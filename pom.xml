@@ -6,17 +6,14 @@
     <groupId>org.wfmc</groupId>
     <artifactId>wfmc-project</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>wfmc-api</module>
         <module>wfmc-commons</module>
         <module>wfmc-impl-elo</module>
-
-
-
-        <module>wfmc-commons-impl</module>
-        <module>wfmc-server-core</module>
-        <module>wfmc-server-services</module>
+        <!--<module>wfmc-commons-impl</module>-->
+        <!--<module>wfmc-server-core</module>-->
+        <!--<module>wfmc-server-services</module>-->
     </modules>
 
     <!-- TODO project name  -->
@@ -30,6 +27,8 @@
             <url>http://tni-hq-artifactory/tn-components</url>
         </repository>
     </repositories>
+
+
 
     <properties>
         <artifactory-maven-plugin.version>2.2.1</artifactory-maven-plugin.version>
@@ -55,11 +54,14 @@
                             </deployProperties>
                             <publisher>
                                 <contextUrl>http://tni-hq-artifactory</contextUrl>
-                                <username>lucian.dragomir</username>
-                                <password>lucian1234</password>
+                                <username>admin</username>
+                                <password>1234%asd</password>
                                 <repoKey>tn-components</repoKey>
                                 <!--<snapshotRepoKey>libs-snapshots-local</snapshotRepoKey>-->
                             </publisher>
+                            <deployProperties>
+                                
+                            </deployProperties>
                         </configuration>
                     </execution>
                 </executions>
