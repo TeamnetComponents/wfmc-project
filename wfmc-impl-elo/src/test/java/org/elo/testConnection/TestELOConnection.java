@@ -4,8 +4,7 @@ import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
 
 
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by andras on 2/18/2015.
@@ -31,7 +30,7 @@ public class TestELOConnection {
         Properties connProps = IXConnFactory.createConnProps(IX_URL); //URL
         Properties sessOpts = IXConnFactory.createSessionOptions("IX-Example", "1.0");
         IXConnFactory connFact = new IXConnFactory(connProps, sessOpts);
-        ix = connFact.create(LOGIN_NAME, LOGIN_PWD, CNN_NAME, null);
+        ix = connFact.create(LOGIN_NAME, LOGIN_PWD, CNN_NAME, LOGIN_NAME);
 
         // Get contstant values (cached by IXClient object)
         CONS = ix.getCONST();
@@ -62,10 +61,15 @@ public class TestELOConnection {
             // do the tests
 
             testCollectWorkFlows();
-            testCreateWorkFlow();
-            testCollectWorkFlows();
+           // testCreateWorkFlow();
+           // testCollectWorkFlows();
+            //testGetTasks();
+            getTasks(LOGIN_NAME);
+            getSuccNodes(readDiagram("32",WORKFLOW_TYPE.getACTIVE()),1);
         } catch (RemoteException e) {
             System.out.println("ERROR= " +e.toString());
+        } catch (java.rmi.RemoteException e) {
+            e.printStackTrace();
         } finally {
             // logout from Index Server
             disconnectIx();
@@ -126,6 +130,90 @@ public class TestELOConnection {
 
         System.out.println("inserted sord: name=" + sord.getName() + ", id=" + objId + ", guid=" + sord.getGuid());
         return objId;
+    }
+
+    public static void testGetTasks() throws RemoteException {
+        // Search for all workflow nodes using workflow name
+        WFCollectNode[] nodes = ix.ix().collectWorkFlowNodes(
+                "Flux editare atribute drumuri",        // Name of workflow
+                null,            // WF type - null = active
+                null,            // Node name
+                0,               // Node type - 0 = all nodes
+                Integer.toString(2), // objId for object
+                null,            // Enter date
+                null,            // Exit date
+                null,            // User ids
+                false,            // Only active nodes
+                false);          // Only start nodes
+
+        // List all found nodes
+        System.out.println("Logged in with user WF-User1 - workflow admin rights");
+        for (int i = 0; i < nodes.length; i++){
+
+            System.out.println("    Node found:  nodeName= " + nodes[i].getNodeName() +
+                    ", userName= " + nodes[i].getUserName() +
+                    ", active = " + nodes[i].isActive());
+        }
+    }
+
+    public static List<UserTask> getTasks(String userName) throws java.rmi.RemoteException {
+        final int NUMBER_OF_RESULTS = 100;
+        List<UserTask> tasks = new ArrayList<>();
+        //construire criteriu de cautare
+        FindTasksInfo findTasksInfo = new FindTasksInfo();
+        findTasksInfo.setInclWorkflows(true);
+
+        FindResult findResult = ix.ix().findFirstTasks(findTasksInfo, NUMBER_OF_RESULTS);
+        tasks.addAll(Arrays.asList(findResult.getTasks()));
+        int count = 0;
+        //cautare se face paginata
+        while (findResult.isMoreResults()) {
+            ix.ix().findNextTasks(findResult.getSearchId(), tasks.size(), count * NUMBER_OF_RESULTS);
+            count++;
+        }
+        //inchidem cautarea
+        ix.ix().findClose(findResult.getSearchId());
+        return tasks;
+
+    }
+
+    public static WFDiagram readDiagram(String workflowId, WFTypeZ wFTypeZ) throws java.rmi.RemoteException {
+        return ix.ix().checkoutWorkFlow(workflowId, wFTypeZ, WFDiagramC.mbAll, LockC.NO);
+    }
+
+    //Intoarce nodurile succesoare
+    //3. Obtinem “next steps” – obtinem lista de rezolutii “tranzitii” posibile pe care le putem utiliza la un pas in flux
+    public static List<WFNode> getSuccNodes(WFDiagram workflow, Integer nodeId) {
+        List<WFNode> ret = new ArrayList<>();
+        for (WFNodeAssoc assoc : workflow.getMatrix().getAssocs()) {
+            if (assoc.getNodeFrom() == nodeId) {
+                ret.add(getNode(workflow, assoc.getNodeTo()));
+            }
+        }
+        return ret;
+    }
+
+
+
+
+    public static WFNode getNode(WFDiagram workflow, String nodeName) {
+
+        for (WFNode wFNode : workflow.getNodes()) {
+            if (wFNode.getName().equals(nodeName)) {
+                return wFNode;
+            }
+        }
+        return null;
+    }
+
+    //Intoarcere noduri in functie de id sau nume
+    public static WFNode getNode(WFDiagram workflow, Integer nodeId) {
+        for (WFNode wFNode : workflow.getNodes()) {
+            if (wFNode.getId() == nodeId) {
+                return wFNode;
+            }
+        }
+        return null;
     }
 
 }
