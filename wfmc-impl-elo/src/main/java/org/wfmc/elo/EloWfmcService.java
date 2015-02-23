@@ -172,7 +172,6 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public void disconnect() throws WMWorkflowException {
-        //EloConnectionManager.returnCoonection(this.eloConnection)
         if (eloConnection != null) {
             eloConnection.logout();
             eloConnection = null;
@@ -201,7 +200,18 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public String startProcess(String procInstId) throws WMWorkflowException {
-        return null;
+
+        EloWfmcProcessInstance wmProcessInstance = (EloWfmcProcessInstance)getProcessInstance(procInstId);
+        try {
+            int workspaceId = eloConnection.ix().startWorkFlow(wmProcessInstance.getProcessDefinitionId(),
+                                             wmProcessInstance.getName(),
+                                             ((EloWfmcSord)wmProcessInstance.getEloWfmcSord()).getSordId());
+
+            return Integer.toString(workspaceId);
+        } catch (RemoteException remoteException) {
+            throw new WMWorkflowException(remoteException);
+        }
+
     }
 
     @Override
