@@ -1,17 +1,21 @@
 package org.wfmc.elo;
 
+import de.elo.ix.client.IXConnFactory;
 import de.elo.ix.client.IXConnection;
+import de.elo.utils.net.RemoteException;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 
+import java.util.Properties;
+
 /**
  * Created by Lucian.Dragomir on 2/10/2015.
  */
 public class EloWfmcService extends WfmcServiceImpl_Abstract {
-    IXConnection eloConnection;
 
+    private IXConnection eloConnection;
 
     @Override
     public boolean isWorkListHandlerProfileSupported() {
@@ -150,7 +154,19 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
-        //this.eloConnection = EloConnectionManager.getconn(this.context, WMConnectInfo -> properties);
+
+        Properties connProps = IXConnFactory.createConnProps(connectInfo.getScope());
+        Properties sessOpts = IXConnFactory.createSessionOptions("IX-Example", "1.0");
+        IXConnFactory connFact = null;
+        try {
+            connFact = new IXConnFactory(connProps, sessOpts);
+            eloConnection = connFact.create(connectInfo.getUserIdentification(),
+                                            connectInfo.getPassword(),
+                                            connectInfo.getEngineName(),
+                                            connectInfo.getUserIdentification());
+        } catch (RemoteException remoteException) {
+            throw new WMWorkflowException(remoteException);
+        }
 
     }
 
@@ -353,4 +369,13 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
     public void terminateApp(int toolAgentHandle, String procInstId, String workItemId) throws WMWorkflowException {
 
     }
+
+    public IXConnection getEloConnection() {
+        return eloConnection;
+    }
+
+    public void setEloConnection(IXConnection eloConnection) {
+        this.eloConnection = eloConnection;
+    }
+
 }
