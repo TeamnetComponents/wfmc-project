@@ -173,6 +173,10 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
     @Override
     public void disconnect() throws WMWorkflowException {
         //EloConnectionManager.returnCoonection(this.eloConnection)
+        if (eloConnection != null) {
+            eloConnection.logout();
+            eloConnection = null;
+        }
     }
 
     @Override

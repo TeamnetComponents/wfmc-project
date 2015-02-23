@@ -39,4 +39,16 @@ public class EloWfmcServiceTest {
 
     }
 
+    @Test
+    public void check_elo_disconnection(){
+        WMConnectInfo wmConnectInfo = new WMConnectInfo(configBundle.getString("login.name"),
+                configBundle.getString("login.password"),
+                configBundle.getString("cnn.name"),
+                configBundle.getString("ix.url"));
+        eloWfmcService.connect(wmConnectInfo);
+
+        eloWfmcService.disconnect();
+
+        Assertions.assertThat(eloWfmcService.getEloConnection() == null);
+    }
 }
