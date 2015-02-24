@@ -69,7 +69,7 @@ public class EloWfmcServiceTest {
         EloWfmcProcessInstance wmProcessInstance = new EloWfmcProcessInstance();
         wmProcessInstance.setProcessDefinitionId("4"); // setting the template ID
         wmProcessInstance.setName("Test Workflow Name");
-        wmProcessInstance.setEloWfmcSord(new EloWfmcSord("89"));
+        wmProcessInstance.setEloWfmcSord(new EloWfmcSord("104")); //idSORD fisier TEST WF
 
         eloWfmcService = Mockito.spy(eloWfmcService);
         Mockito.when(eloWfmcService.getProcessInstance(Mockito.<String>any())).thenReturn(wmProcessInstance);

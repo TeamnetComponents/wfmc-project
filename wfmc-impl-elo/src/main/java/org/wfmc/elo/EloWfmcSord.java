@@ -10,9 +10,30 @@ public class EloWfmcSord implements WMEntity{
 
     private String sordId;
     private String sordName;
+    private String parentId;  //parintele sordului
+    private String maskId;   //formularul de indexare
+
+    private EloWfmcObjKey[] objKeys;   //atributele sord-ului
+
 
     public EloWfmcSord(String sordId){
         this.sordId = sordId;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getMaskId() {
+        return maskId;
+    }
+
+    public void setMaskId(String maskId) {
+        this.maskId = maskId;
     }
 
     public String getSordId() {
@@ -31,4 +52,11 @@ public class EloWfmcSord implements WMEntity{
         this.sordName = sordName;
     }
 
+    public EloWfmcObjKey[] getObjKeys() {
+        return objKeys;
+    }
+
+    public void setObjKeys(EloWfmcObjKey[] objKeys) {
+        this.objKeys = objKeys;
+    }
 }
