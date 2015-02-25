@@ -5,6 +5,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.wfmc.elo.model.EloWfmcProcessInstance;
+import org.wfmc.elo.model.EloWfmcSord;
 import org.wfmc.wapi.WMConnectInfo;
 
 import java.util.ResourceBundle;

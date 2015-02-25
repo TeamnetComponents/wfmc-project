@@ -1,6 +1,6 @@
-package org.wfmc.elo;
+package org.wfmc.elo.model;
 
-import org.wfmc.wapi2.WMEntity;
+import org.wfmc.elo.base.WMEntityDefault;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,7 +9,7 @@ import org.wfmc.wapi2.WMEntity;
  * Time: 11:12 AM
  * To change this template use File | Settings | File Templates.
  */
-public class EloWfmcObjKey implements WMEntity{
+public class EloWfmcObjKey extends WMEntityDefault{
 
     private String[] value; //valoare atribut
     private int	id ;        //id-ul liniei din seria de atribute

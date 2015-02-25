@@ -3,6 +3,8 @@ package org.wfmc.elo;
 import de.elo.ix.client.IXConnFactory;
 import de.elo.ix.client.IXConnection;
 import de.elo.utils.net.RemoteException;
+import org.wfmc.elo.model.EloWfmcProcessInstance;
+import org.wfmc.elo.model.EloWfmcSord;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;

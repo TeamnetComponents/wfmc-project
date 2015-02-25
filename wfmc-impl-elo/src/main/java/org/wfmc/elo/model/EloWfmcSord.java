@@ -1,12 +1,12 @@
-package org.wfmc.elo;
+package org.wfmc.elo.model;
 
-import org.wfmc.wapi2.WMEntity;
+import org.wfmc.elo.base.WMEntityDefault;
 
 /**
  * @author adrian.zamfirescu
  * @since 23/02/2015
  */
-public class EloWfmcSord implements WMEntity{
+public class EloWfmcSord extends WMEntityDefault{
 
     private String sordId;
     private String sordName;
