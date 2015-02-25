@@ -18,6 +18,7 @@ import java.util.Properties;
 public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     private IXConnection eloConnection;
+    private ProcessInstanceCache processInstanceCache;
 
     @Override
     public boolean isWorkListHandlerProfileSupported() {
@@ -197,7 +198,16 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
-        return null;
+
+        EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
+        eloWfmcProcessInstance.setProcessDefinitionId(procDefId);
+        eloWfmcProcessInstance.setName(procInstName);
+
+        String processInstanceId = procDefId + procInstName;
+
+        processInstanceCache.createEloWfmcProcessInstance(processInstanceId, eloWfmcProcessInstance);
+
+        return processInstanceId;
     }
 
     @Override
@@ -208,6 +218,9 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
             int workspaceId = eloConnection.ix().startWorkFlow(wmProcessInstance.getProcessDefinitionId(),
                                              wmProcessInstance.getName(),
                                              ((EloWfmcSord)wmProcessInstance.getEloWfmcSord()).getSordId());
+
+            // remove temporary process instance
+            abortProcessInstance(procInstId);
 
             return Integer.toString(workspaceId);
         } catch (RemoteException remoteException) {
@@ -242,8 +255,16 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
     }
 
     @Override
+    /**
+     * A process instance will have a single attribute - the Sord ID (the flow attributes will rest in {@link EloWfmcSord})
+     */
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
 
+        EloWfmcProcessInstance eloWfmcProcessInstance = (EloWfmcProcessInstance)getProcessInstance(procInstId);
+        EloWfmcSord eloWfmcSord = new EloWfmcSord((String)attrValue);
+        eloWfmcProcessInstance.setEloWfmcSord(eloWfmcSord);
+
+        // TODO - assign metadata (eloWfmcSord.objKeys)
     }
 
     @Override
@@ -278,7 +299,7 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {
-        return null;
+        return processInstanceCache.retrieveEloWfmcProcessInstance(procInstId);
     }
 
     @Override
@@ -368,7 +389,7 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public void abortProcessInstance(String procInstId) throws WMWorkflowException {
-
+        processInstanceCache.removeEloWfmcProcessInstance(procInstId);
     }
 
     @Override
@@ -392,6 +413,14 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     public void setEloConnection(IXConnection eloConnection) {
         this.eloConnection = eloConnection;
+    }
+
+    public ProcessInstanceCache getProcessInstanceCache() {
+        return processInstanceCache;
+    }
+
+    public void setProcessInstanceCache(ProcessInstanceCache processInstanceCache) {
+        this.processInstanceCache = processInstanceCache;
     }
 
 }
