@@ -1,13 +1,19 @@
 package org.wfmc.elo;
 
+import de.elo.ix.client.CheckoutUsersC;
+import de.elo.ix.client.LockC;
+import de.elo.ix.client.UserInfo;
+import de.elo.utils.net.RemoteException;
 import org.fest.assertions.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.wfmc.elo.base.WMWorkItemIteratorImpl;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
 import org.wfmc.elo.model.EloWfmcSord;
 import org.wfmc.wapi.WMConnectInfo;
+import org.wfmc.wapi.WMFilter;
 
 import java.util.ResourceBundle;
 
@@ -62,6 +68,29 @@ public class EloWfmcServiceTest {
         eloWfmcService.disconnect();
 
         Assertions.assertThat(eloWfmcService.getEloConnection() == null);
+    }
+
+    @Test
+    public void check_list_work_items_for_groups(){
+        //given
+        String name = "Group";
+        int comparison = WMFilter.EQ;
+
+        //when
+        eloWfmcService.connect(wmConnectInfo);
+        try {
+            UserInfo[] groupsInfo = eloWfmcService.getEloConnection().ix().checkoutUsers(null, CheckoutUsersC.ALL_GROUPS, LockC.YES);
+            for (UserInfo userInfo : groupsInfo){
+                String groupName = userInfo.getName();
+                WMFilter wmFilter = new WMFilter(name, comparison , groupName);
+                WMWorkItemIteratorImpl wmWorkItemIterator = (WMWorkItemIteratorImpl) eloWfmcService.listWorkItems(wmFilter, false);
+                while (wmWorkItemIterator.hasNext()){
+                    Assertions.assertThat((wmWorkItemIterator.tsNext().getParticipant().getName())).isEqualTo(groupName);
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

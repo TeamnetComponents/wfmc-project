@@ -1,8 +1,8 @@
 package org.wfmc.elo;
 
-import de.elo.ix.client.IXConnFactory;
-import de.elo.ix.client.IXConnection;
+import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
+import org.wfmc.elo.base.WMWorkItemIteratorImpl;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
 import org.wfmc.elo.model.EloWfmcSord;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
@@ -10,7 +10,11 @@ import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
+
+import static org.wfmc.elo.utils.UserTaskUtils.findUserTasksByUserOrGroupName;
 
 /**
  * Created by Lucian.Dragomir on 2/10/2015.
@@ -314,7 +318,54 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException {
-        return null;
+        try {
+            /*groupsInfo si usersInfo sunt vectori de UserInfo ce contin date despre grupuri, respectiv useri
+            groupsName este un HashMap ce contine id-ul grupului ca si cheie si numele grupului ca valoare
+            usersName este un HashMap ce contine o cheie cu numele userului, avand ca valoare indexul din vectorul usersInfo.*/
+            UserInfo[] groupsInfo = eloConnection.ix().checkoutUsers(null, CheckoutUsersC.ALL_GROUPS, LockC.YES);
+            HashMap<Integer, String> groupsName = new HashMap<>(); // HashMap contains groupId and group name
+            UserInfo[] usersInfo = eloConnection.ix().checkoutUsers(null, CheckoutUsersC.ALL_USERS, LockC.YES);
+            HashMap<String, Integer> usersName = new HashMap(); //HasMap contains user name and index from usersInfo for each name.
+            Integer userIndex = 0;
+
+            for (UserInfo groupInfo : groupsInfo) {
+                groupsName.put(groupInfo.getId(), groupInfo.getName());
+            }
+            for (UserInfo userInfo : usersInfo) {
+                usersName.put(userInfo.getName(), userIndex);
+                userIndex++;
+            }
+
+            if (filter.getAttributeName().equals("User")) {
+                ArrayList<WMWorkItem> userWorkItems = findUserTasksByUserOrGroupName(eloConnection, (String) filter.getFilterValue());
+                /*listGroupIds este un vector ce contine id-urile grupurilor din care apartine un user.
+                aceasta lista se obtine cu metoda getGroupList pe un obiect de tipul UserInfo.
+                Obiectul UserInfo se obtine din vectorul usersName.
+                Noi primim ca parametru doar numele user-ului iar indexul pentru vectorul de UserInfo il luam din
+                HashMap-ul creat mai devreme unde am stocat index-ul pentru fiecare userName.*/
+                int[] listGroupIds = usersInfo[usersName.get(filter.getFilterValue())].getGroupList();
+                for (Integer groupId : listGroupIds) {
+                    ArrayList<WMWorkItem> workItemsFromDepartment = findUserTasksByUserOrGroupName(eloConnection, groupsName.get(groupId));
+                    for (WMWorkItem wmWorkItem : workItemsFromDepartment) {
+                        userWorkItems.add(wmWorkItem);
+                    }
+                }
+                WMWorkItemIteratorImpl wmWorkItemIterator = new WMWorkItemIteratorImpl(userWorkItems);
+                return wmWorkItemIterator;
+            } else if (filter.getAttributeName().equals("Group")) {
+                ArrayList<WMWorkItem> userWorkItems = findUserTasksByUserOrGroupName(eloConnection, (String) filter.getFilterValue());
+                WMWorkItemIteratorImpl wmWorkItemIterator = new WMWorkItemIteratorImpl(userWorkItems);
+                return wmWorkItemIterator;
+            } else if (!(filter.getAttributeName().equals("Group"))||(!(filter.getAttributeName().equals("User")))){
+                System.out.println("Check filter attribute name to be 'User' or 'Group'!");
+                return null;
+            } else {
+                System.out.println("User or Group name did not exist!");
+                return null;
+            }
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(e);
+        }
     }
 
     @Override
