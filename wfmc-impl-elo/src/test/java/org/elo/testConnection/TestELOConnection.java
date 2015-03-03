@@ -61,6 +61,7 @@ public class TestELOConnection {
             // do the tests
 
             testCollectWorkFlows();
+            forwardTask(43, 7, 2);
            // testCreateWorkFlow();
            // testCollectWorkFlows();
             //testGetTasks();
@@ -216,4 +217,15 @@ public class TestELOConnection {
         return null;
     }
 
+    public static void forwardTask(Integer workflowId, Integer nodeId, Integer nodeIdToForward) throws RemoteException {
+        WFEditNode wfEditNode = ix.ix().beginEditWorkFlowNode(workflowId, nodeId, LockC.YES);
+//        List<WFNode> wfNodes = getNextNodes(workflowId, nodeId);
+        int[] nextNodesId = new int[1];
+//        Integer i = 0;
+//        for (WFNode wfNode : wfNodes) {
+//            nextNodesId[i] = wfNode.getId();
+//        }
+        nextNodesId[0] = nodeIdToForward;
+        ix.ix().endEditWorkFlowNode(workflowId, nodeId, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), nextNodesId);
+    }
 }
