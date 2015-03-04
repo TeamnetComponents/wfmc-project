@@ -74,9 +74,9 @@
                 <configuration>
                     <format>xml</format>
                     <aggregate>true</aggregate>
-                    <check/>
                 </configuration>
             </plugin>
+
             <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
                 <!--<artifactId>maven-compiler-plugin</artifactId>-->
