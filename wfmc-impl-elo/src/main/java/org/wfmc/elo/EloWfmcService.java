@@ -2,19 +2,15 @@ package org.wfmc.elo;
 
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
-import org.wfmc.elo.base.WMWorkItemIteratorImpl;
+import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
+import org.wfmc.elo.model.EloWfmcObjKey;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
-import org.wfmc.elo.model.EloWfmcSord;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Properties;
-
-import static org.wfmc.elo.utils.UserTaskUtils.findUserTasksByUserOrGroupName;
 
 /**
  * Created by Lucian.Dragomir on 2/10/2015.
@@ -159,6 +155,15 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     }
 
+    /**
+     * Metoda creaza o conexiune cu server-ul de ELO.
+     * @param connectInfo Este un obiect de tipul WMConnectInfo ce contine urmatoarele campuri:
+     *                    userIdentification - reprezinta numele utilizatorului;
+     *                    password - parola utilizatorului
+     *                    engineName - numele masinii de pe care te conectezi;
+     *                    scope - reprezinta ELO index server (IX)
+     * @throws WMWorkflowException
+     */
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
 
@@ -177,6 +182,10 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     }
 
+    /**
+     * Metoda distruge conexiunea la server-ul de ELO.
+     * @throws WMWorkflowException
+     */
     @Override
     public void disconnect() throws WMWorkflowException {
         if (eloConnection != null) {
@@ -200,6 +209,13 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     }
 
+    /**
+     * Metoda creaza o instanta de proces in functie de un process definition si returneaza id-ul acestei instante.
+     * @param procDefId    Reprezinta id-ul unui process definition in functie de care o sa fie creat aceasta instanta.
+     * @param procInstName Reprezinta numele pe care o sa il aibe instanta.
+     * @return Id-ul instantei de proces
+     * @throws WMWorkflowException
+     */
     @Override
     public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
 
@@ -214,6 +230,15 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
         return processInstanceId;
     }
 
+    /**
+     * Metoda porneste o instanta de proces in functie de id-ul pe care il primim cand apelam metoda createProcessInstance
+     * si returneaza id-ul procesului pornit care e diferit de id-ul instantei de proces sau de id-ul lui process definition.
+     * Inainte de a da startProcess trebuie sa apelam si assignProcessInstanceAttribute pentru a adauga un sord acelei
+     * instante de proces ce va fi pornita.
+     * @param procInstId  Reprezinta id-ul unei instante de proces. Acesta trebuie sa fie id-ul unei instante existente, altfel o sa arunce un WMWorkflowException.
+     * @return Id-ul procesului pornit.
+     * @throws WMWorkflowException
+     */
     @Override
     public String startProcess(String procInstId) throws WMWorkflowException {
 
@@ -221,7 +246,7 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
         try {
             int workspaceId = eloConnection.ix().startWorkFlow(wmProcessInstance.getProcessDefinitionId(),
                                              wmProcessInstance.getName(),
-                                             ((EloWfmcSord)wmProcessInstance.getEloWfmcSord()).getSordId());
+                                             ((ELOWfMCProcessInstanceAttributes)wmProcessInstance.getEloWfmcSord()).getSordId());
 
             // remove temporary process instance
             abortProcessInstance(procInstId);
@@ -258,17 +283,109 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
         return null;
     }
 
+    /**
+     * Metoda adauga un sord pe o instanta de proces pentru a putea fi pornita.
+     * @param procInstId  Reprezinta id-ul unei instante de proces. Acesta trebuie sa fie id-ul unei instante existente, altfel o sa arunce un WMWorkflowException.
+     * @param attrName   Numele.
+     * @param attrValue  Id-ul sordului ce va fi pus pe proces.
+     * @throws WMWorkflowException
+     */
     @Override
     /**
-     * A process instance will have a single attribute - the Sord ID (the flow attributes will rest in {@link EloWfmcSord})
+     * A process instance will have a single attribute - the Sord ID (the flow attributes will rest in {@link org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes})
      */
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
 
         EloWfmcProcessInstance eloWfmcProcessInstance = (EloWfmcProcessInstance)getProcessInstance(procInstId);
-        EloWfmcSord eloWfmcSord = new EloWfmcSord((String)attrValue);
-        eloWfmcProcessInstance.setEloWfmcSord(eloWfmcSord);
+        //todo Daniel: de  verificat daca procesul are deja setat eloWfmcProcessInstance pe el. Daca nu are inseamna ca este primul atribut primit pe metoda.
+        //Daca este primul atribut primit verificam ca parametru este ori SORDID ordi MASKID. Daca nu e niciunul dam eroare. Daca este unul ditre ele,
+        // cream un eloWfmcProcessInstance nou cu sord-ul sau mask-ul primit. Daca procesul are deja setat eloWfmcProcessInstance pe el inseamna ca atributul primit este unul de
+        //pe sord si validam asta. (Avem sordul, in care avem objectKeys) Daca nu il gasim dam eroare. Daca il gasim il setam pe sord si in cache (adica pe
+        //eloWfmcProcessInstance).
 
-        // TODO - assign metadata (eloWfmcSord.objKeys)
+        if ((ELOWfMCProcessInstanceAttributes)eloWfmcProcessInstance.getEloWfmcSord() == null) {
+            try {
+                if (eloConnection.ix().checkoutSord(String.valueOf(attrValue), SordC.mbAll, LockC.NO) != null) {
+                    Sord sord = eloConnection.ix().checkoutSord((String) attrValue, SordC.mbAll, LockC.NO);
+                    ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = new ELOWfMCProcessInstanceAttributes((String) attrValue);
+                    eloWfMCProcessInstanceAttributes.setSordId((String) attrValue);
+                    eloWfMCProcessInstanceAttributes.setMaskId(String.valueOf(sord.getMask()));
+
+                    EloWfmcObjKey[] eloWfmcObjKeys = new EloWfmcObjKey[sord.getObjKeys().length];
+                    for (int i = 0; i < sord.getObjKeys().length; i++) {
+                        eloWfmcObjKeys[i] = new EloWfmcObjKey();
+                        eloWfmcObjKeys[i].setId(sord.getObjKeys()[i].getId());
+                        eloWfmcObjKeys[i].setObjId(sord.getObjKeys()[i].getObjId());
+                        eloWfmcObjKeys[i].setName(sord.getObjKeys()[i].getName());
+                        eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
+                    }
+                    eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
+                    eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
+                }
+            } catch (RemoteException e) {
+                try {
+                    if (eloConnection.ix().checkoutDocMask(String.valueOf(attrValue), DocMaskC.mbAll, LockC.NO) != null) {
+                        Sord sord = eloConnection.ix().createSord("1", (String) attrValue, SordC.mbAll);
+                        ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = new ELOWfMCProcessInstanceAttributes(String.valueOf(sord.getId()));
+                        eloWfMCProcessInstanceAttributes.setMaskId((String) attrValue);
+                        eloWfMCProcessInstanceAttributes.setSordId((String.valueOf(sord.getId())));
+
+                        EloWfmcObjKey[] eloWfmcObjKeys = new EloWfmcObjKey[sord.getObjKeys().length];
+                        for (int i = 0; i < sord.getObjKeys().length; i++) {
+                            eloWfmcObjKeys[i] = new EloWfmcObjKey();
+                            eloWfmcObjKeys[i].setId(sord.getObjKeys()[i].getId());
+                            eloWfmcObjKeys[i].setObjId(sord.getObjKeys()[i].getObjId());
+                            eloWfmcObjKeys[i].setName(sord.getObjKeys()[i].getName());
+                            eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
+                        }
+                        eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
+                        eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
+                    }
+                } catch (RemoteException e1) {
+                    try {
+                        String comment = eloConnection.ix().checkoutWorkFlow(eloWfmcProcessInstance.getProcessDefinitionId(), WFTypeC.TEMPLATE, WFDiagramC.mbAll, LockC.YES).getNodes()[0].getComment();
+                        if (comment.contains("mask=")) {
+                            int startPosition = comment.indexOf("mask=");
+                            int endPosition = comment.indexOf(";", startPosition);
+                            Sord sord = eloConnection.ix().createSord("1", comment.substring(startPosition + 4, endPosition), SordC.mbAll);
+                            ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = new ELOWfMCProcessInstanceAttributes(String.valueOf(sord.getId()));
+                            eloWfMCProcessInstanceAttributes.setMaskId((String) attrValue);
+                            eloWfMCProcessInstanceAttributes.setSordId((String.valueOf(sord.getId())));
+                            EloWfmcObjKey[] eloWfmcObjKeys = new EloWfmcObjKey[sord.getObjKeys().length];
+                            for (int i = 0; i < sord.getObjKeys().length; i++) {
+                                eloWfmcObjKeys[i] = new EloWfmcObjKey();
+                                eloWfmcObjKeys[i].setId(sord.getObjKeys()[i].getId());
+                                eloWfmcObjKeys[i].setObjId(sord.getObjKeys()[i].getObjId());
+                                eloWfmcObjKeys[i].setName(sord.getObjKeys()[i].getName());
+                                eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
+                            }
+                            eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
+                            eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
+                        }
+                    } catch (RemoteException e2) {
+                        throw new WMWorkflowException(e2);
+                    }
+                }
+            }
+
+        } else {
+            ELOWfMCProcessInstanceAttributes eloWfmcSord = (ELOWfMCProcessInstanceAttributes)eloWfmcProcessInstance.getEloWfmcSord();
+            EloWfmcObjKey[] objKeys = eloWfmcSord.getObjKeys();
+            boolean existAttribute = false;
+            for (int i = 0; i < objKeys.length; i++) {
+                if (objKeys[i].getName().equals(attrName)) {
+                    existAttribute = true;
+                    String[] values = new String[objKeys[i].getValue().length];
+                    for (int j = 0; j < objKeys[i].getValue().length; j++){
+                        values[j] = String.valueOf(attrValue);
+                    }
+                    objKeys[i].setValue(values);
+                }
+            }
+            if (existAttribute == false) {
+                throw new WMWorkflowException("Attribute does not exist!");
+            }
+        }
     }
 
     @Override
@@ -301,6 +418,12 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
         return null;
     }
 
+    /**
+     * Metoda intoarce o instanta de proces.
+     * @param procInstId Reprezinta id-ul unei instante de proces. Acesta trebuie sa fie id-ul unei instante existente, altfel o sa arunce un WMWorkflowException.
+     * @return Instanta dorita.
+     * @throws WMWorkflowException
+     */
     @Override
     public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {
         return processInstanceCache.retrieveEloWfmcProcessInstance(procInstId);
@@ -318,54 +441,7 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException {
-        try {
-            /*groupsInfo si usersInfo sunt vectori de UserInfo ce contin date despre grupuri, respectiv useri
-            groupsName este un HashMap ce contine id-ul grupului ca si cheie si numele grupului ca valoare
-            usersName este un HashMap ce contine o cheie cu numele userului, avand ca valoare indexul din vectorul usersInfo.*/
-            UserInfo[] groupsInfo = eloConnection.ix().checkoutUsers(null, CheckoutUsersC.ALL_GROUPS, LockC.YES);
-            HashMap<Integer, String> groupsName = new HashMap<>(); // HashMap contains groupId and group name
-            UserInfo[] usersInfo = eloConnection.ix().checkoutUsers(null, CheckoutUsersC.ALL_USERS, LockC.YES);
-            HashMap<String, Integer> usersName = new HashMap(); //HasMap contains user name and index from usersInfo for each name.
-            Integer userIndex = 0;
-
-            for (UserInfo groupInfo : groupsInfo) {
-                groupsName.put(groupInfo.getId(), groupInfo.getName());
-            }
-            for (UserInfo userInfo : usersInfo) {
-                usersName.put(userInfo.getName(), userIndex);
-                userIndex++;
-            }
-
-            if (filter.getAttributeName().equals("User")) {
-                ArrayList<WMWorkItem> userWorkItems = findUserTasksByUserOrGroupName(eloConnection, (String) filter.getFilterValue());
-                /*listGroupIds este un vector ce contine id-urile grupurilor din care apartine un user.
-                aceasta lista se obtine cu metoda getGroupList pe un obiect de tipul UserInfo.
-                Obiectul UserInfo se obtine din vectorul usersName.
-                Noi primim ca parametru doar numele user-ului iar indexul pentru vectorul de UserInfo il luam din
-                HashMap-ul creat mai devreme unde am stocat index-ul pentru fiecare userName.*/
-                int[] listGroupIds = usersInfo[usersName.get(filter.getFilterValue())].getGroupList();
-                for (Integer groupId : listGroupIds) {
-                    ArrayList<WMWorkItem> workItemsFromDepartment = findUserTasksByUserOrGroupName(eloConnection, groupsName.get(groupId));
-                    for (WMWorkItem wmWorkItem : workItemsFromDepartment) {
-                        userWorkItems.add(wmWorkItem);
-                    }
-                }
-                WMWorkItemIteratorImpl wmWorkItemIterator = new WMWorkItemIteratorImpl(userWorkItems);
-                return wmWorkItemIterator;
-            } else if (filter.getAttributeName().equals("Group")) {
-                ArrayList<WMWorkItem> userWorkItems = findUserTasksByUserOrGroupName(eloConnection, (String) filter.getFilterValue());
-                WMWorkItemIteratorImpl wmWorkItemIterator = new WMWorkItemIteratorImpl(userWorkItems);
-                return wmWorkItemIterator;
-            } else if (!(filter.getAttributeName().equals("Group"))||(!(filter.getAttributeName().equals("User")))){
-                System.out.println("Check filter attribute name to be 'User' or 'Group'!");
-                return null;
-            } else {
-                System.out.println("User or Group name did not exist!");
-                return null;
-            }
-        } catch (RemoteException e) {
-            throw new WMWorkflowException(e);
-        }
+        return  null;
     }
 
     @Override
@@ -388,9 +464,16 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     }
 
+    /**
+     * Metoda atribuie un task unui utilizator.
+     * @param sourceUser Utilizatorul care are atribuit task-ul.
+     * @param targetUser Utilizatorul caruia i se va atribui task-ul.
+     * @param procInstId Id-ul procesului.
+     * @param workItemId Id-ul task-ului.
+     * @throws WMWorkflowException
+     */
     @Override
     public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
-
     }
 
     @Override
@@ -438,6 +521,11 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
     }
 
+    /**
+     * Metoda sterge o instanta de proces.
+     * @param procInstId reprezinta id-ul unei instante de proces. Acesta trebuie sa fie id-ul unei instante existente, altfel o sa arunce un WMWorkflowException.
+     * @throws WMWorkflowException
+     */
     @Override
     public void abortProcessInstance(String procInstId) throws WMWorkflowException {
         processInstanceCache.removeEloWfmcProcessInstance(procInstId);
