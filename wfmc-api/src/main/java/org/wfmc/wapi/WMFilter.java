@@ -61,6 +61,9 @@ public class WMFilter implements Serializable {
     // anywhere.  So here's an arbitrary stab at assigning two types:
     public static final int SIMPLE_TYPE = 1;
     public static final int SQL_TYPE = 2;
+    //added Lucian Dragomir
+    public static final int COMPLEX_TYPE = 3;
+
 
     // WFMC-TC-1013 isn't clear, but it appears that comparisons are represented
     // by integer codes formed from the operators' 8-bit ASCII character codes.
@@ -106,10 +109,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The boolean value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        Boolean attributeValue) {
+                    Boolean attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.BOOLEAN_TYPE, comparison,
-            attributeValue);
+                attributeValue);
     }
 
     /**
@@ -122,10 +125,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The boolean value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        boolean attributeValue) {
+                    boolean attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.BOOLEAN_TYPE, comparison,
-            attributeValue ? Boolean.TRUE : Boolean.FALSE);
+                attributeValue ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
@@ -139,10 +142,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The date value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        Date attributeValue) {
+                    Date attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.DATETIME_TYPE, comparison,
-            attributeValue);
+                attributeValue);
     }
 
     /**
@@ -156,10 +159,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The floating point value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        Double attributeValue) {
+                    Double attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.FLOAT_TYPE, comparison,
-            attributeValue);
+                attributeValue);
     }
 
     /**
@@ -173,10 +176,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The floating point value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        double attributeValue) {
+                    double attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.FLOAT_TYPE, comparison,
-            new Double(attributeValue));
+                new Double(attributeValue));
     }
 
     /**
@@ -190,10 +193,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The integer value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        Integer attributeValue) {
+                    Integer attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.INTEGER_TYPE, comparison,
-            attributeValue);
+                attributeValue);
     }
 
     /**
@@ -207,10 +210,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The integer value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        int attributeValue) {
+                    int attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.INTEGER_TYPE, comparison,
-            new Integer(attributeValue));
+                new Integer(attributeValue));
     }
 
     /**
@@ -225,10 +228,10 @@ public class WMFilter implements Serializable {
      * @param attributeValue The string value to test.
      */
     public WMFilter(String attributeName, int comparison,
-        String attributeValue) {
+                    String attributeValue) {
 
         this(SIMPLE_TYPE, attributeName, WMAttribute.STRING_TYPE, comparison,
-            attributeValue);
+                attributeValue);
     }
 
     /**
@@ -242,28 +245,32 @@ public class WMFilter implements Serializable {
         this(SQL_TYPE, null, WMAttribute.STRING_TYPE, NO, sqlString);
     }
 
+    public WMFilter(Object expression) {
+        this(COMPLEX_TYPE, null, WMAttribute.DEFAULT_TYPE, NO, expression);
+    }
+
     private WMFilter(int filterType, String attributeName, int attributeType,
-        int comparison, Object filterValue) {
+                     int comparison, Object filterValue) {
 
         if (filterType != SIMPLE_TYPE && filterType != SQL_TYPE)
             throw new IllegalArgumentException("filterType: " + filterType);
         if (filterType == SIMPLE_TYPE &&
-            comparison != LT &&
-            comparison != LE &&
-            comparison != EQ &&
-            comparison != NE &&
-            comparison != GE &&
-            comparison != GT) {
+                comparison != LT &&
+                comparison != LE &&
+                comparison != EQ &&
+                comparison != NE &&
+                comparison != GE &&
+                comparison != GT) {
 
             throw new IllegalArgumentException("comparison: " +
-                String.valueOf(comparison));
+                    String.valueOf(comparison));
         }
         if (filterType == SIMPLE_TYPE) {
             if (attributeName != null)
                 attributeName = attributeName.trim();
             if (attributeName == null || attributeName.length() == 0) {
                 throw new IllegalArgumentException("attributeName: " +
-                    attributeName);
+                        attributeName);
             }
         }
         this.filterType = filterType;
@@ -298,14 +305,14 @@ public class WMFilter implements Serializable {
     }
 
     public String getSQLComparison() {
-        return (String)SQL_COMPARISONS.get(new Integer(comparison));
+        return (String) SQL_COMPARISONS.get(new Integer(comparison));
     }
 
     public String toString() {
         return "WMFilter[filterType=" + filterType
-            + ", attributeName='" + attributeName + '\''
-            + ", comparison=" + comparison
-            + ", filterValue='" + filterValue + '\''
-            + ']';
+                + ", attributeName='" + attributeName + '\''
+                + ", comparison=" + comparison
+                + ", filterValue='" + filterValue + '\''
+                + ']';
     }
 }

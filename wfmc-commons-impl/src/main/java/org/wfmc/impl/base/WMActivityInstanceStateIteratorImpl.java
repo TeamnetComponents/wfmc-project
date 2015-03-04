@@ -44,6 +44,7 @@
 
 package org.wfmc.impl.base;
 
+import org.wfmc.impl.base.moved.AbstractWMIterator;
 import org.wfmc.wapi.WMActivityInstanceState;
 import org.wfmc.wapi.WMActivityInstanceStateIterator;
 import org.wfmc.wapi.WMNoMoreDataException;

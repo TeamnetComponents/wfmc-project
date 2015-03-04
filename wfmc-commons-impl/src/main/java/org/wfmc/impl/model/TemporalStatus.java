@@ -28,14 +28,20 @@ public final class TemporalStatus extends AbstractEnum {
     public static final int NORMAL_INT = 1;
     public static final int WARNING_INT = 2;
     public static final int OVERDUE_INT = 3;
+
+    public static final String UNDEFINED_KIND = "UNDEFINED";
+    public static final String NORMAL_KIND = "NORMAL";
+    public static final String WARNING_KIND = "WARNING";
+    public static final String OVERDUE_KIND = "OVERDUE";
+
     public static final TemporalStatus UNDEFINED =
-        new TemporalStatus(OBENames.UNDEFINED_KIND, UNDEFINED_INT);
+        new TemporalStatus(UNDEFINED_KIND, UNDEFINED_INT);
     public static final TemporalStatus NORMAL =
-        new TemporalStatus(OBENames.NORMAL_KIND, NORMAL_INT);
+        new TemporalStatus(NORMAL_KIND, NORMAL_INT);
     public static final TemporalStatus WARNING =
-        new TemporalStatus(OBENames.WARNING_KIND, WARNING_INT);
+        new TemporalStatus(WARNING_KIND, WARNING_INT);
     public static final TemporalStatus OVERDUE =
-        new TemporalStatus(OBENames.OVERDUE_KIND, OVERDUE_INT);
+        new TemporalStatus(OVERDUE_KIND, OVERDUE_INT);
 
     private static final TemporalStatus[] _values = {
         UNDEFINED,

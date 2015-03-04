@@ -11,6 +11,7 @@
         <module>wfmc-api</module>
         <module>wfmc-commons</module>
         <module>wfmc-impl-elo</module>
+        <module>wfmc-test</module>
         <!--<module>wfmc-commons-impl</module>-->
         <!--<module>wfmc-server-core</module>-->
         <!--<module>wfmc-server-services</module>-->
@@ -76,6 +77,16 @@
                     <check/>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                <!--<version>3.1</version>-->
+                <!--<configuration>-->
+                    <!--<source>1.7</source>-->
+                    <!--<target>1.7</target>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
         </plugins>
     </build>
     <profiles>

@@ -1,9 +1,6 @@
 package org.wfmc.elo.utils;
 
-import de.elo.ix.client.FindResult;
-import de.elo.ix.client.FindTasksInfo;
-import de.elo.ix.client.IXConnection;
-import de.elo.ix.client.UserTask;
+import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
 import org.wfmc.elo.base.WMParticipantImpl;
 import org.wfmc.elo.base.WMWorkItemImpl;
@@ -24,6 +21,7 @@ public class UserTaskUtils {
         findTasksInfo.setInclReminders(true);
         findTasksInfo.setInclWorkflows(true);
         findTasksInfo.setAllUsers(true);
+
 
         FindResult findResult = eloConnection.ix().findFirstTasks(findTasksInfo, workItemsNumber); //workItemsNumber = numarul de WorkItem-uri aduse de cautare.
         UserTask[] userTasks = findResult.getTasks();

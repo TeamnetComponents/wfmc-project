@@ -14,7 +14,7 @@ public class InMemoryProcessInstanceCache implements ProcessInstanceCache{
     Map<String,EloWfmcProcessInstance> processInstancesCache;
 
     public InMemoryProcessInstanceCache(){
-        processInstancesCache = new HashMap<>();
+        processInstancesCache = new HashMap<String, EloWfmcProcessInstance>();
     }
 
     @Override

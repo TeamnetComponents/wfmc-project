@@ -46,6 +46,7 @@ package org.wfmc.impl.base;
 
 import org.wfmc.audit.WMAAuditEntry;
 import org.wfmc.audit.WMAAuditEntryIterator;
+import org.wfmc.impl.base.moved.AbstractWMIterator;
 import org.wfmc.wapi.WMNoMoreDataException;
 
 import java.util.NoSuchElementException;

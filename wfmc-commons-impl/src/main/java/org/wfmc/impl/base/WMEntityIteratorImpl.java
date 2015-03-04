@@ -44,6 +44,7 @@
 
 package org.wfmc.impl.base;
 
+import org.wfmc.impl.base.moved.AbstractWMIterator;
 import org.wfmc.wapi.WMNoMoreDataException;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;

@@ -44,6 +44,7 @@
 
 package org.wfmc.impl.base;
 
+import org.wfmc.impl.base.moved.AbstractTask;
 import org.wfmc.impl.model.OBEActivityInstance;
 import org.wfmc.wapi.WMActivityInstanceState;
 import org.wfmc.wapi.WMParticipant;
