@@ -323,14 +323,14 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
                             eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
                         }
                         eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
-                        eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
+                        eloWfmcProcessInstance.setEloWfMCProcessInstanceAttributes(eloWfMCProcessInstanceAttributes);
                     }
                 } catch (RemoteException e) {
                     throw new WMAttributeAssignmentException(attrName);
                 }
             }
             //treat MASK_ID
-            if (attrName.equals(ELOConstants.ELO_MASK_ID)) {
+            else if (attrName.equals(ELOConstants.ELO_MASK_ID)) {
                 try {
                     if (eloConnection.ix().checkoutDocMask(String.valueOf(attrValue), DocMaskC.mbAll, LockC.NO) != null) {
                         Sord sord = eloConnection.ix().createSord("1", (String) attrValue, SordC.mbAll);
@@ -347,54 +347,68 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
                             eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
                         }
                         eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
+                        eloWfmcProcessInstance.setEloWfMCProcessInstanceAttributes(eloWfMCProcessInstanceAttributes);
                         eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
                     }
                 } catch (RemoteException e) {
                     throw new WMAttributeAssignmentException(attrName);
                 }
-            }
-            //treat MASK_ID found in comment in first node of workflow
-            try {
-                WFDiagram theWorkflow = eloConnection.ix().checkoutWorkFlow(eloWfmcProcessInstance.getProcessDefinitionId(), WFTypeC.TEMPLATE, WFDiagramC.mbAll, LockC.YES);
-                WFNode theFirstNode = theWorkflow.getNodes()[0];
-                String comment =theFirstNode.getComment();
-                if (comment.contains("mask=")) {
-                    int startPosition = comment.indexOf("mask=");
-                    int endPosition = comment.indexOf(";", startPosition);
-                    Sord sord = eloConnection.ix().createSord("1", comment.substring(startPosition + 4, endPosition), SordC.mbAll);
-                    ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = new ELOWfMCProcessInstanceAttributes(String.valueOf(sord.getId()));
-                    eloWfMCProcessInstanceAttributes.setMaskId((String) attrValue);
-                    eloWfMCProcessInstanceAttributes.setSordId((String.valueOf(sord.getId())));
-                    EloWfmcObjKey[] eloWfmcObjKeys = new EloWfmcObjKey[sord.getObjKeys().length];
-                    for (int i = 0; i < sord.getObjKeys().length; i++) {
-                        eloWfmcObjKeys[i] = new EloWfmcObjKey();
-                        eloWfmcObjKeys[i].setId(sord.getObjKeys()[i].getId());
-                        eloWfmcObjKeys[i].setObjId(sord.getObjKeys()[i].getObjId());
-                        eloWfmcObjKeys[i].setName(sord.getObjKeys()[i].getName());
-                        eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
+            } else {
+                //treat MASK_ID found in comment in first node of workflow
+                try {
+                    WFDiagram theWorkflow = eloConnection.ix().checkoutWorkFlow(eloWfmcProcessInstance.getProcessDefinitionId(), WFTypeC.TEMPLATE, WFDiagramC.mbAll, LockC.YES);
+                    WFNode theFirstNode = theWorkflow.getNodes()[0];
+                    String comment = theFirstNode.getComment();
+                    if (comment.contains("Mask=")) {
+                        int startPosition = comment.indexOf("Mask=");
+                        int endPosition = comment.indexOf(";", startPosition);
+                        String substring = comment.substring(startPosition + 5, endPosition);
+                        Sord sord = eloConnection.ix().createSord("1", substring, SordC.mbAll);
+                        ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = new ELOWfMCProcessInstanceAttributes(String.valueOf(sord.getId()));
+                        eloWfMCProcessInstanceAttributes.setMaskId((substring));
+                        eloWfMCProcessInstanceAttributes.setSordId((String.valueOf(sord.getId())));
+                        EloWfmcObjKey[] eloWfmcObjKeys = new EloWfmcObjKey[sord.getObjKeys().length];
+                        for (int i = 0; i < sord.getObjKeys().length; i++) {
+                            eloWfmcObjKeys[i] = new EloWfmcObjKey();
+                            eloWfmcObjKeys[i].setId(sord.getObjKeys()[i].getId());
+                            eloWfmcObjKeys[i].setObjId(sord.getObjKeys()[i].getObjId());
+                            eloWfmcObjKeys[i].setName(sord.getObjKeys()[i].getName());
+                            eloWfmcObjKeys[i].setValue(sord.getObjKeys()[i].getData());
+                        }
+                        eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
+                        eloWfmcProcessInstance.setEloWfMCProcessInstanceAttributes(eloWfMCProcessInstanceAttributes);
+                        eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
+                    } else {
+                        throw new WMWorkflowException("Mask not found on first node of the workflow!"); //TODO Adi: de scos textele de eroare intr-un fisier de proprietati
                     }
-                    eloWfMCProcessInstanceAttributes.setObjKeys(eloWfmcObjKeys);
-                    eloConnection.ix().checkinSord(sord, SordC.mbAll, LockC.YES);
-                } else {
-                    throw new WMWorkflowException("Mask not found on first node of the workflow!"); //TODO Adi: de scos textele de eroare intr-un fisier de proprietati
+                } catch (RemoteException e) {
+                    throw new WMWorkflowException(e);
                 }
-            } catch (RemoteException e) {
-                throw new WMWorkflowException(e);
             }
         } else {
             ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = (ELOWfMCProcessInstanceAttributes)eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes();
             EloWfmcObjKey[] objKeys = eloWfMCProcessInstanceAttributes.getObjKeys();
             boolean existAttribute = false;
             for (int i = 0; i < objKeys.length; i++) {
-                if (objKeys[i].getName().equals(attrName)) {
+
+                if (attrName.equals(objKeys[i].getName())) {
                     existAttribute = true;
-                    String[] values = new String[objKeys[i].getValue().length];
-                    for (int j = 0; j < objKeys[i].getValue().length; j++){
-                        values[j] = String.valueOf(attrValue);
+
+                    if (attrValue instanceof String) {
+                        String[] values = new String[]{attrValue.toString()};
+                        objKeys[i].setValue(values);
+                    } else if (attrValue instanceof String[]) {
+                        String[] values = new String[((String[]) attrValue).length];
+                        for (int j = 0; j < ((String[]) attrValue).length; j++ ){
+                            values[j] = new String();
+                            values[j] = ((String[]) attrValue)[j];
+                        }
+                        objKeys[i].setValue(values);
                     }
-                    objKeys[i].setValue(values);
                 }
             }
+            eloWfMCProcessInstanceAttributes.setObjKeys(objKeys);
+            eloWfmcProcessInstance.setEloWfMCProcessInstanceAttributes(eloWfMCProcessInstanceAttributes);
             if (existAttribute == false) {
                 throw new WMInvalidAttributeException(attrName);
             }
