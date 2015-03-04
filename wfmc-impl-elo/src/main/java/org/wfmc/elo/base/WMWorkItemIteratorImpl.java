@@ -39,4 +39,9 @@ public class WMWorkItemIteratorImpl implements WMWorkItemIterator {
     public Object next() {
         return examples.get(index++);
     }
+
+    @Override
+    public void remove() {
+        examples.remove(index);
+    }
 }

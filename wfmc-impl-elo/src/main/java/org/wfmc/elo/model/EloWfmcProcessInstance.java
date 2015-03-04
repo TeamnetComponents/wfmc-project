@@ -9,14 +9,14 @@ import org.wfmc.wapi2.WMEntity;
  */
 public class EloWfmcProcessInstance extends WMProcessInstanceDefault{
 
-    private WMEntity eloWfmcSord;
+    private WMEntity eloWfMCProcessInstanceAttributes;
 
-    public WMEntity getEloWfmcSord() {
-        return eloWfmcSord;
+    public WMEntity getEloWfMCProcessInstanceAttributes() {
+        return eloWfMCProcessInstanceAttributes;
     }
 
-    public void setEloWfmcSord(WMEntity eloWfmcSord) {
-        this.eloWfmcSord = eloWfmcSord;
+    public void setEloWfMCProcessInstanceAttributes(WMEntity eloWfMCProcessInstanceAttributes) {
+        this.eloWfMCProcessInstanceAttributes = eloWfMCProcessInstanceAttributes;
     }
 
 }
