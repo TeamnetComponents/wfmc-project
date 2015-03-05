@@ -12,9 +12,9 @@ import java.util.Map;
 /**
  * Created by Lucian.Dragomir on 3/4/2015.
  */
-public class WfmcUtils {
+public class WfmcUtilsService {
 
-    public static List toList(WMIterator wmIterator) {
+    public List toList(WMIterator wmIterator) {
         List list = new ArrayList<>();
         if (wmIterator != null) {
             while (wmIterator.hasNext()) {
@@ -25,7 +25,7 @@ public class WfmcUtils {
         return list;
     }
 
-    public static Map<String, WMAttribute> toWMAttributeMap(WMAttributeIterator wmAttributeIterator) {
+    public Map<String, WMAttribute> toWMAttributeMap(WMAttributeIterator wmAttributeIterator) {
         Map<String, WMAttribute> wmAttributeMap = new HashMap<String, WMAttribute>();
         if (wmAttributeIterator != null) {
             while (wmAttributeIterator.hasNext()) {
@@ -37,7 +37,7 @@ public class WfmcUtils {
         return wmAttributeMap;
     }
 
-    public static Map<String, Object> toMap(WMAttributeIterator wmAttributeIterator) {
+    public Map<String, Object> toMap(WMAttributeIterator wmAttributeIterator) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (wmAttributeIterator != null) {
             while (wmAttributeIterator.hasNext()) {
@@ -48,7 +48,7 @@ public class WfmcUtils {
         return map;
     }
 
-    public static Map<String, Object> toMap(Map<String, WMAttribute> wmAttributeMap) {
+    public Map<String, Object> toMap(Map<String, WMAttribute> wmAttributeMap) {
         Map<String, Object> map = new HashMap<String, Object>();
         for (Map.Entry entry : wmAttributeMap.entrySet()) {
             map.put((String) entry.getKey(), ((WMAttribute) entry.getValue()).getValue());

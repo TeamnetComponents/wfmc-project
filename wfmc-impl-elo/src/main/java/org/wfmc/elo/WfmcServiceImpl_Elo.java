@@ -4,11 +4,11 @@ import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
 import org.apache.commons.lang.StringUtils;
 import org.wfmc.elo.model.ELOConstants;
-import org.wfmc.elo.utils.EloUtils;
+import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.impl.utils.TemplateEngine;
 import org.wfmc.impl.utils.Utils;
-import org.wfmc.impl.utils.WfmcUtils;
+import org.wfmc.impl.utils.WfmcUtilsService;
 import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
@@ -24,6 +24,9 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     private static final String WF_SORD_LOCATION_TEMPLATE = "workflow.sord.location.template.path";
 
     private IXConnection ixConnection;
+
+    private EloUtilsService eloUtilsService = new EloUtilsService();
+    private WfmcUtilsService wfmcUtilsService = new WfmcUtilsService();
 
     private void borrowIxConnection(WMConnectInfo connectInfo) {
         Properties connProps = IXConnFactory.createConnProps(connectInfo.getScope());
@@ -58,6 +61,13 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         return 0;
     }
 
+    public void setEloUtilsService(EloUtilsService eloUtilsService) {
+        this.eloUtilsService = eloUtilsService;
+    }
+
+    public void setWfmcUtilsService(WfmcUtilsService wfmcUtilsService) {
+        this.wfmcUtilsService = wfmcUtilsService;
+    }
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
@@ -69,6 +79,9 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         releaseIXConnection();
     }
 
+    public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {
+        return getWfmcServiceCache().getProcessInstance(procInstId);
+    }
 
     @Override
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
@@ -100,12 +113,12 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         try {
             //get process definition and attributes from cache
             wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
-            wmProcessInstanceWMAttributeMap = WfmcUtils.toWMAttributeMap(getWfmcServiceCache().getProcessInstanceAttributes(procInstId));
+            wmProcessInstanceWMAttributeMap = wfmcUtilsService.toWMAttributeMap(getWfmcServiceCache().getProcessInstanceAttributes(procInstId));
             //simple map attributename/attributevalue
-            wmProcessInstanceAttributeMap = WfmcUtils.toMap(wmProcessInstanceWMAttributeMap);
+            wmProcessInstanceAttributeMap = wfmcUtilsService.toMap(wmProcessInstanceWMAttributeMap);
 
             //detect the process template associated to the cached instance
-            wfDiagram = EloUtils.getWorkFlow(getIxConnection(), wmProcessInstance.getProcessDefinitionId(), WFTypeC.TEMPLATE, WFDiagramC.mbAll, LockC.NO);
+            wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), wmProcessInstance.getProcessDefinitionId(), WFTypeC.TEMPLATE, WFDiagramC.mbAll, LockC.NO);
             //get special attributes from definition template (e.g. ".Mask" or ".Dir" or ".DirHist") - see EloConstants class
             // ca exemplu voi avea in comment: .Mask=10;.Dir=/Fluxuri/${Uat}/
             // Nota: variabila .Dir trebuie sa suporte si placeholdere de tip temporal:  "yyyy", "MM", "dd", "HH", "mm", "ss"
@@ -116,7 +129,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             //am primit sord id -> il folosesc pe instanta de flux
             if (wmProcessInstanceWMAttributeMap.containsKey(ELOConstants.SORD_ID)) {
                 sordId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.SORD_ID).getValue();
-                sord = EloUtils.getSord(getIxConnection(), sordId, SordC.mbAll, LockC.YES);
+                sord = eloUtilsService.getSord(getIxConnection(), sordId, SordC.mbAll, LockC.YES);
                 if (sord == null) {
                     throw new WMExecuteException("The provided sord does not exist.");
                 }
@@ -144,17 +157,17 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                 }
                 sordDirectory = FileUtils.replaceTemporalItems(sordDirectory);
                 sordDirectory = TemplateEngine.getInstance().getValueFromTemplate(sordDirectory, wmProcessInstanceAttributeMap);
-                sordDirectory = EloUtils.fileUtilsRegular.convertPathName(sordDirectory, EloUtils.fileUtilsElo);
-                sord = EloUtils.createSord(getIxConnection(), sordDirectory, maskId, sordName);
+                sordDirectory = eloUtilsService.fileUtilsRegular.convertPathName(sordDirectory, eloUtilsService.fileUtilsElo);
+                sord = eloUtilsService.createSord(getIxConnection(), sordDirectory, maskId, sordName);
             }
 
             //setez atributele sord-ului
-            EloUtils.updateSordAttributes(sord, wmProcessInstanceAttributeMap);
+            eloUtilsService.updateSordAttributes(sord, wmProcessInstanceAttributeMap);
             //save the sord
-            sordId = String.valueOf(EloUtils.saveSord(getIxConnection(), sord, SordC.mbAll, LockC.YES));
+            sordId = String.valueOf(eloUtilsService.saveSord(getIxConnection(), sord, SordC.mbAll, LockC.YES));
 
             //WORKFLOW PREPARATIONS
-            processInstanceId = EloUtils.startWorkFlow(getIxConnection(), wmProcessInstance.getProcessDefinitionId(), wmProcessInstance.getName(), sordId);
+            processInstanceId = eloUtilsService.startWorkFlow(getIxConnection(), wmProcessInstance.getProcessDefinitionId(), wmProcessInstance.getName(), sordId);
 
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
@@ -187,7 +200,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     @Override
     public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
         try {
-            WFDiagram wfDiagram = EloUtils.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            WFDiagram wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             WFNode[] nodes = wfDiagram.getNodes();
             if ((nodes[Integer.parseInt(workItemId)].getName() != "") && (nodes[Integer.parseInt(workItemId)].getType() != 1)) {
                 if (sourceUser.equals(nodes[Integer.parseInt(workItemId)].getUserName())) {

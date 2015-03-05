@@ -10,16 +10,16 @@ import java.util.*;
 /**
  * Created by Lucian.Dragomir on 3/4/2015.
  */
-public class EloUtils {
+public class EloUtilsService {
     public static final int FOLDER_ROOT_ID_ELO = 1;
     public final static FileUtils fileUtilsElo = new FileUtils("ARCPATH:", String.valueOf((char) 182));
     public final static FileUtils fileUtilsRegular = new FileUtils("/", "/");
 
-    public static boolean isArray(Object obj) {
+    public boolean isArray(Object obj) {
         return obj != null && obj.getClass().isArray();
     }
 
-    public static boolean isInteger(String s) {
+    public boolean isInteger(String s) {
         try {
             Integer.parseInt(s);
         } catch (NumberFormatException e) {
@@ -29,13 +29,13 @@ public class EloUtils {
         return true;
     }
 
-    public static Date getCurrentDate() {
+    public Date getCurrentDate() {
         Calendar calendar = Calendar.getInstance();
         Date currentDate = calendar.getTime();
         return currentDate;
     }
 
-    public static Calendar convertIso2Calendar(IXConnection ixConnection, String isoDate) {
+    public Calendar convertIso2Calendar(IXConnection ixConnection, String isoDate) {
         if (isoDate == null || isoDate.equals("")) {
             return null;
         }
@@ -48,17 +48,17 @@ public class EloUtils {
         }
     }
 
-    public static String convertCalendar2Iso(IXConnection ixConnection, GregorianCalendar date) {
+    public String convertCalendar2Iso(IXConnection ixConnection, GregorianCalendar date) {
         return ixConnection.dateToIso(date.getTime());
     }
 
-    public static Sord createSord(IXConnection ixConnection, String parentPathNameOrId, String maskId, String name) throws de.elo.utils.net.RemoteException {
+    public Sord createSord(IXConnection ixConnection, String parentPathNameOrId, String maskId, String name) throws de.elo.utils.net.RemoteException {
         Sord sord = null;
         sord = ixConnection.ix().createSord(parentPathNameOrId, maskId, SordC.mbAll);
         return sord;
     }
 
-    public static Sord getSord(IXConnection ixConnection, String pathNameOrId, SordZ sordZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
+    public Sord getSord(IXConnection ixConnection, String pathNameOrId, SordZ sordZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
         Sord sord = null;
         if (!isInteger(pathNameOrId)) {
             pathNameOrId = fileUtilsRegular.convertPathName(pathNameOrId, fileUtilsElo);
@@ -77,7 +77,7 @@ public class EloUtils {
         return sord;
     }
 
-    public static void updateSordAttributes(Sord sord, Map<String, Object> attributes) {
+    public void updateSordAttributes(Sord sord, Map<String, Object> attributes) {
         ObjKey[] objKeys = sord.getObjKeys();
         for (int i = 0; i < objKeys.length; i++) {
             if (attributes.containsKey(objKeys[i].getName())) {
@@ -95,12 +95,12 @@ public class EloUtils {
         sord.setObjKeys(objKeys);
     }
 
-    public static int saveSord(IXConnection ixConnection, Sord sord, SordZ sordZ, LockZ unlockZ) throws de.elo.utils.net.RemoteException {
+    public int saveSord(IXConnection ixConnection, Sord sord, SordZ sordZ, LockZ unlockZ) throws de.elo.utils.net.RemoteException {
         return ixConnection.ix().checkinSord(sord, sordZ, unlockZ);
     }
 
 
-    public static WFDiagram getWorkFlow(IXConnection ixConnection, String flowId, WFTypeZ wfTypeZ, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
+    public WFDiagram getWorkFlow(IXConnection ixConnection, String flowId, WFTypeZ wfTypeZ, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
         WFDiagram wfDiagram = null;
         try {
             wfDiagram = ixConnection.ix().checkoutWorkFlow(flowId, wfTypeZ, wfDiagramZ, lockZ);
@@ -116,7 +116,7 @@ public class EloUtils {
         return wfDiagram;
     }
 
-    public static String startWorkFlow(IXConnection ixConnection, String templateId, String name, String sordId) throws de.elo.utils.net.RemoteException {
+    public String startWorkFlow(IXConnection ixConnection, String templateId, String name, String sordId) throws de.elo.utils.net.RemoteException {
         return String.valueOf(ixConnection.ix().startWorkFlow(templateId, name, sordId));
     }
 
