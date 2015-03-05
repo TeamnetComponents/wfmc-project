@@ -1,11 +1,12 @@
 package org.wfmc.elo;
 
+import de.elo.ix.client.*;
+import de.elo.utils.net.RemoteException;
 import org.fest.assertions.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.wfmc.elo.base.WMProcessInstanceImpl_Elo;
 import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
 import org.wfmc.elo.model.EloWfmcObjKey;
@@ -13,7 +14,10 @@ import org.wfmc.elo.model.EloWfmcProcessInstance;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceCacheImpl_Memory;
-import org.wfmc.wapi.*;
+import org.wfmc.wapi.WMAttributeAssignmentException;
+import org.wfmc.wapi.WMConnectInfo;
+import org.wfmc.wapi.WMProcessInstance;
+import org.wfmc.wapi.WMWorkflowException;
 
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -375,5 +379,29 @@ public class WfmcServiceImpl_EloTest {
 
     }
 
+    @Test
+    public void should_reassign_work_item () throws RemoteException {
+        String sourceUser = "Andra";
+        String targetUser = "Administrator";
+        String workItemId = "7";
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
 
+        int test = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow("1", "test", "2");
+        WFDiagram wfDiagram = wfmcServiceImpl_Elo.getIxConnection().ix().checkoutWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+        WFNode[] nodes = wfDiagram.getNodes();
+        if ((nodes[Integer.parseInt(workItemId)].getName() != null) && (Integer.parseInt(workItemId) != 0)){
+            nodes[Integer.valueOf(workItemId)].setUserName(sourceUser);
+            wfDiagram.setNodes(nodes);
+            wfmcServiceImpl_Elo.getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
+
+            wfmcServiceImpl_Elo.reassignWorkItem(sourceUser, targetUser, String.valueOf(test), workItemId);
+
+            WFDiagram wfDiagram2 = wfmcServiceImpl_Elo.getIxConnection().ix().checkoutWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            Assertions.assertThat(wfDiagram2.getNodes()[Integer.parseInt(workItemId)].getUserName()).isEqualTo(targetUser);
+            wfmcServiceImpl_Elo.getIxConnection().ix().deleteWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, LockC.NO);
+        } else {
+
+        }
+
+    }
 }

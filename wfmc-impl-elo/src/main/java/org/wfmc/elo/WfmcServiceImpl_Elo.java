@@ -77,7 +77,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         WMProcessInstance wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
 
         //detect mask associated to process template
-        //String maskId = getEloMask(wmProcessInstance.getProcessDefinitionId());
+//        String maskId = getEloMask(wmProcessInstance.getProcessDefinitionId());
 
         //test if attribute name exists in ELO mask associated to the process and if attrValue is according to the definition
 
@@ -186,7 +186,25 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
      */
     @Override
     public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
-        //TODO : implement
+        try {
+            WFDiagram wfDiagram = EloUtils.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            WFNode[] nodes = wfDiagram.getNodes();
+            if ((nodes[Integer.parseInt(workItemId)].getName() != "") && (nodes[Integer.parseInt(workItemId)].getType() != 1)) {
+                if (sourceUser.equals(nodes[Integer.parseInt(workItemId)].getUserName())) {
+                    nodes[Integer.parseInt(workItemId)].setUserName(targetUser);
+                    wfDiagram.setNodes(nodes);
+                    getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
+                } else {
+                    throw new WMInvalidWorkItemException("This work item do not belong to " + sourceUser);
+                }
+            } else if (nodes[Integer.parseInt(workItemId)].getType() == 1){
+                throw new WMInvalidWorkItemException("This is a begin node and can not be modified");
+            } else {
+                throw new WMInvalidWorkItemException("Work item with id " + workItemId + " do not exist!");
+            }
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(e);
+        }
     }
 
     protected void setWfmcServiceCache(WfmcServiceCache wfmcServiceCache) {
