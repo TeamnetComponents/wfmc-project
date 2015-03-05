@@ -3,7 +3,12 @@ package org.wfmc.elo;
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
 import org.apache.commons.lang.StringUtils;
+import org.wfmc.elo.base.WMErrorElo;
 import org.wfmc.elo.model.ELOConstants;
+import org.wfmc.elo.utils.EloToWfMCObjectConverter;
+import org.wfmc.elo.utils.WfMCToEloObjectConverter;
+import org.wfmc.impl.base.WMWorkItemIteratorImpl;
+import org.wfmc.impl.base.filter.WMFilterWorkItem;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.impl.utils.TemplateEngine;
@@ -15,18 +20,26 @@ import org.wfmc.wapi.*;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Created by Lucian.Dragomir on 2/28/2015.
  */
 public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
+    private static final int MAX_RESULT = 1000;
     private static final String WF_SORD_LOCATION_TEMPLATE = "workflow.sord.location.template.path";
 
     private IXConnection ixConnection;
 
     private EloUtilsService eloUtilsService = new EloUtilsService();
     private WfmcUtilsService wfmcUtilsService = new WfmcUtilsService();
+
+    protected ResourceBundle errorMessagesResourceBundle = ResourceBundle.getBundle("errorMessages");
+
+    protected EloToWfMCObjectConverter eloToWfMCObjectConverter = new EloToWfMCObjectConverter();
+
+    protected WfMCToEloObjectConverter wfMCToEloObjectConverter = new WfMCToEloObjectConverter();
 
     private void borrowIxConnection(WMConnectInfo connectInfo) {
         Properties connProps = IXConnFactory.createConnProps(connectInfo.getScope());
@@ -131,7 +144,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                 sordId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.SORD_ID).getValue();
                 sord = eloUtilsService.getSord(getIxConnection(), sordId, SordC.mbAll, LockC.YES);
                 if (sord == null) {
-                    throw new WMExecuteException("The provided sord does not exist.");
+                    throw new WMExecuteException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_SORD_NOT_EXIST));
                 }
             }
             // nu am primit sord si caut mask id pentru a crea un sord cu acea masca
@@ -226,7 +239,20 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException {
-        throw new WMUnsupportedOperationException("listWorkItems");
+        if (filter instanceof WMFilterWorkItem){
+            try {
+                FindTasksInfo findTasksInfo = wfMCToEloObjectConverter.convertWMFilterWorkItemToFindTasksInfo((WMFilterWorkItem) filter);
+                FindResult findResult = ixConnection.ix().findFirstTasks(findTasksInfo, MAX_RESULT);
+                UserTask[] userTasks = findResult.getTasks();
+                WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks);
+                return new WMWorkItemIteratorImpl(wmWorkItems);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
+        }
+        throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
     }
 
 }

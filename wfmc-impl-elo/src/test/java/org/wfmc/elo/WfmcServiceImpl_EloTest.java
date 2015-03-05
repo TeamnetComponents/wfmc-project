@@ -2,12 +2,14 @@ package org.wfmc.elo;
 
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
+import junit.framework.Assert;
 import org.fest.assertions.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.wfmc.elo.base.WMErrorElo;
 import org.wfmc.elo.base.WMProcessInstanceImpl_Elo;
 import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
@@ -477,5 +479,17 @@ public class WfmcServiceImpl_EloTest {
 
         }
 
+    }
+
+    @Test
+    public void test_error_resource_buldle(){
+        Assert.assertEquals(wfmcServiceImpl_Elo.errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED),
+                "WMFilter type not supported!");
+    }
+
+    @Test(expected = WMUnsupportedOperationException.class)
+    public void test_listWorkItems_WMFilter_not_supported(){
+        WMFilter wmFilter = new WMFilter("testing sql filter not supported");
+        wfmcServiceImpl_Elo.listWorkItems(wmFilter, false);
     }
 }
