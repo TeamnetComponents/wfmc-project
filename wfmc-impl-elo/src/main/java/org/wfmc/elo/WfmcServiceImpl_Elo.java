@@ -18,9 +18,7 @@ import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by Lucian.Dragomir on 2/28/2015.
@@ -80,6 +78,10 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     public void setWfmcUtilsService(WfmcUtilsService wfmcUtilsService) {
         this.wfmcUtilsService = wfmcUtilsService;
+    }
+
+    public void setEloToWfMCObjectConverter(EloToWfMCObjectConverter eloToWfMCObjectConverter) {
+        this.eloToWfMCObjectConverter = eloToWfMCObjectConverter;
     }
 
     @Override
@@ -269,4 +271,25 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             throw new WMWorkflowException(e);
         }
     }
+    
+    @Override
+    public List<WMWorkItem> getNextSteps(Integer workflowId, Integer nodeId) throws WMWorkflowException {
+
+        List<WFNode> nextNodes = new ArrayList<>();
+
+        try{
+            WFNodeAssoc[] wfNodeAssoc = eloUtilsService.getActiveWorkflowById(getIxConnection(), workflowId).getMatrix().getAssocs();
+            for (WFNodeAssoc wfNode : wfNodeAssoc) {
+                if (wfNode.getNodeFrom() == nodeId.intValue()) {
+                    nextNodes.add(eloUtilsService.getNode(getIxConnection(), workflowId, wfNode.getNodeTo()));
+                }
+            }
+        }
+        catch(RemoteException e){
+            throw new WMWorkflowException(e);
+        }
+
+        return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
+    }
+    
 }

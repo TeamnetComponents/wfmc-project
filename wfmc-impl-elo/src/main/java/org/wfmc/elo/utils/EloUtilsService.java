@@ -11,9 +11,12 @@ import java.util.*;
  * Created by Lucian.Dragomir on 3/4/2015.
  */
 public class EloUtilsService {
+
     public static final int FOLDER_ROOT_ID_ELO = 1;
     public final static FileUtils fileUtilsElo = new FileUtils("ARCPATH:", String.valueOf((char) 182));
     public final static FileUtils fileUtilsRegular = new FileUtils("/", "/");
+
+    private final static Integer ACTIVE_WORKFLOWS_MAX_NUMBER = 10;
 
     public boolean isArray(Object obj) {
         return obj != null && obj.getClass().isArray();
@@ -120,5 +123,28 @@ public class EloUtilsService {
         return String.valueOf(ixConnection.ix().startWorkFlow(templateId, name, sordId));
     }
 
+    public WFDiagram getActiveWorkflowById(IXConnection ixConnection, Integer workflowId) throws de.elo.utils.net.RemoteException {
+
+        FindWorkflowInfo findWorkflowInfo = new FindWorkflowInfo();
+        findWorkflowInfo.setType(WFTypeC.ACTIVE);
+        FindResult findResult = ixConnection.ix().findFirstWorkflows(findWorkflowInfo, ACTIVE_WORKFLOWS_MAX_NUMBER, WFDiagramC.mbAll);
+        WFDiagram[] wfDiagrams = findResult.getWorkflows();
+
+        for (WFDiagram wfDiagram : wfDiagrams) {
+            if (workflowId == wfDiagram.getId() )
+                return wfDiagram;
+        }
+
+        return null;
+    }
+
+    public WFNode getNode(IXConnection ixConnection, Integer workflowId, Integer nodeId) throws de.elo.utils.net.RemoteException {
+        for (WFNode wFNode : getActiveWorkflowById(ixConnection, workflowId).getNodes()) {
+            if (wFNode.getId() == nodeId) {
+                return wFNode;
+            }
+        }
+        return null;
+    }
 
 }

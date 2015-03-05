@@ -1,6 +1,7 @@
 package org.wfmc.elo.utils;
 
 import de.elo.ix.client.UserTask;
+import de.elo.ix.client.WFNode;
 import org.wfmc.impl.base.WMParticipantImpl;
 import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.wapi.WMUnsupportedOperationException;
@@ -49,4 +50,25 @@ public class EloToWfMCObjectConverter {
         wmWorkItemsList.toArray(wmWorkItems);
         return wmWorkItems;
     }
+
+    public List<WMWorkItem> convertWFNodesToWMWorkItems(List<WFNode> wfNodes){
+
+        List<WMWorkItem> wmWorkItems = new ArrayList<>();
+
+        for (WFNode wfNode : wfNodes){
+
+            WMWorkItemImpl wmWorkItem = new WMWorkItemImpl();
+            wmWorkItem.setName(wfNode.getName());
+            wmWorkItem.setId(Integer.toString(wfNode.getId()));
+            WMParticipantImpl user = new WMParticipantImpl(wfNode.getUserName());
+            wmWorkItem.setParticipant(user);
+            wmWorkItem.setPerformer(wfNode.getUserName());
+
+            wmWorkItems.add(wmWorkItem);
+
+        }
+
+        return wmWorkItems;
+    }
+
 }

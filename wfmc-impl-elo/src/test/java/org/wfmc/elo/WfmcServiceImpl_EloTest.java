@@ -362,7 +362,6 @@ public class WfmcServiceImpl_EloTest {
         WMProcessInstance wmProcessInstance = new WMProcessInstanceImpl(procInstId, String.valueOf(UUID.randomUUID()), procInstId);
         wfmcServiceImpl_Elo.getWfmcServiceCache().addProcessInstance(wmProcessInstance);
 
-
         // when
         wfmcServiceImpl_Elo.terminateProcessInstance(procInstId);
 
@@ -492,4 +491,44 @@ public class WfmcServiceImpl_EloTest {
         WMFilter wmFilter = new WMFilter("testing sql filter not supported");
         wfmcServiceImpl_Elo.listWorkItems(wmFilter, false);
     }
+
+    @Test
+    public void should_get_next_steps() throws RemoteException {
+
+        // given
+        Integer wfId = 1;
+        Integer nodeId = 20;
+
+        EloUtilsService eloUtilsService = Mockito.mock(EloUtilsService.class);
+        wfmcServiceImpl_Elo.setEloUtilsService(eloUtilsService);
+
+        WFNodeAssoc[] wfNodeAssoc = new WFNodeAssoc[5];
+        wfNodeAssoc[0] = new WFNodeAssoc();
+        wfNodeAssoc[0].setNodeFrom(15);
+        wfNodeAssoc[1] = new WFNodeAssoc();
+        wfNodeAssoc[1].setNodeFrom(20);
+        wfNodeAssoc[2] = new WFNodeAssoc();
+        wfNodeAssoc[2].setNodeFrom(25);
+        wfNodeAssoc[3] = new WFNodeAssoc();
+        wfNodeAssoc[3].setNodeFrom(20);
+        wfNodeAssoc[4] = new WFNodeAssoc();
+        wfNodeAssoc[4].setNodeFrom(30);
+
+        WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
+        Mockito.when(eloUtilsService.getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(wfId))).thenReturn(wfDiagram);
+        WFNodeMatrix matrix = Mockito.mock(WFNodeMatrix.class);
+        Mockito.when(wfDiagram.getMatrix()).thenReturn(matrix);
+
+        Mockito.when(matrix.getAssocs()).thenReturn(wfNodeAssoc);
+        Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.<Integer>any())).thenReturn(new WFNode());
+
+        // when
+        List<WMWorkItem> workItems = wfmcServiceImpl_Elo.getNextSteps(wfId, nodeId);
+
+        // then
+        Mockito.verify(eloUtilsService).getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(wfId));
+        Assertions.assertThat(workItems).hasSize(2);
+
+    }
+
 }
