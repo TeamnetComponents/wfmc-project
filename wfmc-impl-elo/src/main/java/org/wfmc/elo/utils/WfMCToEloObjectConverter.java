@@ -2,16 +2,10 @@ package org.wfmc.elo.utils;
 
 import de.elo.ix.client.FindTasksInfo;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
-import org.wfmc.wapi.WMFilter;
-import org.wfmc.wapi.WMInvalidFilterException;
 import org.wfmc.wapi.WMParticipant;
-import org.wfmc.wapi.WMProcessInstanceState;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by andras on 3/4/2015.
@@ -37,8 +31,6 @@ public class WfMCToEloObjectConverter {
             eloUserIds.toArray(eloUserIdsArray);
             findTasksInfo.setUserIds(eloUserIdsArray);
         }
-        findTasksInfo.setInclActivities(true);
-        findTasksInfo.setInclReminders(true);
         findTasksInfo.setInclWorkflows(true);
 
         return  findTasksInfo;

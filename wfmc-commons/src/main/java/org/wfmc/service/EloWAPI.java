@@ -14,6 +14,6 @@ public interface EloWAPI extends WAPI2 {
 
     List<WMWorkItem> getNextSteps(Integer workflowId, Integer nodeId) throws WMWorkflowException;
 
-    void setTransition(Integer workflowId, Integer currentNodeId, Integer transitionNodeId) throws WMWorkflowException;
+    void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException;
 
 }

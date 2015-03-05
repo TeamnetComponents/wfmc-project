@@ -198,8 +198,13 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
      * @throws WMWorkflowException
      */
     @Override
-    public void abortProcessInstance(String procInstId) throws WMWorkflowException {
+    public void terminateProcessInstance(String procInstId) throws WMWorkflowException {
         getWfmcServiceCache().removeProcessInstance(procInstId);
+    }
+
+    @Override
+    public void abortProcessInstance(String procInstId) throws WMWorkflowException {
+
     }
 
     /**
@@ -255,4 +260,13 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
     }
 
+    @Override
+    public void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException {
+        try {
+            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(workflowId, currentNodeId, LockC.YES);
+            getIxConnection().ix().endEditWorkFlowNode(workflowId, currentNodeId, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), transitionNodeId);
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(e);
+        }
+    }
 }

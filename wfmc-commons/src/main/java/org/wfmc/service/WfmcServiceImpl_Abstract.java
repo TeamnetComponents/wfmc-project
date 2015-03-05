@@ -406,7 +406,7 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     }
 
     @Override
-    public void setTransition(Integer workflowId, Integer currentNodeId, Integer transitionNodeId) throws WMWorkflowException {
+    public void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException {
         throw new WMUnsupportedOperationException("setTransition");
     }
 

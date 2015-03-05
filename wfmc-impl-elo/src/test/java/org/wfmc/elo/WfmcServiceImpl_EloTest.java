@@ -364,7 +364,7 @@ public class WfmcServiceImpl_EloTest {
 
 
         // when
-        wfmcServiceImpl_Elo.abortProcessInstance(procInstId);
+        wfmcServiceImpl_Elo.terminateProcessInstance(procInstId);
 
         // then
          Assertions.assertThat(wfmcServiceImpl_Elo.getProcessInstance(procInstId)).isNull();
