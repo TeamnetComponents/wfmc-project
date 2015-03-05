@@ -61,9 +61,6 @@ public class WMFilter implements Serializable {
     // anywhere.  So here's an arbitrary stab at assigning two types:
     public static final int SIMPLE_TYPE = 1;
     public static final int SQL_TYPE = 2;
-    //added Lucian Dragomir
-    public static final int COMPLEX_TYPE = 3;
-
 
     // WFMC-TC-1013 isn't clear, but it appears that comparisons are represented
     // by integer codes formed from the operators' 8-bit ASCII character codes.
@@ -243,10 +240,6 @@ public class WMFilter implements Serializable {
      */
     public WMFilter(String sqlString) {
         this(SQL_TYPE, null, WMAttribute.STRING_TYPE, NO, sqlString);
-    }
-
-    public WMFilter(Object expression) {
-        this(COMPLEX_TYPE, null, WMAttribute.DEFAULT_TYPE, NO, expression);
     }
 
     private WMFilter(int filterType, String attributeName, int attributeType,
