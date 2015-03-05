@@ -3,7 +3,7 @@ package org.wfmc.elo;
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
 import org.apache.commons.lang.StringUtils;
-import org.wfmc.elo.model.EloConstants;
+import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.utils.EloUtils;
 import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.impl.utils.TemplateEngine;
@@ -113,8 +113,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
             //SORD PREPARATIONS
             //am primit sord id -> il folosesc pe instanta de flux
-            if (wmProcessInstanceWMAttributeMap.containsKey(EloConstants.SORD_ID)) {
-                sordId = (String) wmProcessInstanceWMAttributeMap.get(EloConstants.SORD_ID).getValue();
+            if (wmProcessInstanceWMAttributeMap.containsKey(ELOConstants.SORD_ID)) {
+                sordId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.SORD_ID).getValue();
                 sord = EloUtils.getSord(getIxConnection(), sordId, SordC.mbAll, LockC.YES);
                 if (sord == null) {
                     throw new WMExecuteException("The provided sord does not exist.");
@@ -126,18 +126,18 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                 String sordDirectory = null;
                 String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId();
                 //daca am primit mask id
-                if (wmProcessInstanceWMAttributeMap.containsKey(EloConstants.MASK_ID)) {
-                    maskId = (String) wmProcessInstanceWMAttributeMap.get(EloConstants.MASK_ID).getValue();
+                if (wmProcessInstanceWMAttributeMap.containsKey(ELOConstants.MASK_ID)) {
+                    maskId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.MASK_ID).getValue();
                 }
                 //daca a mask id in definitia fluxului
-                else if (processDefinitionAttributes.containsKey(EloConstants.MASK_ID)) {
-                    maskId = processDefinitionAttributes.get(EloConstants.MASK_ID);
+                else if (processDefinitionAttributes.containsKey(ELOConstants.MASK_ID)) {
+                    maskId = processDefinitionAttributes.get(ELOConstants.MASK_ID);
                 }
                 if (StringUtils.isEmpty(maskId)) {
                     throw new WMExecuteException("The mask information does not exist.");
                 }
                 //determin directorul unde trebuie creat sord-ul
-                sordDirectory = processDefinitionAttributes.get(EloConstants.DIR_TEMPLATE);
+                sordDirectory = processDefinitionAttributes.get(ELOConstants.DIR_TEMPLATE);
                 if (StringUtils.isEmpty(sordDirectory)) {
                     throw new WMExecuteException("The directory information does not exist.");
                 }
