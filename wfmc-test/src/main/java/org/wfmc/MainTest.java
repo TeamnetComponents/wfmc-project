@@ -6,12 +6,9 @@ import org.wfmc.wapi.WMProcessInstance;
 
 import java.io.IOException;
 
-/**
- * Hello world!
- */
+
 public class MainTest {
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        System.out.println("Hello World!");
 
         //String serviceCacheProperties = "C:\\__JAVA\\jmeter\\test\\dmsutils\\wapi-cache.properties";
         //WfmcServiceCacheFactory wfmcServiceCacheFactory = new WfmcServiceCacheFactory(serviceCacheProperties);
