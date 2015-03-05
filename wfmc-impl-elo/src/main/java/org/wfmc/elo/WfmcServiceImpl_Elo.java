@@ -9,6 +9,7 @@ import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.impl.utils.TemplateEngine;
 import org.wfmc.impl.utils.Utils;
 import org.wfmc.impl.utils.WfmcUtils;
+import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
 
@@ -47,7 +48,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         ixConnection = null;
     }
 
-    private IXConnection getIxConnection() {
+    protected IXConnection getIxConnection() {
         return ixConnection;
     }
 
@@ -163,6 +164,33 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         super.startProcess(procInstId);
 
         return processInstanceId;
+    }
+
+    /**
+     * Metoda sterge o instanta de proces.
+     * @param procInstId reprezinta id-ul unei instante de proces. Acesta trebuie sa fie id-ul unei instante existente, altfel o sa arunce un WMWorkflowException.
+     * @throws WMWorkflowException
+     */
+    @Override
+    public void abortProcessInstance(String procInstId) throws WMWorkflowException {
+        getWfmcServiceCache().removeProcessInstance(procInstId);
+    }
+
+    /**
+     * Metoda atribuie un task unui utilizator.
+     * @param sourceUser Utilizatorul care are atribuit task-ul.
+     * @param targetUser Utilizatorul caruia i se va atribui task-ul.
+     * @param procInstId Id-ul procesului.
+     * @param workItemId Id-ul task-ului.
+     * @throws WMWorkflowException
+     */
+    @Override
+    public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
+        //TODO : implement
+    }
+
+    protected void setWfmcServiceCache(WfmcServiceCache wfmcServiceCache) {
+        super.setWfmcServiceCache(wfmcServiceCache);
     }
 
 }

@@ -6,6 +6,7 @@ import de.elo.ix.client.LockC;
 import de.elo.ix.client.UserTask;
 import de.elo.ix.client.WFDiagram;
 import de.elo.ix.client.WFDiagramC;
+import de.elo.ix.client.WFEditNode;
 import de.elo.ix.client.WFNode;
 import de.elo.ix.client.WFNodeAssoc;
 import de.elo.ix.client.WFTypeZ;
@@ -24,9 +25,9 @@ public class WorkflowCRUD {
 
     // a se folosi acelasi flag ca la checkout flag = WFDiagramC.FLAG (mbAll prefered)
     //Lock = daca sa se blocheze/deblocheze
-//    public static void saveWorkflow(WFDiagram wFDiagram) throws RemoteException {
-//        getConnection().ix().checkinWorkFlow(wFDiagram, WFDiagramC.mbAll, LockC.NO);
-//    }
+    public static void saveWorkflow(WFDiagram wFDiagram) throws RemoteException {
+        getConnection().ix().checkinWorkFlow(wFDiagram, WFDiagramC.mbAll, LockC.NO);
+    }
 
     //Pornim o instanta de flux pe un template
     public static int startWorkflow(String name, String templateName, String sordId) throws RemoteException {
@@ -86,5 +87,25 @@ public class WorkflowCRUD {
         }
         return ret;
     }
+    
+    public static void forwardTask() throws RemoteException{
+        String userName = ""; //aici se va introduce numele userului.
+        int flowId = 0;   //aici se va introduce id flux dorit pentru a fi trimis mai departe (flowId si nodeId il obtineti din UserTask)
+        int nodeId = 0;   //aici se va intoduce if nod
+        /**Locks a person task node of an active workflow inside the database and returns data needed to edit it*/
+        WFEditNode wFEditNode = getConnectionRunAs(userName).ix().beginEditWorkFlowNode(flowId, nodeId, LockC.YES);
+        //in wFEditNode gasiti informatii utile despre taskul curent selectat;
+        //id-uri noduri care se vor activa
+        int[] succesori = new int[]{};
+        //wFEditNode.getSuccNodes() noduri succesoare posibile luate conform wfDiagram.matrix.assocs
+        /**Stores an edited person node of an active workflow into the database and unlocks the workflow.
+         The workflow is forwarded to the successor nodes as passed in parameter arrEnterNodesIds.*/
+       getConnectionRunAs(userName).ix().endEditWorkFlowNode(flowId, nodeId, false, false, wFEditNode.getNode().getName(), wFEditNode.getNode().getComment(), succesori);
+    }
+    
+    public static void main(String[] args) {
+        
+    }
+    
 
 }

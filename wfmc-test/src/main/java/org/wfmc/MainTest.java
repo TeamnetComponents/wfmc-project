@@ -28,7 +28,7 @@ public class MainTest {
 
         wfmcService.connect(new WMConnectInfo("Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
 
-        String procInstId = wfmcService.createProcessInstance("3", "instance 3");;
+        String procInstId = wfmcService.createProcessInstance("3", "instance 3");
         wfmcService.assignProcessInstanceAttribute(procInstId, "UAT", 1);
         //wfmcService.assignProcessInstanceAttribute(procInstId, "String", "test");
         //wfmcService.assignProcessInstanceAttribute(procInstId, "Double", 1.0);
