@@ -261,6 +261,7 @@ public class TestPoc {
         FindResult findResult = ix.ix().findFirstTasks(findTasksInfo, 20);
         UserTask[] userTasks = findResult.getTasks();
         for (UserTask userTask : userTasks) {
+            if(userTask.getWfNode()!=null){
             Sord sord = ix.ix().checkoutSord(String.valueOf(userTask.getWfNode().getObjId()), SordC.mbAll, LockC.NO);
             ObjKey[] objKeys = sord.getObjKeys();
             for (int i = 0; i < objKeys.length; i++) {
@@ -268,6 +269,7 @@ public class TestPoc {
                     System.out.println(userTask.getWfNode().getFlowName() + userTask.getWfNode().getFlowStatus());
                 }
             }
+        }
         }
     }
 

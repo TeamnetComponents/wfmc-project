@@ -211,4 +211,9 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         super.setWfmcServiceCache(wfmcServiceCache);
     }
 
+    @Override
+    public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        throw new WMUnsupportedOperationException("listWorkItems");
+    }
+
 }
