@@ -8,7 +8,7 @@ import java.util.Properties;
 /**
  * Created by Lucian.Dragomir on 2/10/2015.
  */
-public interface WfmcService extends WAPI2, Service {
+public interface WfmcService extends EloWAPI, Service {
 
     public String getServiceInstance();
 }
