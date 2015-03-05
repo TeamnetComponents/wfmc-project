@@ -1,16 +1,11 @@
 package org.wfmc.elo;
 
-import de.elo.ix.client.CheckoutUsersC;
-import de.elo.ix.client.LockC;
-import de.elo.ix.client.UserInfo;
-import de.elo.utils.net.RemoteException;
 import org.fest.assertions.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.wfmc.elo.base.WMWorkItemIteratorImpl;
-import org.wfmc.elo.model.ELOConstants;
+import org.wfmc.elo.model.EloConstants;
 import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
 import org.wfmc.elo.model.EloWfmcObjKey;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
@@ -140,7 +135,7 @@ public class EloWfmcServiceTest {
 
         // given
         String processInstanceId = "TestProcInstId";
-        String attributeName = ELOConstants.ELO_SORD_ID;
+        String attributeName = EloConstants.SORD_ID;
         String attributeValue = "5";
         eloWfmcService.connect(wmConnectInfo);
 
@@ -163,7 +158,7 @@ public class EloWfmcServiceTest {
 
         // given
         String processInstanceId = "TestProcInstId";
-        String attributeName = ELOConstants.ELO_MASK_ID;
+        String attributeName = EloConstants.MASK_ID;
         String attributeValue = "Dosar";
         eloWfmcService.connect(wmConnectInfo);
 
@@ -210,7 +205,7 @@ public class EloWfmcServiceTest {
 
         // given
         String processInstanceId = "TestProcInstId";
-        String attributeName = ELOConstants.ELO_SORD_ID;
+        String attributeName = EloConstants.SORD_ID;
         String attributeValue = "-1";
         eloWfmcService.connect(wmConnectInfo);
 
@@ -230,7 +225,7 @@ public class EloWfmcServiceTest {
 
         // given
         String processInstanceId = "TestProcInstId";
-        String attributeName = ELOConstants.ELO_MASK_ID;
+        String attributeName = EloConstants.MASK_ID;
         String attributeValue = "-1";
         eloWfmcService.connect(wmConnectInfo);
 
@@ -363,7 +358,7 @@ public class EloWfmcServiceTest {
         // when
         eloWfmcService.connect(wmConnectInfo);
         String processInstanceId = eloWfmcService.createProcessInstance(workflowTemplateId, workflowName);
-        eloWfmcService.assignProcessInstanceAttribute(processInstanceId, ELOConstants.ELO_SORD_ID, sordId);
+        eloWfmcService.assignProcessInstanceAttribute(processInstanceId, EloConstants.SORD_ID, sordId);
         eloWfmcService.startProcess(processInstanceId);
         eloWfmcService.disconnect();
 

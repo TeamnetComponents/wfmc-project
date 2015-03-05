@@ -1,4 +1,4 @@
-package org.wfmc.commons;
+package org.wfmc.impl.utils;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.FileInputStream;

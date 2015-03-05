@@ -2,7 +2,7 @@ package org.wfmc.elo;
 
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
-import org.wfmc.elo.model.ELOConstants;
+import org.wfmc.elo.model.EloConstants;
 import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
 import org.wfmc.elo.model.EloWfmcObjKey;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
@@ -306,7 +306,7 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
 
         if (eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes() == null) {
             //treat SORD_ID
-            if (attrName.equals(ELOConstants.ELO_SORD_ID)) {
+            if (attrName.equals(EloConstants.SORD_ID)) {
                 try {
                     if (eloConnection.ix().checkoutSord(String.valueOf(attrValue), SordC.mbAll, LockC.NO) != null) {
                         Sord sord = eloConnection.ix().checkoutSord((String) attrValue, SordC.mbAll, LockC.NO);
@@ -330,7 +330,7 @@ public class EloWfmcService extends WfmcServiceImpl_Abstract {
                 }
             }
             //treat MASK_ID
-            else if (attrName.equals(ELOConstants.ELO_MASK_ID)) {
+            else if (attrName.equals(EloConstants.MASK_ID)) {
                 try {
                     if (eloConnection.ix().checkoutDocMask(String.valueOf(attrValue), DocMaskC.mbAll, LockC.NO) != null) {
                         Sord sord = eloConnection.ix().createSord("1", (String) attrValue, SordC.mbAll);

@@ -1,7 +1,7 @@
 package org.wfmc.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.wfmc.commons.FileUtils;
+import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.wapi.WMWorkflowException;
 
 import java.io.IOException;
