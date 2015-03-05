@@ -2,8 +2,8 @@ package org.wfmc.elo.utils;
 
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
-import org.wfmc.elo.base.WMParticipantImpl;
-import org.wfmc.elo.base.WMWorkItemImpl;
+import org.wfmc.impl.base.WMParticipantImpl;
+import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.wapi.WMWorkItem;
 
 import java.util.ArrayList;
@@ -35,8 +35,7 @@ public class UserTaskUtils {
                 wmWorkItem.setPriority(userTask.getWfNode().getPrio());
                 wmWorkItem.setId(String.valueOf(userTask.getWfNode().getNodeId()));
                 wmWorkItem.setProcessInstanceId(String.valueOf(userTask.getWfNode().getFlowId()));
-                WMParticipantImpl user = new WMParticipantImpl();
-                user.setName(userTask.getWfNode().getUserName());
+                WMParticipantImpl user = new WMParticipantImpl(userTask.getWfNode().getUserName());
                 wmWorkItem.setParticipant(user);
 
                 userTaskList.add(wmWorkItem);

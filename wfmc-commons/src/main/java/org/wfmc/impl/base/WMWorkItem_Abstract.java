@@ -2,13 +2,15 @@ package org.wfmc.impl.base;
 
 
 
+import org.wfmc.wapi.WMWorkItem;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Adrian Price
  */
-public abstract class WMWorkItem_Abstract implements Serializable {
+public abstract class WMWorkItem_Abstract implements WMWorkItem,Serializable {
     private static final long serialVersionUID = 4138703038866374530L;
     private String _id;
     private String _name;
