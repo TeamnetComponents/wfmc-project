@@ -206,7 +206,11 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     @Override
     public void abortProcessInstance(String procInstId) throws WMWorkflowException {
-
+        try {
+            getIxConnection().ix().deleteWorkFlow(procInstId, WFTypeC.ACTIVE, LockC.NO);
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(e);
+        }
     }
 
     /**
@@ -266,7 +270,26 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     public void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException {
         try {
             WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(workflowId, currentNodeId, LockC.YES);
-            getIxConnection().ix().endEditWorkFlowNode(workflowId, currentNodeId, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), transitionNodeId);
+            List<WMWorkItem> nextSteps = getNextSteps(workflowId, currentNodeId);
+            boolean isNextNode = false;
+            for (int i = 0; i<transitionNodeId.length; i++) {
+                for (WMWorkItem wmWorkItem : nextSteps) {
+                    if (transitionNodeId[i] == Integer.parseInt(wmWorkItem.getId())){
+                        isNextNode = true;
+                    } else {
+                        isNextNode = false;
+                    }
+                }
+//                while (nextSteps.iterator().hasNext()) {
+//                    WMWorkItem next = nextSteps.iterator().next();
+//
+//                }
+            }
+            if (isNextNode == true) {
+                getIxConnection().ix().endEditWorkFlowNode(workflowId, currentNodeId, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), transitionNodeId);
+            } else {
+                System.out.println("Node is not a successor node!");
+            }
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
         }
