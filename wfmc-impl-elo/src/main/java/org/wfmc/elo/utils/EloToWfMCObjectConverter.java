@@ -4,10 +4,11 @@ import de.elo.ix.client.UserTask;
 import de.elo.ix.client.WFNode;
 import org.wfmc.impl.base.WMParticipantImpl;
 import org.wfmc.impl.base.WMWorkItemImpl;
-import org.wfmc.wapi.WMUnsupportedOperationException;
 import org.wfmc.wapi.WMWorkItem;
 import org.wfmc.wapi.WMWorkItemState;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,15 @@ public class EloToWfMCObjectConverter {
             WMParticipantImpl user = new WMParticipantImpl(userTask.getWfNode().getUserName());
             wmWorkItem.setParticipant(user);
             wmWorkItem.setProcessDefinitionId(null);//TODO: setProcessDefinitionId - ar trebui sa ne incarcam flow-ul
-            wmWorkItem.setStartedDate(new Date(userTask.getWfNode().getActivateDateIso())); //TODO:
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+            Date d = null;
+            try {
+                d = sdf.parse((userTask.getWfNode().getActivateDateIso()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+             wmWorkItem.setStartedDate(d); //done
             //wmWorkItem.setTargetDate(); //TODO:
             //wmWorkItem.setDueDate(); //TODO:
             //wmWorkItem.setCompletedDate(null);//TODO: Andra: aici vom avea doar din istoric?
