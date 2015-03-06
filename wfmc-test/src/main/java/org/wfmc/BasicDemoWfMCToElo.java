@@ -1,6 +1,5 @@
 package org.wfmc;
 
-import org.wfmc.elo.WfmcServiceImpl_Elo;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
@@ -25,16 +24,13 @@ public class BasicDemoWfMCToElo {
         //wfmcServiceCache = ((WfmcServiceImpl_Abstract)wfmcService).getWfmcServiceCache();
 
 
-        String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
+        String serviceProperties = "C:\\Users\\ioan.ivan\\Desktop\\wapi-elo-renns.properties";
+
 
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
 
-
-        WfmcServiceImpl_Elo wfmcServiceImpl_Elo = new WfmcServiceImpl_Elo();
-        
-        
         wfmcService.connect(new WMConnectInfo("Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
 
         String procInstId = wfmcService.createProcessInstance("3", "instance 3");
@@ -42,39 +38,37 @@ public class BasicDemoWfMCToElo {
         //wfmcService.assignProcessInstanceAttribute(procInstId, "String", "test");
         //wfmcService.assignProcessInstanceAttribute(procInstId, "Double", 1.0);
         //Pas 1. start process
-        String activeId = wfmcService.startProcess(procInstId);
+        wfmcService.startProcess(procInstId);
         //Pas 2. get available tasks - listWorkItems
         WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName("Redactare raspuns");
         WMWorkItemIterator wmWorkItemIterator = wfmcService.listWorkItems(wmFilter, false);
         WMWorkItem wmWorkItem = null;
         while (wmWorkItemIterator.hasNext()){
             wmWorkItem  = wmWorkItemIterator.tsNext();
-            System.out.println("nume task = " + wmWorkItem.getName());
-            System.out.println("nume user pe task = " + wmWorkItem.getParticipant().getName());
-
+            System.out.println("nume task=" + wmWorkItem.getName());
+            System.out.println("nume user pe task=" + wmWorkItem.getParticipant().getName());
         }
-
-
         //Pas 3. claimTask - reassign
         wfmcService.reassignWorkItem(wmWorkItem.getParticipant().getName(), "Andra", wmWorkItem.getProcessInstanceId(), wmWorkItem.getId());
         //Pas 4. get next nodes
         System.out.println("...");
-        wmWorkItemIterator = wfmcService.listWorkItems(WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Andra"), false);
+        wmWorkItemIterator = wfmcService.listWorkItems(WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Administrator"), false);
+
         while (wmWorkItemIterator.hasNext()){
             wmWorkItem  = wmWorkItemIterator.tsNext();
             System.out.println("nume task=" + wmWorkItem.getName());
             System.out.println("nume user pe task=" + wmWorkItem.getParticipant().getName());
-
-        }
-
-        List<WMWorkItem> nextSteps = wfmcService.getNextSteps(Integer.parseInt(activeId), Integer.parseInt(wmWorkItem.getId()));
-
-        System.out.println("Next steps: " + nextSteps.size());
-        for(WMWorkItem v : nextSteps){
-            System.out.println("nume task=" + v.getName());
-
-        }
+            List<WMWorkItem> nextSteps = wfmcService.getNextSteps(Integer.parseInt(wmWorkItem.getProcessInstanceId()), Integer.parseInt(wmWorkItem.getId()));
+            int[] forwardIds = new int[nextSteps.size()];
+            int i = 0;
+            for ( WMWorkItem workItem : nextSteps) {
+                forwardIds[i++] = Integer.parseInt(workItem.getId());
+                System.out.println("nume next node = " + workItem.getName() + " si nume utilizator = " + workItem.getParticipant().getName());
                 //Pas 5. forward task
+                wfmcService.setTransition(Integer.parseInt(wmWorkItem.getProcessInstanceId()), Integer.parseInt(wmWorkItem.getId()),forwardIds);
+                System.out.println("Workflow forwarded to " + forwardIds);
+            }
+        }
 
         wfmcService.disconnect();
 
