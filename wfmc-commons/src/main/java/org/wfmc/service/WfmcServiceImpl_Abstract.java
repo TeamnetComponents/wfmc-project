@@ -401,12 +401,12 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     }
 
     @Override
-    public List<WMWorkItem> getNextSteps(Integer workflowId, Integer nodeId) throws WMWorkflowException {
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
         throw new WMUnsupportedOperationException("getNextSteps");
     }
 
     @Override
-    public void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException {
+    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
         throw new WMUnsupportedOperationException("setTransition");
     }
 

@@ -16,7 +16,7 @@ public class WMFilterWorkItem extends WMFilter{
     WMWorkItem wmWorkItem;
     List<WMParticipant> wmParticipantList;
     String workItemName;
-
+    String processInstanceId;
 
     public WMFilterWorkItem() {
         super("");
@@ -42,6 +42,11 @@ public class WMFilterWorkItem extends WMFilter{
         return this;
     }
 
+    public WMFilterWorkItem addProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+        return this;
+    }
+
     public WMWorkItem getWmWorkItem() {
         return wmWorkItem;
     }
@@ -64,5 +69,13 @@ public class WMFilterWorkItem extends WMFilter{
 
     public void setWorkItemName(String workItemName) {
         this.workItemName = workItemName;
+    }
+
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
+
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
     }
 }

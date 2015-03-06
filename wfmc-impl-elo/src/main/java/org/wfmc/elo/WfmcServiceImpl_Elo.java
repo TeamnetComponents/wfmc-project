@@ -6,10 +6,12 @@ import org.apache.commons.lang.StringUtils;
 import org.wfmc.elo.base.WMErrorElo;
 import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.utils.EloToWfMCObjectConverter;
+import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.elo.utils.WfMCToEloObjectConverter;
+import org.wfmc.impl.base.WMProcessInstanceImpl;
+import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
 import org.wfmc.impl.base.WMWorkItemIteratorImpl;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
-import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.impl.utils.TemplateEngine;
 import org.wfmc.impl.utils.Utils;
@@ -173,6 +175,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                 sordDirectory = FileUtils.replaceTemporalItems(sordDirectory);
                 sordDirectory = TemplateEngine.getInstance().getValueFromTemplate(sordDirectory, wmProcessInstanceAttributeMap);
                 sordDirectory = eloUtilsService.fileUtilsRegular.convertPathName(sordDirectory, eloUtilsService.fileUtilsElo);
+                String[] pathNames = new String[]{};
                 sord = eloUtilsService.createSord(getIxConnection(), sordDirectory, maskId, sordName);
             }
 
@@ -267,26 +270,30 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException {
+    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
         try {
-            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(workflowId, currentNodeId, LockC.YES);
-            List<WMWorkItem> nextSteps = getNextSteps(workflowId, currentNodeId);
+            Integer processInstanceIdAsInt = Integer.parseInt(processInstanceId);
+            Integer currentWorkItemIdAsInt = Integer.parseInt(currentWorkItemId);
+
+            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
+            List<WMWorkItem> nextSteps = getNextSteps(processInstanceId, currentWorkItemId);
             boolean isNextNode = false;
-            for (int i = 0; i<transitionNodeId.length; i++) {
+            for (int i = 0; i< nextWorkItemIds.length; i++) {
                 for (WMWorkItem wmWorkItem : nextSteps) {
-                    if (transitionNodeId[i] == Integer.parseInt(wmWorkItem.getId())){
+                    if (nextWorkItemIds[i].equals(wmWorkItem.getId())){
                         isNextNode = true;
+                        break;
                     } else {
                         isNextNode = false;
                     }
                 }
-//                while (nextSteps.iterator().hasNext()) {
-//                    WMWorkItem next = nextSteps.iterator().next();
-//
-//                }
             }
             if (isNextNode == true) {
-                getIxConnection().ix().endEditWorkFlowNode(workflowId, currentNodeId, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), transitionNodeId);
+                int[] nextWorkItemIdsAsInt = new int[nextWorkItemIds.length];
+                for (int i = 0; i < nextWorkItemIds.length; i++) {
+                    nextWorkItemIdsAsInt[i] = Integer.parseInt(nextWorkItemIds[i]);
+                }
+                getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), nextWorkItemIdsAsInt);
             } else {
                 System.out.println("Node is not a successor node!");
             }
@@ -296,15 +303,17 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     }
     
     @Override
-    public List<WMWorkItem> getNextSteps(Integer workflowId, Integer nodeId) throws WMWorkflowException {
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
 
+        Integer processInstanceIdAsInt = Integer.parseInt(processInstanceId);
+        Integer workItemIdAsInt = Integer.parseInt(workItemId);
         List<WFNode> nextNodes = new ArrayList<>();
 
         try{
-            WFNodeAssoc[] wfNodeAssoc = eloUtilsService.getActiveWorkflowById(getIxConnection(), workflowId).getMatrix().getAssocs();
+            WFNodeAssoc[] wfNodeAssoc = eloUtilsService.getActiveWorkflowById(getIxConnection(), processInstanceIdAsInt).getMatrix().getAssocs();
             for (WFNodeAssoc wfNode : wfNodeAssoc) {
-                if (wfNode.getNodeFrom() == nodeId.intValue()) {
-                    nextNodes.add(eloUtilsService.getNode(getIxConnection(), workflowId, wfNode.getNodeTo()));
+                if (workItemIdAsInt.compareTo(wfNode.getNodeFrom()) == 0 ) {
+                    nextNodes.add(eloUtilsService.getNode(getIxConnection(), processInstanceIdAsInt, wfNode.getNodeTo()));
                 }
             }
         }
@@ -313,6 +322,32 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         }
 
         return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
+    }
+
+    @Override
+    public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        if (filter instanceof WMFilterWorkItem) {
+            FindWorkflowInfo findWorkflowInfo = new FindWorkflowInfo();
+            findWorkflowInfo.setType(WFTypeC.FINISHED);
+            findWorkflowInfo.setName(((WMFilterWorkItem) filter).getWorkItemName());
+            FindResult findResult = null;
+            try {
+                findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, 10, WFDiagramC.mbAll);
+                WFDiagram[] wfDiagrams = findResult.getWorkflows();
+                WMProcessInstance[] wmProcessInstances = new WMProcessInstance[wfDiagrams.length];
+                for (int i = 0; i < wfDiagrams.length; i++) {
+                    WMProcessInstanceImpl wmProcessInstance = new WMProcessInstanceImpl();
+                    wmProcessInstance.setState(WMProcessInstanceState.CLOSED_COMPLETED);
+                    wmProcessInstance.setName(wfDiagrams[i].getName());
+                    wmProcessInstances[i] = wmProcessInstance;
+                }
+                return new WMProcessInstanceIteratorImpl(wmProcessInstances);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return null;
     }
     
 }

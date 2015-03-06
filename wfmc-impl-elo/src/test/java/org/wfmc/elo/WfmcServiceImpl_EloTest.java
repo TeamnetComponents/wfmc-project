@@ -496,8 +496,8 @@ public class WfmcServiceImpl_EloTest {
     public void should_get_next_steps() throws RemoteException {
 
         // given
-        Integer wfId = 1;
-        Integer nodeId = 20;
+        String wfId = "1";
+        String nodeId = "20";
 
         EloUtilsService eloUtilsService = Mockito.mock(EloUtilsService.class);
         wfmcServiceImpl_Elo.setEloUtilsService(eloUtilsService);
@@ -515,20 +515,23 @@ public class WfmcServiceImpl_EloTest {
         wfNodeAssoc[4].setNodeFrom(30);
 
         WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
-        Mockito.when(eloUtilsService.getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(wfId))).thenReturn(wfDiagram);
+        Mockito.when(eloUtilsService.getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(Integer.parseInt(wfId)))).thenReturn(wfDiagram);
         WFNodeMatrix matrix = Mockito.mock(WFNodeMatrix.class);
         Mockito.when(wfDiagram.getMatrix()).thenReturn(matrix);
 
         Mockito.when(matrix.getAssocs()).thenReturn(wfNodeAssoc);
-        Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.<Integer>any())).thenReturn(new WFNode());
+        Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(Integer.parseInt(wfId)), Mockito.<Integer>any())).thenReturn(new WFNode());
 
         // when
         List<WMWorkItem> workItems = wfmcServiceImpl_Elo.getNextSteps(wfId, nodeId);
 
         // then
-        Mockito.verify(eloUtilsService).getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(wfId));
+        Mockito.verify(eloUtilsService).getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(Integer.parseInt(wfId)));
         Assertions.assertThat(workItems).hasSize(2);
-
     }
 
+    @Test
+    public void should_forward_task() {
+
+    }
 }

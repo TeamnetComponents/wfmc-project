@@ -52,20 +52,20 @@ public class BasicDemoWfMCToElo {
         wfmcService.reassignWorkItem(wmWorkItem.getParticipant().getName(), "Andra", wmWorkItem.getProcessInstanceId(), wmWorkItem.getId());
         //Pas 4. get next nodes
         System.out.println("...");
-        wmWorkItemIterator = wfmcService.listWorkItems(WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Administrator"), false);
+        wmWorkItemIterator = wfmcService.listWorkItems(WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Andra"), false);
 
         while (wmWorkItemIterator.hasNext()){
             wmWorkItem  = wmWorkItemIterator.tsNext();
             System.out.println("nume task=" + wmWorkItem.getName());
             System.out.println("nume user pe task=" + wmWorkItem.getParticipant().getName());
-            List<WMWorkItem> nextSteps = wfmcService.getNextSteps(Integer.parseInt(wmWorkItem.getProcessInstanceId()), Integer.parseInt(wmWorkItem.getId()));
-            int[] forwardIds = new int[nextSteps.size()];
+            List<WMWorkItem> nextSteps = wfmcService.getNextSteps((wmWorkItem.getProcessInstanceId()), (wmWorkItem.getId()));
+            String[] forwardIds = new String[nextSteps.size()];
             int i = 0;
             for ( WMWorkItem workItem : nextSteps) {
-                forwardIds[i++] = Integer.parseInt(workItem.getId());
+                forwardIds[i++] = workItem.getId();
                 System.out.println("nume next node = " + workItem.getName() + " si nume utilizator = " + workItem.getParticipant().getName());
                 //Pas 5. forward task
-                wfmcService.setTransition(Integer.parseInt(wmWorkItem.getProcessInstanceId()), Integer.parseInt(wmWorkItem.getId()),forwardIds);
+                wfmcService.setTransition(wmWorkItem.getProcessInstanceId(), wmWorkItem.getId() ,forwardIds);
                 System.out.println("Workflow forwarded to " + forwardIds);
             }
         }

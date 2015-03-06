@@ -12,8 +12,8 @@ import java.util.List;
  */
 public interface EloWAPI extends WAPI2 {
 
-    List<WMWorkItem> getNextSteps(Integer workflowId, Integer nodeId) throws WMWorkflowException;
+    List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException;
 
-    void setTransition(Integer workflowId, Integer currentNodeId, int[] transitionNodeId) throws WMWorkflowException;
+    void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException;
 
 }
