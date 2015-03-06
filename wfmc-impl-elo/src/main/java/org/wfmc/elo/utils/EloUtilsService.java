@@ -16,7 +16,7 @@ public class EloUtilsService {
     public final static FileUtils fileUtilsElo = new FileUtils("ARCPATH:", String.valueOf((char) 182));
     public final static FileUtils fileUtilsRegular = new FileUtils("/", "/");
 
-    private final static Integer ACTIVE_WORKFLOWS_MAX_NUMBER = 10;
+    private final static Integer ACTIVE_WORKFLOWS_MAX_NUMBER = 500;
 
     public boolean isArray(Object obj) {
         return obj != null && obj.getClass().isArray();

@@ -234,6 +234,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     nodes[Integer.parseInt(workItemId)].setUserName(targetUser);
                     wfDiagram.setNodes(nodes);
                     getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
+                    getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()),WFTypeC.ACTIVE,WFDiagramC.mbAll,LockC.NO);
                 } else {
                     throw new WMInvalidWorkItemException("This work item do not belong to " + sourceUser);
                 }
