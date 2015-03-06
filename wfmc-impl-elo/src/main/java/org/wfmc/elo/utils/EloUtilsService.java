@@ -16,7 +16,7 @@ public class EloUtilsService {
     public final static FileUtils fileUtilsElo = new FileUtils("ARCPATH:", String.valueOf((char) 182));
     public final static FileUtils fileUtilsRegular = new FileUtils("/", "/");
 
-    private final static Integer ACTIVE_WORKFLOWS_MAX_NUMBER = 10;
+    private final static Integer ACTIVE_WORKFLOWS_MAX_NUMBER = Integer.MAX_VALUE;
 
     public boolean isArray(Object obj) {
         return obj != null && obj.getClass().isArray();
@@ -129,7 +129,6 @@ public class EloUtilsService {
         findWorkflowInfo.setType(WFTypeC.ACTIVE);
         FindResult findResult = ixConnection.ix().findFirstWorkflows(findWorkflowInfo, ACTIVE_WORKFLOWS_MAX_NUMBER, WFDiagramC.mbAll);
         WFDiagram[] wfDiagrams = findResult.getWorkflows();
-
         for (WFDiagram wfDiagram : wfDiagrams) {
             if (workflowId == wfDiagram.getId() )
                 return wfDiagram;

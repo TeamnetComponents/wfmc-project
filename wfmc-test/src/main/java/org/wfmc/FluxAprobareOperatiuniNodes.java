@@ -9,4 +9,5 @@ public class FluxAprobareOperatiuniNodes {
     public static String APROBARE_RASPUNS = "Aprobare raspuns";
     public static String APROBAT = "Aprobat";
     public static String RESPINS = "Respins";
+    public static String RESPINGE = "Respinge";
 }
