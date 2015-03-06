@@ -23,8 +23,9 @@ public class WMFilterWorkItem extends WMFilter{
         wmParticipantList = new ArrayList<>();
     }
 
-    public void addWorkItemParticipant(WMParticipant participant){
+    public WMFilterWorkItem addWorkItemParticipant(WMParticipant participant){
         wmParticipantList.add(participant);
+        return this;
     }
 
     public WMFilterWorkItem addWorkItemParticipant(String participantName){
