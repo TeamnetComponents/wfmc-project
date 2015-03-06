@@ -234,6 +234,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     nodes[Integer.parseInt(workItemId)].setUserName(targetUser);
                     wfDiagram.setNodes(nodes);
                     getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
+                    getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()),WFTypeC.ACTIVE,WFDiagramC.mbAll,LockC.NO);
                 } else {
                     throw new WMInvalidWorkItemException("This work item do not belong to " + sourceUser);
                 }
@@ -277,26 +278,23 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
             WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
             List<WMWorkItem> nextSteps = getNextSteps(processInstanceId, currentWorkItemId);
-            boolean isNextNode = false;
             for (int i = 0; i< nextWorkItemIds.length; i++) {
+                boolean isNextWorkItemASuccessor = false;
                 for (WMWorkItem wmWorkItem : nextSteps) {
                     if (nextWorkItemIds[i].equals(wmWorkItem.getId())){
-                        isNextNode = true;
-                        break;
-                    } else {
-                        isNextNode = false;
+                        isNextWorkItemASuccessor = true;
                     }
                 }
-            }
-            if (isNextNode == true) {
-                int[] nextWorkItemIdsAsInt = new int[nextWorkItemIds.length];
-                for (int i = 0; i < nextWorkItemIds.length; i++) {
-                    nextWorkItemIdsAsInt[i] = Integer.parseInt(nextWorkItemIds[i]);
+                if (!isNextWorkItemASuccessor) {
+                    throw new WMInvalidWorkItemException(nextWorkItemIds[i]);
                 }
-                getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(), wfEditNode.getNode().getComment(), nextWorkItemIdsAsInt);
-            } else {
-                System.out.println("Node is not a successor node!");
             }
+            int[] nextWorkItemIdsAsInt = new int[nextWorkItemIds.length];
+            for (int i = 0; i < nextWorkItemIds.length; i++) {
+                nextWorkItemIdsAsInt[i] = Integer.parseInt(nextWorkItemIds[i]);
+            }
+            getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
+                    wfEditNode.getNode().getComment(), nextWorkItemIdsAsInt);
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
         }
