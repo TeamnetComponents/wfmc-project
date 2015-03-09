@@ -123,17 +123,31 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     @Override
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
-
         //detect process templateId of this instance
         WMProcessInstance wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
+        if (wmProcessInstance != null) {
+            // process is not in ELO, only in cache
+            super.assignProcessInstanceAttribute(procInstId, attrName, attrValue);
+            return;
+        }
+        try {
+            // 1. search for workflow
+            WFDiagram wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            // 2. get sord
+            Sord wfSord = eloUtilsService.getSord(getIxConnection(), wfDiagram.getObjId(), SordC.mbAll, LockC.YES);
+            // 3. update sord attrs
+            if (!eloUtilsService.sordContainsAttribute(wfSord, attrName)){
+                throw new WMInvalidAttributeException(attrName);
+            }
+            Map<String, Object> attrMap = new HashMap<>();
+            attrMap.put(attrName, attrValue);
+            eloUtilsService.updateSordAttributes(wfSord, attrMap);
+            // 4. save sord
+            eloUtilsService.saveSord(getIxConnection(), wfSord, SordC.mbAll, LockC.YES);
+        } catch (RemoteException e){
+            throw  new WMWorkflowException(e);
+        }
 
-        //detect mask associated to process template
-//        String maskId = getEloMask(wmProcessInstance.getProcessDefinitionId());
-
-        //test if attribute name exists in ELO mask associated to the process and if attrValue is according to the definition
-
-        //if everything is ok then
-        super.assignProcessInstanceAttribute(procInstId, attrName, attrValue);
     }
 
     @Override

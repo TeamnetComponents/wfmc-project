@@ -86,16 +86,26 @@ public class EloUtilsService {
             if (attributes.containsKey(objKeys[i].getName())) {
                 if (isArray(attributes.get(objKeys[i].getName()))) {
                     List<String> objKeyValue = new ArrayList<>();
-                    for (Object value : ((Array[]) attributes.get(objKeys[i].getName()))) {
+                    for (Object value : ((String[]) attributes.get(objKeys[i].getName()))) {
                         objKeyValue.add(String.valueOf(value));
                     }
-                    objKeys[i].setData((String[]) objKeyValue.toArray(new String[objKeyValue.size()]));
+                    objKeys[i].setData(objKeyValue.toArray(new String[objKeyValue.size()]));
                 } else {
                     objKeys[i].setData(new String[]{attributes.get(objKeys[i].getName()).toString()});
                 }
             }
         }
         sord.setObjKeys(objKeys);
+    }
+
+    public boolean sordContainsAttribute(Sord sord, String attributeName){
+        ObjKey[] objKeys = sord.getObjKeys();
+        for (int i = 0; i < objKeys.length; i++) {
+            if (objKeys[i].getName().equals(attributeName)){
+                return  true;
+            }
+        }
+        return false;
     }
 
     public int saveSord(IXConnection ixConnection, Sord sord, SordZ sordZ, LockZ unlockZ) throws de.elo.utils.net.RemoteException {
