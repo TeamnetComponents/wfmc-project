@@ -15,6 +15,7 @@ import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
 import org.wfmc.elo.model.EloWfmcObjKey;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
+import org.wfmc.elo.utils.EloToWfMCObjectConverter;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.base.WMAttributeImpl;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
@@ -544,5 +545,50 @@ public class WfmcServiceImpl_EloTest {
         wfmcServiceImpl_Elo.disconnect();
 
         Assertions.assertThat(wmProcessInstance).isNotNull();
+    }
+
+    @Test
+    public void test_assignProcessInstanceAttribute_for_started_process_with_existing_attr_in_sord() throws RemoteException {
+        // given
+        String workflowTemplateId = "4";
+        String workflowName = "Integration Test Workflow Name";
+        String sordId = "104";
+        String attributeName = "TIPDRUM";
+//        Object attributeValue = "Strada";
+        Object attributeValue = new String[] {"strada","autostrada"};
+        // when
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        String processInstanceId = wfmcServiceImpl_Elo.createProcessInstance(workflowTemplateId, workflowName);
+        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
+        String eloProcessId = wfmcServiceImpl_Elo.startProcess(processInstanceId);
+        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
+        //verify
+        EloUtilsService eloUtilsService = new EloUtilsService();
+        Sord sord =  eloUtilsService.getSord(wfmcServiceImpl_Elo.getIxConnection(),sordId, SordC.mbAll, LockC.NO);
+        ObjKey[] objKeys = sord.getObjKeys();
+        for (ObjKey objKey : Arrays.asList(objKeys)){
+            if (objKey.getName().equals(attributeName)){
+                Assertions.assertThat(objKey.getData()[0]).isEqualTo("strada") ;
+            }
+        }
+        wfmcServiceImpl_Elo.disconnect();
+    }
+
+    @Test(expected = WMInvalidAttributeException.class)
+    public void test_assignProcessInstanceAttribute_for_started_process_without_existing_attr_in_sord() throws RemoteException {
+        // given
+        String workflowTemplateId = "4";
+        String workflowName = "Integration Test Workflow Name";
+        String sordId = "104";
+        String attributeName = "TIP DRUM";
+//        Object attributeValue = "Strada";
+        Object attributeValue = new String[] {"strada","autostrada"};
+        // when
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        String processInstanceId = wfmcServiceImpl_Elo.createProcessInstance(workflowTemplateId, workflowName);
+        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
+        String eloProcessId = wfmcServiceImpl_Elo.startProcess(processInstanceId);
+        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
+        wfmcServiceImpl_Elo.disconnect();
     }
 }
