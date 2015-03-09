@@ -142,4 +142,30 @@ public class EloUtilsService {
         return null;
     }
 
+    public String[] getLicenseUserForLogin(String userIdentification) {
+        String[] userNames = userIdentification.split("@");
+        return userNames;
+    }
+
+    public Integer createUserGroup(IXConnection ixConnection, String groupName, String rightsAsUserId) {
+        try {
+            UserInfo group = ixConnection.ix().createUser(rightsAsUserId);
+            group.setType(UserInfoC.TYPE_GROUP);
+            group.setName(groupName);
+            int[] ints = ixConnection.ix().checkinUsers(new UserInfo[]{group}, CheckinUsersC.NEW_USER, LockC.YES);
+            return ints[0];
+        } catch (de.elo.utils.net.RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean checkIfGroupExist(IXConnection ixConnection, String groupName) {
+        try {
+            ixConnection.ix().checkoutUsers(new String[]{groupName}, CheckoutUsersC.ALL_GROUPS, LockC.NO);
+            return true;
+        } catch (de.elo.utils.net.RemoteException e) {
+            return false;
+        }
+    }
 }

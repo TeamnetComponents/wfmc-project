@@ -8,7 +8,6 @@ import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.utils.EloToWfMCObjectConverter;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.elo.utils.WfMCToEloObjectConverter;
-import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
 import org.wfmc.impl.base.WMWorkItemIteratorImpl;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
@@ -48,10 +47,13 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         IXConnFactory connFact = null;
         try {
             connFact = new IXConnFactory(connProps, sessOpts);
-            ixConnection = connFact.create(connectInfo.getUserIdentification(),
+            ixConnection = connFact.create(eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[1],
                     connectInfo.getPassword(),
                     connectInfo.getEngineName(),
-                    connectInfo.getUserIdentification());
+                    eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[1]);
+            if (!eloUtilsService.checkIfGroupExist(getIxConnection(), eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[0])) {
+                eloUtilsService.createUserGroup(getIxConnection(), eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[0], null);
+            }
         } catch (RemoteException remoteException) {
             throw new WMWorkflowException(remoteException);
         }
@@ -188,7 +190,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             else {
                 String maskId = null;
                 String sordDirectory = null;
-                String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId();
+                String sordName = wmProcessInstance.getId();
+//                String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId();
                 //daca am primit mask id
                 if (wmProcessInstanceWMAttributeMap.containsKey(ELOConstants.MASK_ID)) {
                     maskId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.MASK_ID).getValue();
@@ -208,7 +211,6 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                 sordDirectory = FileUtils.replaceTemporalItems(sordDirectory);
                 sordDirectory = TemplateEngine.getInstance().getValueFromTemplate(sordDirectory, wmProcessInstanceAttributeMap);
                 sordDirectory = eloUtilsService.fileUtilsRegular.convertPathName(sordDirectory, eloUtilsService.fileUtilsElo);
-                String[] pathNames = new String[]{};
                 sord = eloUtilsService.createSord(getIxConnection(), sordDirectory, maskId, sordName);
             }
 
@@ -269,12 +271,12 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
                     getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
                 } else {
-                    throw new WMInvalidWorkItemException("This work item do not belong to " + sourceUser);
+                    throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
                 }
             } else if (nodes[Integer.parseInt(workItemId)].getType() == 1){
-                throw new WMInvalidWorkItemException("This is a begin node and can not be modified");
+                throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
             } else {
-                throw new WMInvalidWorkItemException("Work item with id " + workItemId + " do not exist!");
+                throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
             }
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
