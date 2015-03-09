@@ -10,7 +10,7 @@ import java.util.List;
  * @author adrian.zamfirescu
  * @since 03/05/2015
  */
-public interface EloWAPI extends WAPI2 {
+public interface WAPIExtended extends WAPI2 {
 
     List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException;
 
