@@ -11,6 +11,7 @@ import org.wfmc.elo.utils.WfMCToEloObjectConverter;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
 import org.wfmc.impl.base.WMWorkItemIteratorImpl;
+import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
 import org.wfmc.impl.utils.FileUtils;
 import org.wfmc.impl.utils.TemplateEngine;
@@ -66,12 +67,6 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     protected IXConnection getIxConnection() {
         return ixConnection;
-    }
-
-
-    //ELO utility methods
-    int getProcessMaskId(String procDefId) {
-        return 0;
     }
 
     public void setEloUtilsService(EloUtilsService eloUtilsService) {
@@ -324,21 +319,12 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException {
-        if (filter instanceof WMFilterWorkItem) {
-            FindWorkflowInfo findWorkflowInfo = new FindWorkflowInfo();
-            findWorkflowInfo.setType(WFTypeC.FINISHED);
-            findWorkflowInfo.setName(((WMFilterWorkItem) filter).getWorkItemName());
-            FindResult findResult = null;
+        if (filter instanceof WMFilterProcessInstance) {
             try {
-                findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, 10, WFDiagramC.mbAll);
+                FindWorkflowInfo findWorkflowInfo = wfMCToEloObjectConverter.convertWMFilterProcessInstanceToFindWorkflowInfo((WMFilterProcessInstance)filter);
+                FindResult findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, 10, WFDiagramC.mbAll);
                 WFDiagram[] wfDiagrams = findResult.getWorkflows();
-                WMProcessInstance[] wmProcessInstances = new WMProcessInstance[wfDiagrams.length];
-                for (int i = 0; i < wfDiagrams.length; i++) {
-                    WMProcessInstanceImpl wmProcessInstance = new WMProcessInstanceImpl();
-                    wmProcessInstance.setState(WMProcessInstanceState.CLOSED_COMPLETED);
-                    wmProcessInstance.setName(wfDiagrams[i].getName());
-                    wmProcessInstances[i] = wmProcessInstance;
-                }
+                WMProcessInstance[] wmProcessInstances = eloToWfMCObjectConverter.convertWFDiagramsToWMProcessInstances(wfDiagrams);
                 return new WMProcessInstanceIteratorImpl(wmProcessInstances);
             } catch (RemoteException e) {
                 e.printStackTrace();

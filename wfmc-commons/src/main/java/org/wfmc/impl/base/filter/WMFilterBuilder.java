@@ -9,4 +9,9 @@ public class WMFilterBuilder {
         return new WMFilterWorkItem();
     }
 
+    public static WMFilterProcessInstance createWMFilterProcessInstance()
+    {
+        return new WMFilterProcessInstance();
+    }
+
 }

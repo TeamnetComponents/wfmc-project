@@ -1,9 +1,13 @@
 package org.wfmc.elo.utils;
 
 import de.elo.ix.client.UserTask;
+import de.elo.ix.client.WFDiagram;
 import de.elo.ix.client.WFNode;
 import org.wfmc.impl.base.WMParticipantImpl;
+import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMWorkItemImpl;
+import org.wfmc.wapi.WMProcessInstance;
+import org.wfmc.wapi.WMProcessInstanceState;
 import org.wfmc.wapi.WMWorkItem;
 import org.wfmc.wapi.WMWorkItemState;
 
@@ -18,12 +22,12 @@ import java.util.List;
  */
 public class EloToWfMCObjectConverter {
 
-    public EloToWfMCObjectConverter(){
+    public EloToWfMCObjectConverter() {
 
     }
 
-    public  WMWorkItem[] convertUserTasksToWMWorkItems(UserTask[] userTasks){
-        WMWorkItem[] wmWorkItems =  new WMWorkItem[userTasks.length];
+    public WMWorkItem[] convertUserTasksToWMWorkItems(UserTask[] userTasks) {
+        WMWorkItem[] wmWorkItems = new WMWorkItem[userTasks.length];
         List<WMWorkItem> wmWorkItemsList = new ArrayList<>();
         for (int i = 0; i < userTasks.length; i++) {
             UserTask userTask = userTasks[i];
@@ -46,7 +50,7 @@ public class EloToWfMCObjectConverter {
                 e.printStackTrace();
             }
 
-             wmWorkItem.setStartedDate(d); //done
+            wmWorkItem.setStartedDate(d); //done
             //wmWorkItem.setTargetDate(); //TODO:
             //wmWorkItem.setDueDate(); //TODO:
             //wmWorkItem.setCompletedDate(null);//TODO: Andra: aici vom avea doar din istoric?
@@ -60,12 +64,11 @@ public class EloToWfMCObjectConverter {
         return wmWorkItems;
     }
 
-    public List<WMWorkItem> convertWFNodesToWMWorkItems(List<WFNode> wfNodes){
+    public List<WMWorkItem> convertWFNodesToWMWorkItems(List<WFNode> wfNodes) {
 
         List<WMWorkItem> wmWorkItems = new ArrayList<>();
 
-        for (WFNode wfNode : wfNodes){
-
+        for (WFNode wfNode : wfNodes) {
             WMWorkItemImpl wmWorkItem = new WMWorkItemImpl();
             wmWorkItem.setName(wfNode.getName());
             wmWorkItem.setId(Integer.toString(wfNode.getId()));
@@ -74,10 +77,27 @@ public class EloToWfMCObjectConverter {
             wmWorkItem.setPerformer(wfNode.getUserName());
 
             wmWorkItems.add(wmWorkItem);
-
         }
 
         return wmWorkItems;
+    }
+
+
+    public WMProcessInstance[] convertWFDiagramsToWMProcessInstances(WFDiagram[] wfDiagrams) {
+
+        WMProcessInstance[] wmProcessInstances = new WMProcessInstance[wfDiagrams.length];
+        List<WMProcessInstance> wmProcessInstanceList = new ArrayList<>();
+        for(int i = 0; i<wfDiagrams.length;i++){
+            WMProcessInstanceImpl wmProcessInstance = new WMProcessInstanceImpl();
+            wmProcessInstance.setName(wfDiagrams[i].getName());
+            wmProcessInstance.setId(Integer.toString(wfDiagrams[i].getId()));
+            wmProcessInstance.setProcessDefinitionId(Integer.toString(wfDiagrams[i].getTemplateId()));
+            //TODO: de vazut ce mai trebuie setat pe WMProcessInstanceImpl si ce avem nevoie din WFDiagram si nu putem pune in WMProcessInstanceImpl
+            wmProcessInstances[i] = wmProcessInstance;
+        }
+        wmProcessInstanceList.toArray(wmProcessInstances);
+        return wmProcessInstances;
+
     }
 
 }
