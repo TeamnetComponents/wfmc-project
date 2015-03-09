@@ -142,7 +142,7 @@ public class EloUtilsService {
         return null;
     }
 
-    public String[] getLicenseUserForLogin(String userIdentification) {
+    public String[] splitLoginUsers(String userIdentification) {
         String[] userNames = userIdentification.split("@");
         return userNames;
     }

@@ -41,18 +41,19 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     protected WfMCToEloObjectConverter wfMCToEloObjectConverter = new WfMCToEloObjectConverter();
 
-    private void borrowIxConnection(WMConnectInfo connectInfo) {
+    private void borrowIxConnection(WMConnectInfo connectInfo) throws WMWorkflowException{
         Properties connProps = IXConnFactory.createConnProps(connectInfo.getScope());
         Properties sessOpts = IXConnFactory.createSessionOptions("IX-Example", "1.0");
         IXConnFactory connFact = null;
         try {
             connFact = new IXConnFactory(connProps, sessOpts);
-            ixConnection = connFact.create(eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[1],
+            String[] usersSplit = eloUtilsService.splitLoginUsers(connectInfo.getUserIdentification());
+            ixConnection = connFact.create(usersSplit[1],
                     connectInfo.getPassword(),
                     connectInfo.getEngineName(),
-                    eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[1]);
-            if (!eloUtilsService.checkIfGroupExist(getIxConnection(), eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[0])) {
-                eloUtilsService.createUserGroup(getIxConnection(), eloUtilsService.getLicenseUserForLogin(connectInfo.getUserIdentification())[0], null);
+                    usersSplit[1]);
+            if (!eloUtilsService.checkIfGroupExist(getIxConnection(), usersSplit[0])) {
+                eloUtilsService.createUserGroup(getIxConnection(), usersSplit[0], null);
             }
         } catch (RemoteException remoteException) {
             throw new WMWorkflowException(remoteException);

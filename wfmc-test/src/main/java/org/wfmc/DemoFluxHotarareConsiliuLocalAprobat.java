@@ -15,13 +15,13 @@ import java.util.List;
 public class DemoFluxHotarareConsiliuLocalAprobat {
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        String serviceProperties = "C:\\Users\\ioan.ivan\\Desktop\\wapi-elo-renns.properties";
+        String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         String processInstanceName = "Instanta flux hotarare consiliu local 2";
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
-
-        wfmcService.connect(new WMConnectInfo("Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
+        //naming conversion for user: {ApplicationUser}@{ImpersonatedUser}   ; ImpersonatedUser = Userul de login in ELO(licenta); Administrator acum
+        wfmcService.connect(new WMConnectInfo("Andra@Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
         // Pas 1. Create process instance
         String procInstIdTemp = wfmcService.createProcessInstance("5", processInstanceName);
 

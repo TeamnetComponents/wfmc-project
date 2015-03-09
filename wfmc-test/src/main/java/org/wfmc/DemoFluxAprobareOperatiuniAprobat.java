@@ -14,14 +14,14 @@ import java.util.List;
 public class DemoFluxAprobareOperatiuniAprobat {
 
     public static void main(String[] arg) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        String serviceProperties = "G:\\Fisier\\wapi-elo-renns.properties";
+        String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         String processInstanceName =  "Instanta flux aprobare operatiuni 3";
 
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
 
-        wfmcService.connect(new WMConnectInfo("Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
+        wfmcService.connect(new WMConnectInfo("Andra@Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
         // Pas 1. Create process instance
         String procInstIdTemp = wfmcService.createProcessInstance("3", processInstanceName);
         //Pas 2. Asign process attribute
