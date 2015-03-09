@@ -29,7 +29,7 @@ public class DemoFluxAprobareOperatiuniAprobat {
         String procInstId = wfmcService.startProcess(procInstIdTemp);
 
         //Pas 4. Get avaible tasks for REDACTARE_RASPUNS taskType
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Administrator").
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("Administrator").
                 addWorkItemName(FluxAprobareOperatiuniNodes.REDACTARE_RASPUNS);
         WMWorkItemIterator wmWorkItemIterator = wfmcService.listWorkItems(wmFilter, true);
 
@@ -55,7 +55,7 @@ public class DemoFluxAprobareOperatiuniAprobat {
         }
 
         //Pas 8. Get avaible tasks for APROBARE_RASPUNS taskType
-        WMFilter wmFilter1 = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName(FluxAprobareOperatiuniNodes.APROBARE_RASPUNS).addWorkItemParticipant("Administrator");
+        WMFilter wmFilter1 = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName(FluxAprobareOperatiuniNodes.APROBARE_RASPUNS).addWorkItemParticipantName("Administrator");
         WMWorkItemIterator wmWorkItemIterator1 = wfmcService.listWorkItems(wmFilter1, true);
 
         //Pas 9. Claim task APROBARE_RASPUNS

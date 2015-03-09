@@ -35,7 +35,7 @@ public class DemoFluxAprobareOperatiuniNode10 {
 
         //Pas 4 : Gasire toate Taskuri de tip REDACTARE_RASPUNS
 
-        WMFilter filtruRedactareRaspuns = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Administrator")
+        WMFilter filtruRedactareRaspuns = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("Administrator")
                 .addWorkItemName(FluxAprobareOperatiuniNodes.REDACTARE_RASPUNS);
         WMWorkItemIterator wmWorkItemIterator = wfmcService.listWorkItems(filtruRedactareRaspuns, true);
 

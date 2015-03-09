@@ -38,7 +38,7 @@ public class BasicDemoWfMCToElo {
         wfmcService.reassignWorkItem(wmWorkItem.getParticipant().getName(), "Andra", wmWorkItem.getProcessInstanceId(), wmWorkItem.getId());
         //Pas 4. get next nodes
         System.out.println("...");
-        wmWorkItemIterator = wfmcService.listWorkItems(WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Andra"), false);
+        wmWorkItemIterator = wfmcService.listWorkItems(WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("Andra"), false);
 
         while (wmWorkItemIterator.hasNext()){
             wmWorkItem  = wmWorkItemIterator.tsNext();

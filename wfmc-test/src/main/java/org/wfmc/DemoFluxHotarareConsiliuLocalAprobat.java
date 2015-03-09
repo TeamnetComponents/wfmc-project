@@ -34,7 +34,7 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         String processInstanceId = wfmcService.startProcess(procInstIdTemp);
 
         //Pas 4. Get avaible task for Automatizare Asteptare and user = ELO Service.
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("ELO Service").
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("ELO Service").
                 addWorkItemName(FluxHotarareConsiliuLocalNodes.AUTOMATIZARE_ASTEPTARE);
 
         WMWorkItemIterator wmWorkItemIterator = wfmcService.listWorkItems(wmFilter, true);
@@ -55,7 +55,7 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         }
 
         //Pas 6. Check if the work item was assigned to Andra by getting avaible task for Automatizare Asteptare and user = Andra.
-        WMFilter wmFilterForAndra = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Andra").
+        WMFilter wmFilterForAndra = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("Andra").
                 addWorkItemName(FluxHotarareConsiliuLocalNodes.AUTOMATIZARE_ASTEPTARE);
         WMWorkItemIterator wmWorkItemIteratorForAndra = wfmcService.listWorkItems(wmFilterForAndra, true);
         while (wmWorkItemIteratorForAndra.hasNext()){

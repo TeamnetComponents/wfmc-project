@@ -28,7 +28,7 @@ public class WMFilterWorkItem extends WMFilter{
         return this;
     }
 
-    public WMFilterWorkItem addWorkItemParticipant(String participantName){
+    public WMFilterWorkItem addWorkItemParticipantName(String participantName){
         wmParticipantList.add(new WMParticipantImpl(participantName));
         return this;
     }
