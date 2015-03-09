@@ -19,7 +19,7 @@ public class DemoFluxAprobareOperatiuniNode10 {
         String sourceUser = "Administrator";
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
-
+        //naming convention for user: {ApplicationUser}@{ImpersonatedUser}   ; ImpersonatedUser = Userul de login in ELO(licenta); Administrator pt DEV
         wfmcService.connect(new WMConnectInfo("Andra@Administrator","elo@RENNS2015","Wfmc Test","http://10.6.38.90:8080/ix-elo/ix"));
 
          //Pas 1 : Creare processInstance
