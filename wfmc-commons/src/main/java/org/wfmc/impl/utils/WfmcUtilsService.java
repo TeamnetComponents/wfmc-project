@@ -31,7 +31,6 @@ public class WfmcUtilsService {
             while (wmAttributeIterator.hasNext()) {
                 WMAttribute wmAttribute = wmAttributeIterator.tsNext();
                 wmAttributeMap.put(wmAttribute.getName(), wmAttribute);
-                ;
             }
         }
         return wmAttributeMap;

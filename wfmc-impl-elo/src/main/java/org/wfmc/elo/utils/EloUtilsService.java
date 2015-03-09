@@ -113,7 +113,7 @@ public class EloUtilsService {
             {
                 throw e;
             } else {
-                // return null because the workflow does not exists
+                return null;
             }
         }
         return wfDiagram;
@@ -123,23 +123,8 @@ public class EloUtilsService {
         return String.valueOf(ixConnection.ix().startWorkFlow(templateId, name, sordId));
     }
 
-    public WFDiagram getActiveWorkflowById(IXConnection ixConnection, Integer workflowId) throws de.elo.utils.net.RemoteException {
-
-        FindWorkflowInfo findWorkflowInfo = new FindWorkflowInfo();
-        findWorkflowInfo.setType(WFTypeC.ACTIVE);
-        FindResult findResult = ixConnection.ix().findFirstWorkflows(findWorkflowInfo, ACTIVE_WORKFLOWS_MAX_NUMBER, WFDiagramC.mbAll);
-        WFDiagram[] wfDiagrams = findResult.getWorkflows();
-
-        for (WFDiagram wfDiagram : wfDiagrams) {
-            if (workflowId == wfDiagram.getId() )
-                return wfDiagram;
-        }
-
-        return null;
-    }
-
-    public WFNode getNode(IXConnection ixConnection, Integer workflowId, Integer nodeId) throws de.elo.utils.net.RemoteException {
-        for (WFNode wFNode : getActiveWorkflowById(ixConnection, workflowId).getNodes()) {
+    public WFNode getNode(IXConnection ixConnection, String workflowId, Integer nodeId) throws de.elo.utils.net.RemoteException {
+        for (WFNode wFNode : getWorkFlow(ixConnection, workflowId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO).getNodes()) {
             if (wFNode.getId() == nodeId) {
                 return wFNode;
             }

@@ -1,8 +1,6 @@
 package org.wfmc.elo.utils;
 
-import de.elo.ix.client.UserTask;
-import de.elo.ix.client.WFDiagram;
-import de.elo.ix.client.WFNode;
+import de.elo.ix.client.*;
 import org.wfmc.impl.base.WMParticipantImpl;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMWorkItemImpl;
@@ -88,16 +86,31 @@ public class EloToWfMCObjectConverter {
         WMProcessInstance[] wmProcessInstances = new WMProcessInstance[wfDiagrams.length];
         List<WMProcessInstance> wmProcessInstanceList = new ArrayList<>();
         for(int i = 0; i<wfDiagrams.length;i++){
-            WMProcessInstanceImpl wmProcessInstance = new WMProcessInstanceImpl();
-            wmProcessInstance.setName(wfDiagrams[i].getName());
-            wmProcessInstance.setId(Integer.toString(wfDiagrams[i].getId()));
-            wmProcessInstance.setProcessDefinitionId(Integer.toString(wfDiagrams[i].getTemplateId()));
-            //TODO: de vazut ce mai trebuie setat pe WMProcessInstanceImpl si ce avem nevoie din WFDiagram si nu putem pune in WMProcessInstanceImpl
-            wmProcessInstances[i] = wmProcessInstance;
+           wmProcessInstances[i] = this.convertWFDiagramToWMProcessInstance(wfDiagrams[i]);
         }
         wmProcessInstanceList.toArray(wmProcessInstances);
         return wmProcessInstances;
 
+    }
+
+    public WMProcessInstance convertWFDiagramToWMProcessInstance(WFDiagram wfDiagram) {
+        WMProcessInstanceImpl wmProcessInstance = new WMProcessInstanceImpl();
+        wmProcessInstance.setName(wfDiagram.getName());
+        wmProcessInstance.setId(Integer.toString(wfDiagram.getId()));
+        wmProcessInstance.setProcessDefinitionId(Integer.toString(wfDiagram.getTemplateId()));
+        wmProcessInstance.setState(wfDiagram.getCompletionDateIso() == null || wfDiagram.getCompletionDateIso().equals("")? WMProcessInstanceState.OPEN_RUNNING : WMProcessInstanceState.CLOSED_COMPLETED);
+        //TODO: de vazut ce mai trebuie setat pe WMProcessInstanceImpl si ce avem nevoie din WFDiagram si nu putem pune in WMProcessInstanceImpl
+        return  wmProcessInstance;
+    }
+
+    public WMProcessInstance convertWFDiagramToWMProcessInstanceWithStatus(WFDiagram wfDiagram , WFTypeZ status) {
+        WMProcessInstanceImpl wmProcessInstance = new WMProcessInstanceImpl();
+        wmProcessInstance.setName(wfDiagram.getName());
+        wmProcessInstance.setId(Integer.toString(wfDiagram.getId()));
+        wmProcessInstance.setProcessDefinitionId(Integer.toString(wfDiagram.getTemplateId()));
+        wmProcessInstance.setState(status == WFTypeC.ACTIVE ?  WMProcessInstanceState.OPEN_RUNNING : WMProcessInstanceState.CLOSED_COMPLETED);
+        //TODO: de vazut ce mai trebuie setat pe WMProcessInstanceImpl si ce avem nevoie din WFDiagram si nu putem pune in WMProcessInstanceImpl
+        return  wmProcessInstance;
     }
 
 }

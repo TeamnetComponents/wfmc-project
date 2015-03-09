@@ -16,7 +16,7 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         String serviceProperties = "C:\\Users\\ioan.ivan\\Desktop\\wapi-elo-renns.properties";
-        String processInstanceName = "Instanta flux hotarare consiliu local";
+        String processInstanceName = "Instanta flux hotarare consiliu local 2";
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
@@ -63,6 +63,12 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
             currentWorkItemId = wmWorkItem.getId();
             System.out.println("Task for user " + wmWorkItem.getParticipant().getName() + " are : " + wmWorkItem.getName() );
         }
+
+        // 6.1 print workflow
+        WMProcessInstance wmProcessInstance = wfmcService.getProcessInstance(processInstanceId);
+        System.out.println(wmProcessInstance == null ? "null process instance" : "Process instance id = " + wmProcessInstance.getId());
+        System.out.println(wmProcessInstance == null ? "null process instance" : "Process instance name = " + wmProcessInstance.getName());
+        System.out.println(wmProcessInstance == null || wmProcessInstance.getState() == null ? "Process instance state = " + "null": "Process instance state = " + wmProcessInstance.getState().stringValue() );
         //Pas 7. List next steps for Automatizare Asteptare.
         List<WMWorkItem> nextSteps = wfmcService.getNextSteps(processInstanceId, currentWorkItemId);
 
@@ -77,9 +83,10 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);
         WMProcessInstanceIterator wmProcessInstanceIterator = wfmcService.listProcessInstances(wmFilter2, true);
         while (wmProcessInstanceIterator.hasNext()) {
-            WMProcessInstance wmProcessInstance = wmProcessInstanceIterator.tsNext();
-            System.out.println("Process instance name = " + wmProcessInstance.getName());
-            System.out.println("Process instance state = " + wmProcessInstance.getState().stringValue());
+            WMProcessInstance wmProcessInstanceTemp = wmProcessInstanceIterator.tsNext();
+            System.out.println(wmProcessInstanceTemp == null ? "null process instance" : "Process instance id = " + wmProcessInstanceTemp.getId());
+            System.out.println(wmProcessInstanceTemp == null ? "null process instance" : "Process instance name = " + wmProcessInstanceTemp.getName());
+            System.out.println(wmProcessInstanceTemp == null || wmProcessInstance.getState() == null ? "Process instance state = " + "null": "Process instance state = " + wmProcessInstanceTemp.getState().stringValue() );
         }
     }
 }

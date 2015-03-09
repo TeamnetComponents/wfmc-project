@@ -15,7 +15,7 @@ public class DemoFluxAprobareOperatiuniAprobat {
 
     public static void main(String[] arg) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         String serviceProperties = "G:\\Fisier\\wapi-elo-renns.properties";
-        String processInstanceName =  "Instanta flux aprobare operatiuni";
+        String processInstanceName =  "Instanta flux aprobare operatiuni 3";
 
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
@@ -82,8 +82,9 @@ public class DemoFluxAprobareOperatiuniAprobat {
         WMProcessInstanceIterator wmProcessInstanceIterator = wfmcService.listProcessInstances(wmFilter2, true);
         while (wmProcessInstanceIterator.hasNext()) {
             WMProcessInstance wmProcessInstance = wmProcessInstanceIterator.tsNext();
-            System.out.println("Process instance name = " + wmProcessInstance.getName());
-            System.out.println("Process instance state = " + wmProcessInstance.getState().stringValue());
+            System.out.println(wmProcessInstance == null ? "null process instance" : "Process instance id = " + wmProcessInstance.getId());
+            System.out.println(wmProcessInstance == null ? "null process instance" : "Process instance name = " + wmProcessInstance.getName());
+            System.out.println(wmProcessInstance == null || wmProcessInstance.getState() == null ? "Process instance state = " + "null": "Process instance state = " + wmProcessInstance.getState().stringValue() );
         }
     }
 

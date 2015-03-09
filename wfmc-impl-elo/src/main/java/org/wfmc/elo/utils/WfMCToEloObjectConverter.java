@@ -63,7 +63,7 @@ public class WfMCToEloObjectConverter {
         }
 
         //todo: cum facem cu tipul de proces? cum il trimitem in filtru?  - ma refer la findWorkflowInfo.setType(WFTypeC.ACTIVE);etc
-
+         findWorkflowInfo.setType(WFTypeC.FINISHED);
         return  findWorkflowInfo;
     }
 }

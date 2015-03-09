@@ -515,23 +515,34 @@ public class WfmcServiceImpl_EloTest {
         wfNodeAssoc[4].setNodeFrom(30);
 
         WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
-        Mockito.when(eloUtilsService.getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(Integer.parseInt(wfId)))).thenReturn(wfDiagram);
+        Mockito.when(eloUtilsService.getWorkFlow(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.eq(WFTypeC.ACTIVE), Mockito.eq(WFDiagramC.mbAll), Mockito.eq(LockC.NO))).thenReturn(wfDiagram);
         WFNodeMatrix matrix = Mockito.mock(WFNodeMatrix.class);
         Mockito.when(wfDiagram.getMatrix()).thenReturn(matrix);
 
         Mockito.when(matrix.getAssocs()).thenReturn(wfNodeAssoc);
-        Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(Integer.parseInt(wfId)), Mockito.<Integer>any())).thenReturn(new WFNode());
+        Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.<Integer>any())).thenReturn(new WFNode());
 
         // when
         List<WMWorkItem> workItems = wfmcServiceImpl_Elo.getNextSteps(wfId, nodeId);
 
         // then
-        Mockito.verify(eloUtilsService).getActiveWorkflowById(Mockito.<IXConnection>any(), Mockito.eq(Integer.parseInt(wfId)));
+        Mockito.verify(eloUtilsService).getWorkFlow(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.eq(WFTypeC.ACTIVE), Mockito.eq(WFDiagramC.mbAll), Mockito.eq(LockC.NO));
         Assertions.assertThat(workItems).hasSize(2);
     }
 
     @Test
     public void should_forward_task() {
 
+    }
+
+    @Test
+    public void test_getProcessInstance_with_finished_workflow(){
+        String flowId = "215";
+
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        WMProcessInstance wmProcessInstance = wfmcServiceImpl_Elo.getProcessInstance(flowId);
+        wfmcServiceImpl_Elo.disconnect();
+
+        Assertions.assertThat(wmProcessInstance).isNotNull();
     }
 }

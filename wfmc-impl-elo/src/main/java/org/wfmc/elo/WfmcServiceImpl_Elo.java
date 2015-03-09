@@ -92,7 +92,31 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     }
 
     public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {
-        return getWfmcServiceCache().getProcessInstance(procInstId);
+        WMProcessInstance processInstanceInCache = getWfmcServiceCache().getProcessInstance(procInstId);
+        //process instance wasn't created in ELO, is just in cache
+        if (processInstanceInCache != null)
+            return processInstanceInCache;
+        //process instance exists in ELO, was created
+        WFDiagram wfDiagram = null;
+        WMProcessInstance wmProcessInstance;
+        try {
+            //check if workflow is active
+            wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            if (wfDiagram == null) {
+                //check if workflow is finished
+                wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.FINISHED, WFDiagramC.mbAll, LockC.NO);
+                if (wfDiagram == null) {
+                    throw  new WMInvalidProcessInstanceException(procInstId);
+                } else {
+                    wmProcessInstance = eloToWfMCObjectConverter.convertWFDiagramToWMProcessInstanceWithStatus(wfDiagram, WFTypeC.FINISHED);
+                }
+            } else {
+                wmProcessInstance = eloToWfMCObjectConverter.convertWFDiagramToWMProcessInstanceWithStatus(wfDiagram, WFTypeC.ACTIVE);
+            }
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(e);
+        }
+        return wmProcessInstance;
     }
 
     @Override
@@ -229,7 +253,7 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     nodes[Integer.parseInt(workItemId)].setUserName(targetUser);
                     wfDiagram.setNodes(nodes);
                     getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
-                    getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()),WFTypeC.ACTIVE,WFDiagramC.mbAll,LockC.NO);
+                    getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
                 } else {
                     throw new WMInvalidWorkItemException("This work item do not belong to " + sourceUser);
                 }
@@ -298,15 +322,15 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     @Override
     public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
 
-        Integer processInstanceIdAsInt = Integer.parseInt(processInstanceId);
+
         Integer workItemIdAsInt = Integer.parseInt(workItemId);
         List<WFNode> nextNodes = new ArrayList<>();
 
         try{
-            WFNodeAssoc[] wfNodeAssoc = eloUtilsService.getActiveWorkflowById(getIxConnection(), processInstanceIdAsInt).getMatrix().getAssocs();
+            WFNodeAssoc[] wfNodeAssoc = eloUtilsService.getWorkFlow(getIxConnection(),processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO).getMatrix().getAssocs();
             for (WFNodeAssoc wfNode : wfNodeAssoc) {
                 if (workItemIdAsInt.compareTo(wfNode.getNodeFrom()) == 0 ) {
-                    nextNodes.add(eloUtilsService.getNode(getIxConnection(), processInstanceIdAsInt, wfNode.getNodeTo()));
+                    nextNodes.add(eloUtilsService.getNode(getIxConnection(), processInstanceId, wfNode.getNodeTo()));
                 }
             }
         }
@@ -333,5 +357,4 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         }
         return null;
     }
-    
 }
