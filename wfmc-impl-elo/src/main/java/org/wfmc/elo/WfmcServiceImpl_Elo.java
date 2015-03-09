@@ -118,6 +118,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             }
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
+        } catch (NullPointerException e){
+            throw new WMWorkflowException(e);
         }
         return wmProcessInstance;
     }
