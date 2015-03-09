@@ -57,7 +57,7 @@ public class WfmcServiceImpl_EloTest {
         wfmcServiceCache.__initialize(cacheTestProperties);
 
         // set the ELO connection attributes
-        wmConnectInfo = new WMConnectInfo(configBundle.getString("login.name"),
+        wmConnectInfo = new WMConnectInfo("Andra@"+ configBundle.getString("login.name"),
                 configBundle.getString("login.password"),
                 configBundle.getString("cnn.name"),
                 configBundle.getString("ix.url"));
@@ -83,7 +83,7 @@ public class WfmcServiceImpl_EloTest {
 
     @Test
     public void check_elo_disconnection(){
-        WMConnectInfo wmConnectInfo = new WMConnectInfo(configBundle.getString("login.name"),
+        WMConnectInfo wmConnectInfo = new WMConnectInfo("Andra@"+configBundle.getString("login.name"),
                 configBundle.getString("login.password"),
                 configBundle.getString("cnn.name"),
                 configBundle.getString("ix.url"));
@@ -156,25 +156,6 @@ public class WfmcServiceImpl_EloTest {
         Assertions.assertThat(processInstanceId).isNotNull();
         Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getProcessInstance(processInstanceId)).isNotNull();
 
-    }
-
-    @Test
-    public void should_assign_process_instance_attribute(){
-
-        // given
-        String processInstanceId = "TestProcInstId";
-        String attributeName = ELOConstants.SORD_ID;
-        String attributeValue = "5";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-
-        WfmcServiceCache wfmcServiceCache = Mockito.mock(WfmcServiceCache.class);
-        wfmcServiceImpl_Elo.setWfmcServiceCache(wfmcServiceCache);
-
-        // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
-
-        // then
-        Mockito.verify(wfmcServiceCache).addProcessInstanceAttribute(Mockito.eq(processInstanceId), Mockito.<WMAttribute>any());
     }
 
     @Ignore
@@ -337,24 +318,7 @@ public class WfmcServiceImpl_EloTest {
         }
     }
 
-    @Test
-    public void should_retrieve_process_instance_from_cache(){
-
-        // given
-        String procInstId = "TestProcInstId";
-
-        WfmcServiceCache wfmcServiceCache = Mockito.mock(WfmcServiceCache.class);
-        wfmcServiceImpl_Elo.setWfmcServiceCache(wfmcServiceCache);
-
-        // when
-        WMProcessInstance eloWfmcProcessInstance = wfmcServiceImpl_Elo.getProcessInstance(procInstId);
-
-        // then
-        Mockito.verify(wfmcServiceCache).getProcessInstance(procInstId);
-
-    }
-
-    @Test
+    @Test(expected = WMWorkflowException.class)
     public void should_remove_process_instance_from_cache(){
 
         // given
@@ -367,7 +331,7 @@ public class WfmcServiceImpl_EloTest {
         wfmcServiceImpl_Elo.terminateProcessInstance(procInstId);
 
         // then
-         Assertions.assertThat(wfmcServiceImpl_Elo.getProcessInstance(procInstId)).isNull();
+         wfmcServiceImpl_Elo.getProcessInstance(procInstId);
 
     }
 
@@ -536,7 +500,7 @@ public class WfmcServiceImpl_EloTest {
 
     }
 
-    @Test
+    @Ignore
     public void test_getProcessInstance_with_finished_workflow(){
         String flowId = "215";
 

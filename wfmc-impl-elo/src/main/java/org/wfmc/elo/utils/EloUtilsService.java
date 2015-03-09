@@ -125,6 +125,8 @@ public class EloUtilsService {
             } else {
                 return null;
             }
+        } catch (NullPointerException e){
+            throw e;
         }
         return wfDiagram;
     }
