@@ -92,8 +92,12 @@ public class DemoFluxAprobareOperatiuniNode10 {
         System.out.println("Numar instante proces :" +  wmWorkItemsIterator.getCount());
         while(wmWorkItemsIterator.hasNext()){
             WMProcessInstance wmWorkItem = wmWorkItemsIterator.tsNext();
-            System.out.println("Nume instanta proces : " + wmWorkItem.getName() + "\nStare : " + wmWorkItem.getState().stringValue());
+            if(wmWorkItem!=null)
+                System.out.println("Nume instanta proces : " + wmWorkItem.getName() + "\nStare : " + wmWorkItem.getState().stringValue());
+            else
+                System.out.println("Instanta Proces Nula");
         }
+
 
     }
 
