@@ -347,7 +347,8 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
 
     @Override
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
-        throw new WMUnsupportedOperationException("assignWorkItemAttribute");
+        WMAttribute wmAttribute = new WMAttributeImpl(attrName, WMAttribute.DEFAULT_TYPE, attrValue);
+        wfmcServiceCache.addWorkItemAttribute(procInstId, workItemId, wmAttribute);
     }
 
     @Override

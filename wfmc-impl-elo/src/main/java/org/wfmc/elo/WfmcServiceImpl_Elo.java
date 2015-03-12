@@ -9,7 +9,10 @@ import org.wfmc.elo.utils.EloToWfMCObjectConverter;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.elo.utils.WfMCToEloObjectConverter;
 import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
+import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.impl.base.WMWorkItemIteratorImpl;
+import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
 import org.wfmc.impl.utils.FileUtils;
@@ -397,4 +400,55 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         }
         return null;
     }
+
+    @Override
+    public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
+        WMWorkItem workItem = getWorkItem(procInstId, workItemId);
+        if ((workItem != null) && (WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString().equals(attrName))){
+            super.assignWorkItemAttribute(procInstId, workItemId, attrName, attrValue);
+        }
+    }
+
+    @Override
+    public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
+        WMAttributeIterator workItemAttribute = getWfmcServiceCache().getWorkItemAttribute(procInstId, workItemId);
+        int[] nextNodesId = new int[workItemAttribute.getCount()];
+        if (workItemAttribute != null) {
+            int i = 0;
+            while (workItemAttribute.hasNext()){
+                WMAttribute wmAttribute = workItemAttribute.tsNext();
+                nextNodesId[i++] = (Integer)wmAttribute.getValue();
+            }
+        }
+
+        Integer processInstanceIdAsInt = Integer.parseInt(procInstId);
+        Integer currentWorkItemIdAsInt = Integer.parseInt(workItemId);
+
+        try {
+            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
+            getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
+                    wfEditNode.getNode().getComment(), nextNodesId);
+
+            getWfmcServiceCache().removeWorkItemAttributes(procInstId, workItemId);
+        } catch (RemoteException e) {
+            throw new WMUnsupportedOperationException("Could not complete work item");
+        }
+
+        //TODO: De verificat daca nextNodesId apartin matricei primita prin apelul metodei getNextSteps.
+    }
+
+    @Override
+    public WMWorkItem getWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId(procInstId);
+        WMWorkItemIterator wmWorkItemIterator = listWorkItems(wmFilter, true);
+        WMWorkItemImpl wmWorkItem = new WMWorkItemImpl();
+        while (wmWorkItemIterator.hasNext()) {
+            WMWorkItem workItem = wmWorkItemIterator.tsNext();
+            if (wmWorkItem.getId().equals(workItemId)) {
+                wmWorkItem = (WMWorkItemImpl) workItem;
+            }
+        }
+        return wmWorkItem;
+    }
+
 }
