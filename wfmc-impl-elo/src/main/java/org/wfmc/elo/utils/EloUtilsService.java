@@ -3,7 +3,6 @@ package org.wfmc.elo.utils;
 import de.elo.ix.client.*;
 import org.wfmc.impl.utils.FileUtils;
 
-import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -58,6 +57,7 @@ public class EloUtilsService {
     public Sord createSord(IXConnection ixConnection, String parentPathNameOrId, String maskId, String name) throws de.elo.utils.net.RemoteException {
         Sord sord = null;
         sord = ixConnection.ix().createSord(parentPathNameOrId, maskId, SordC.mbAll);
+        sord.setName(name);
         return sord;
     }
 
@@ -169,5 +169,16 @@ public class EloUtilsService {
         } catch (de.elo.utils.net.RemoteException e) {
             return false;
         }
+    }
+
+    public boolean existSord (IXConnection ixConnection, String pathNameOrId) {
+        boolean existSord = false;
+        try {
+            ixConnection.ix().checkoutSord(pathNameOrId, SordC.mbAll, LockC.NO);
+            existSord = true;
+        } catch (de.elo.utils.net.RemoteException e) {
+            existSord = false;
+        }
+        return existSord;
     }
 }

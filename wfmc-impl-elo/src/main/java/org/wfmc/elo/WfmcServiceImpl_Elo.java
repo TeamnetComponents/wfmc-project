@@ -193,8 +193,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             else {
                 String maskId = null;
                 String sordDirectory = null;
-                String sordName = wmProcessInstance.getId();
-//                String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId();
+                String maskPath = null;
+                String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId().replace("-",":");
                 //daca am primit mask id
                 if (wmProcessInstanceWMAttributeMap.containsKey(ELOConstants.MASK_ID)) {
                     maskId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.MASK_ID).getValue();
@@ -207,13 +207,34 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     throw new WMExecuteException("The mask information does not exist.");
                 }
                 //determin directorul unde trebuie creat sord-ul
-                sordDirectory = processDefinitionAttributes.get(ELOConstants.DIR_TEMPLATE);
+                sordDirectory = processDefinitionAttributes.get(ELOConstants.PATH_TEMPLATE);
+                maskPath = processDefinitionAttributes.get(ELOConstants.PATH_MASK_ID);
                 if (StringUtils.isEmpty(sordDirectory)) {
                     throw new WMExecuteException("The directory information does not exist.");
                 }
                 sordDirectory = FileUtils.replaceTemporalItems(sordDirectory);
                 sordDirectory = TemplateEngine.getInstance().getValueFromTemplate(sordDirectory, wmProcessInstanceAttributeMap);
                 sordDirectory = eloUtilsService.fileUtilsRegular.convertPathName(sordDirectory, eloUtilsService.fileUtilsElo);
+                String[] pathNames = sordDirectory.split("¶");
+                String pathName = null;
+                for (int i = 1; i < pathNames.length; i++) {
+                    if (i == 1) {
+                        pathName = pathNames[0] + "¶" + pathNames[i];
+                        if (!eloUtilsService.existSord(getIxConnection(),pathName)) {
+                            Sord newSord = eloUtilsService.createSord(getIxConnection(), "1",maskPath , pathNames[i]);
+                            eloUtilsService.saveSord(getIxConnection(),newSord, SordC.mbAll, LockC.YES);
+                        }
+                    } else {
+                        if (eloUtilsService.existSord(getIxConnection(), pathName + "¶" + pathNames[i])) {
+                            pathName = pathName + "¶" + pathNames[i];
+                        } else  {
+                            Sord newSord = eloUtilsService.createSord(getIxConnection(), pathName,  maskPath , pathNames[i]);
+                            eloUtilsService.saveSord(getIxConnection(),newSord, SordC.mbAll, LockC.YES);
+                            pathName = pathName + "¶" + pathNames[i];
+                            //pathName = newSord.getRefPaths()[0].getPathAsString();
+                        }
+                    }
+                }
                 sord = eloUtilsService.createSord(getIxConnection(), sordDirectory, maskId, sordName);
             }
 
