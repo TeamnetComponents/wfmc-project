@@ -9,7 +9,10 @@ import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMProcessInstanceState;
 import org.wfmc.wapi.WMWorkItem;
 import org.wfmc.wapi.WMWorkItemState;
+import org.wfmc.xpdl.model.transition.Transition;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
+import java.beans.PropertyVetoException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,8 +123,8 @@ public class EloToWfMCObjectConverter {
             wmWorkItem.setTargetDate(convertEloDateToWfmc(userTask.getWfNode().getUserDelayDateIso(),sdf));
 
             // wmWorkItem.setDueDate(); //TODO:
-           //dueDate - "  The date/time by which the work item must be complete. "
-          // timeLimitIso -    Node must be completed until this date.
+            //dueDate - "  The date/time by which the work item must be complete. "
+            // timeLimitIso -    Node must be completed until this date.
             wmWorkItem.setDueDate(convertEloDateToWfmc(userTask.getWfNode().getTimeLimitIso(),sdf));
 
             //wmWorkItem.setCompletedDate(null); //TODO: Andra: aici vom avea doar din istoric?
@@ -169,13 +172,13 @@ public class EloToWfMCObjectConverter {
     }
 
     private static Date convertEloDateToWfmc(String data, SimpleDateFormat sdf){
-          if(data==null)
-              return null;
-          try {
+        if(data==null)
+            return null;
+        try {
             Date d = sdf.parse(data);
             return d;
-            }
-              catch (ParseException e) {
+        }
+        catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
@@ -186,6 +189,31 @@ public class EloToWfMCObjectConverter {
 
     }
 
+    public WorkflowProcess convertWfDiagramToWorkflowProcess(WFDiagram wfDiagram){
+        WorkflowProcess wp = new WorkflowProcess();
+
+        WFNodeAssoc[] asocieri = wfDiagram.getMatrix().getAssocs();
+
+
+        int idTranzitie = 0;
+        Transition[] tranzitii = new Transition[asocieri.length];
+        for(int i =0; i<asocieri.length;i++){
+            Transition t = new Transition();
+            t.setFrom(asocieri[i].getNodeFrom()+"");
+            t.setTo(asocieri[i].getNodeTo()+"");
+            t.setId(idTranzitie++ + "");
+            tranzitii[i] = t;
+
+        }
+        try {
+            wp.setTransition(tranzitii);
+        } catch (PropertyVetoException e) {
+            e.printStackTrace();
+        }
+        wp.setName(wfDiagram.getName());
+
+        return wp;
+    }
 
 
     public WMProcessInstance[] convertWFDiagramsToWMProcessInstances(WFDiagram[] wfDiagrams) {
@@ -193,7 +221,7 @@ public class EloToWfMCObjectConverter {
         WMProcessInstance[] wmProcessInstances = new WMProcessInstance[wfDiagrams.length];
         List<WMProcessInstance> wmProcessInstanceList = new ArrayList<>();
         for(int i = 0; i<wfDiagrams.length;i++){
-           wmProcessInstances[i] = this.convertWFDiagramToWMProcessInstance(wfDiagrams[i]);
+            wmProcessInstances[i] = this.convertWFDiagramToWMProcessInstance(wfDiagrams[i]);
         }
         wmProcessInstanceList.toArray(wmProcessInstances);
         return wmProcessInstances;
