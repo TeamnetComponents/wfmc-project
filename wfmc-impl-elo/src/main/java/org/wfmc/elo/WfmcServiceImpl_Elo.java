@@ -22,7 +22,10 @@ import org.wfmc.impl.utils.WfmcUtilsService;
 import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
+import org.wfmc.xpdl.model.transition.Transition;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
+import java.beans.PropertyVetoException;
 import java.util.*;
 
 /**
@@ -449,6 +452,39 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             }
         }
         return wmWorkItem;
+    }
+
+    @Override
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) {
+        WorkflowProcess wp = new WorkflowProcess();
+        try {
+
+            WFDiagram wfDiagram = eloUtilsService.getWorkFlowTemplate(getIxConnection(),processDefinitionId,"",WFDiagramC.mbAll,LockC.NO);
+            System.out.println("wf"+ wfDiagram);
+
+            WFNodeAssoc[] asocieri = wfDiagram.getMatrix().getAssocs();
+
+
+            int idTranzitie = 0;
+            Transition[] tranzitii = new Transition[asocieri.length];
+            for(int i =0; i<asocieri.length;i++){
+                Transition t = new Transition();
+                t.setFrom(asocieri[i].getNodeFrom()+"");
+                t.setTo(asocieri[i].getNodeTo()+"");
+                //nu am gasit in elo, dar ii setez id-ul pt ca e folosit de hashcode si crapa daca e null cand folsoim in anumite colectii
+                t.setId(idTranzitie++ + "");
+                tranzitii[i] = t;
+
+            }
+            wp.setTransition(tranzitii);
+            wp.setName(wfDiagram.getName());
+
+
+        } catch (RemoteException | PropertyVetoException e) {
+            e.printStackTrace();
+        }
+
+        return wp;
     }
 
 }

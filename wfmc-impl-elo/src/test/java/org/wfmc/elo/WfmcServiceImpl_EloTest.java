@@ -15,7 +15,6 @@ import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
 import org.wfmc.elo.model.EloWfmcObjKey;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
-import org.wfmc.elo.utils.EloToWfMCObjectConverter;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.base.WMAttributeImpl;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
@@ -24,6 +23,8 @@ import org.wfmc.service.ServiceFactory;
 import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceCacheImpl_Memory;
 import org.wfmc.wapi.*;
+import org.wfmc.xpdl.model.transition.Transition;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
 import java.io.IOException;
 import java.util.*;
@@ -157,6 +158,82 @@ public class WfmcServiceImpl_EloTest {
         Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getProcessInstance(processInstanceId)).isNotNull();
 
     }
+
+
+    @Test
+    public void should_getWorkFlowProcess() throws RemoteException {
+        //checking for the right transitions
+
+        // given
+        String wfId = "1";
+        String nodeId = "2";
+
+        EloUtilsService eloUtilsService = Mockito.mock(EloUtilsService.class);
+        wfmcServiceImpl_Elo.setEloUtilsService(eloUtilsService);
+
+        WFNodeAssoc[] wfNodeAssoc = new WFNodeAssoc[6];
+        wfNodeAssoc[0] = new WFNodeAssoc();
+        wfNodeAssoc[0].setNodeTo(1);
+        wfNodeAssoc[0].setNodeFrom(0);
+
+        wfNodeAssoc[1] = new WFNodeAssoc();
+        wfNodeAssoc[1].setNodeTo(2);
+        wfNodeAssoc[1].setNodeFrom(1);
+
+        wfNodeAssoc[2] = new WFNodeAssoc();
+        wfNodeAssoc[2].setNodeTo(4);
+        wfNodeAssoc[2].setNodeFrom(2);
+
+        wfNodeAssoc[3] = new WFNodeAssoc();
+        wfNodeAssoc[3].setNodeTo(5);
+        wfNodeAssoc[3].setNodeFrom(2);
+
+        wfNodeAssoc[4] = new WFNodeAssoc();
+        wfNodeAssoc[4].setNodeTo(4);
+        wfNodeAssoc[4].setNodeFrom(5);
+
+        wfNodeAssoc[5] = new WFNodeAssoc();
+        wfNodeAssoc[5].setNodeTo(5);
+        wfNodeAssoc[5].setNodeFrom(4);
+
+        WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
+
+        Mockito.when(eloUtilsService.getWorkFlowTemplate(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.eq(""), Mockito.eq(WFDiagramC.mbAll), Mockito.eq(LockC.NO))).thenReturn(wfDiagram);
+
+        WFNodeMatrix matrix = Mockito.mock(WFNodeMatrix.class);
+        Mockito.when(wfDiagram.getMatrix()).thenReturn(matrix);
+
+        Mockito.when(matrix.getAssocs()).thenReturn(wfNodeAssoc);
+        Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.<Integer>any())).thenReturn(new WFNode());
+
+        // when
+        WorkflowProcess workFlowProcess = wfmcServiceImpl_Elo.getWorkFlowProcess(wfId);
+
+
+
+        // then
+        Transition[] transitions = workFlowProcess.getTransition();
+
+        Mockito.verify(eloUtilsService).getWorkFlowTemplate(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.eq(""), Mockito.eq(WFDiagramC.mbAll), Mockito.eq(LockC.NO));
+
+        Assertions.assertThat(transitions).hasSize(6);
+
+        //verificam tranzitiile de la nodul 2 - (next steps)
+
+        List<String> to = new LinkedList<String>();
+        for(int i=0;i<transitions.length;i++){
+            if(transitions[i].getFrom().equals(nodeId))
+                to.add(transitions[i].getTo());
+
+
+        }
+
+        Assertions.assertThat(to).hasSize(2);
+        Assertions.assertThat(to).contains("4","5");
+
+    }
+
+
 
     @Ignore
     public void should_assign_process_instance_attribute_mask_id(){

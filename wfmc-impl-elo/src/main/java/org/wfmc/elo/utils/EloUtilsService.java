@@ -113,6 +113,30 @@ public class EloUtilsService {
     }
 
 
+    public WFDiagram getWorkFlowTemplate(IXConnection ixConnection, String processDefinitionId,String versionId, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
+        WFDiagram wfDiagram = null;
+        try {
+
+            wfDiagram = ixConnection.ix().checkoutWorkflowTemplate(processDefinitionId, null, WFDiagramC.mbAll, LockC.NO);
+
+
+        } catch (RemoteException e) {
+            IXError ixError = IXError.parseException((de.elo.utils.net.RemoteException) e);
+            if (ixError.code != 5023) //cale incorecta
+            {
+                throw e;
+            } else {
+                return null;
+            }
+        } catch (NullPointerException e){
+            throw e;
+        }
+        return wfDiagram;
+    }
+
+
+
+
     public WFDiagram getWorkFlow(IXConnection ixConnection, String flowId, WFTypeZ wfTypeZ, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
         WFDiagram wfDiagram = null;
         try {
