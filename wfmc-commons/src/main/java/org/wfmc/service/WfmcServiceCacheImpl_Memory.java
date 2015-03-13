@@ -2,6 +2,7 @@ package org.wfmc.service;
 
 import org.wfmc.cache.ExpirableMemoryCache;
 import org.wfmc.impl.base.WMAttributeIteratorImpl;
+import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.wapi.WMAttribute;
 import org.wfmc.wapi.WMAttributeIterator;
 import org.wfmc.wapi.WMProcessInstance;
@@ -107,29 +108,29 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
 
     @Override
     public WMAttributeIterator getWorkItemAttribute(String procInstId, String workItemId) {
-        WMWorkItem workItem = wfmcService.getWorkItem(procInstId, workItemId);
+        WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
         Map<String, WMAttribute> wmAttributeMap = this.getCache().wmWorkItemAttributeCache.get(workItem);
         return new WMAttributeIteratorImpl(wmAttributeMap.values().toArray());
     }
 
     @Override
     public void addWorkItemAttribute(String procInstId, String workItemId, WMAttribute wmAttribute) {
-        WMWorkItem wmWorkItem = wfmcService.getWorkItem(procInstId, workItemId);
-        if (wmWorkItem != null) {
+        WMWorkItem wmWorkItem = new WMWorkItemImpl(procInstId, workItemId);
+        if (wmWorkItem.getId() != null) {
             synchronized (wmWorkItem) {
                 Map<String, WMAttribute> wmAttributeMap = getCache().wmWorkItemAttributeCache.get(wmWorkItem);
                 if (wmAttributeMap == null) {
                     wmAttributeMap = new ConcurrentHashMap<String, WMAttribute>();
-                    getCache().wmWorkItemAttributeCache.put(wmWorkItem, wmAttributeMap);
                 }
                 wmAttributeMap.put(wmAttribute.getName(), wmAttribute);
+                getCache().wmWorkItemAttributeCache.put(wmWorkItem, wmAttributeMap);
             }
         }
     }
 
     @Override
     public void removeWorkItemAttribute(String procInstId, String workItemId, String attrName) {
-        WMWorkItem wmWorkItem = wfmcService.getWorkItem(procInstId, workItemId);
+        WMWorkItem wmWorkItem = new WMWorkItemImpl(procInstId, workItemId);
         Map<String, WMAttribute> wmAttributeMap = this.getCache().wmWorkItemAttributeCache.get(wmWorkItem);
         if (wmAttributeMap != null) {
             wmAttributeMap.remove(attrName);
@@ -138,7 +139,7 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
 
     @Override
     public void removeWorkItemAttributes(String procInstId, String workItemId) {
-        WMWorkItem workItem = wfmcService.getWorkItem(procInstId, workItemId);
+        WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
         this.getCache().wmWorkItemAttributeCache.remove(workItem);
     }
 

@@ -12,7 +12,6 @@ import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
 import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.impl.base.WMWorkItemIteratorImpl;
-import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
 import org.wfmc.impl.utils.FileUtils;
@@ -336,42 +335,11 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
-        try {
-            Integer processInstanceIdAsInt = Integer.parseInt(processInstanceId);
-            Integer currentWorkItemIdAsInt = Integer.parseInt(currentWorkItemId);
-
-            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
-            List<WMWorkItem> nextSteps = getNextSteps(processInstanceId, currentWorkItemId);
-            for (int i = 0; i< nextWorkItemIds.length; i++) {
-                boolean isNextWorkItemASuccessor = false;
-                for (WMWorkItem wmWorkItem : nextSteps) {
-                    if (nextWorkItemIds[i].equals(wmWorkItem.getId())){
-                        isNextWorkItemASuccessor = true;
-                    }
-                }
-                if (!isNextWorkItemASuccessor) {
-                    throw new WMInvalidWorkItemException(nextWorkItemIds[i]);
-                }
-            }
-            int[] nextWorkItemIdsAsInt = new int[nextWorkItemIds.length];
-            for (int i = 0; i < nextWorkItemIds.length; i++) {
-                nextWorkItemIdsAsInt[i] = Integer.parseInt(nextWorkItemIds[i]);
-            }
-            getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
-                    wfEditNode.getNode().getComment(), nextWorkItemIdsAsInt);
-        } catch (RemoteException e) {
-            throw new WMWorkflowException(e);
-        }
-    }
-
-
-    @Override
     public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException {
         if (filter instanceof WMFilterProcessInstance) {
             try {
                 FindWorkflowInfo findWorkflowInfo = wfMCToEloObjectConverter.convertWMFilterProcessInstanceToFindWorkflowInfo((WMFilterProcessInstance)filter);
-                FindResult findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, 10, WFDiagramC.mbAll);
+                FindResult findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, MAX_RESULT, WFDiagramC.mbAll);
                 WFDiagram[] wfDiagrams = findResult.getWorkflows();
                 WMProcessInstance[] wmProcessInstances = eloToWfMCObjectConverter.convertWFDiagramsToWMProcessInstances(wfDiagrams);
                 return new WMProcessInstanceIteratorImpl(wmProcessInstances);
@@ -385,8 +353,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     @Override
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
-        WMWorkItem workItem = getWorkItem(procInstId, workItemId);
-        if ((workItem != null) && (WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString().equals(attrName))){
+        WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
+        if ((workItem.getId() != null) && (WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString().equals(attrName))){
             super.assignWorkItemAttribute(procInstId, workItemId, attrName, attrValue);
         }
     }
@@ -394,12 +362,13 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     @Override
     public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
         WMAttributeIterator workItemAttribute = getWfmcServiceCache().getWorkItemAttribute(procInstId, workItemId);
+
         int[] nextNodesId = new int[workItemAttribute.getCount()];
         if (workItemAttribute != null) {
             int i = 0;
             while (workItemAttribute.hasNext()){
                 WMAttribute wmAttribute = workItemAttribute.tsNext();
-                nextNodesId[i++] = (Integer)wmAttribute.getValue();
+                nextNodesId[i++] = Integer.parseInt((String)wmAttribute.getValue());
             }
         }
 
@@ -408,29 +377,54 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
         try {
             WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
-            getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
-                    wfEditNode.getNode().getComment(), nextNodesId);
+            List<WMWorkItem> nextSteps = getNextSteps(procInstId, workItemId);
 
-            getWfmcServiceCache().removeWorkItemAttributes(procInstId, workItemId);
+            List<String> nextStepsId = new ArrayList<>();
+            for (WMWorkItem wmWorkItem : nextSteps){
+                String id = wmWorkItem.getId();
+                nextStepsId.add(id);
+            }
+
+            boolean isNextWorkItemASuccessor = false;
+            for (int i = 0; i < nextNodesId.length; i++) {
+                if (nextStepsId.contains(String.valueOf(nextNodesId[i]))) {
+                    isNextWorkItemASuccessor = true;
+                } else {
+                    isNextWorkItemASuccessor = false;
+                    break;
+                }
+            }
+            if (isNextWorkItemASuccessor) {
+                getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
+                        wfEditNode.getNode().getComment(), nextNodesId);
+                getWfmcServiceCache().removeWorkItemAttributes(procInstId, workItemId);
+            }
         } catch (RemoteException e) {
-            throw new WMUnsupportedOperationException("Could not complete work item");
+            throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_COMPLETE_WORK_ITEM));
         }
-
-        //TODO: De verificat daca nextNodesId apartin matricei primita prin apelul metodei getNextSteps.
     }
 
     @Override
     public WMWorkItem getWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId(procInstId);
-        WMWorkItemIterator wmWorkItemIterator = listWorkItems(wmFilter, true);
-        WMWorkItemImpl wmWorkItem = new WMWorkItemImpl();
-        while (wmWorkItemIterator.hasNext()) {
-            WMWorkItem workItem = wmWorkItemIterator.tsNext();
-            if (wmWorkItem.getId().equals(workItemId)) {
-                wmWorkItem = (WMWorkItemImpl) workItem;
+
+        try {
+            WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            WFNode[] nodes = wfDiagram.getNodes();
+            WMWorkItem wmWorkItem = null;
+            List<WFNode> wfNodes = new ArrayList<>();
+            for (WFNode wfNode : nodes) {
+                if (Integer.parseInt(workItemId) == wfNode.getId()) {
+                    wfNodes.add(wfNode);
+                    List<WMWorkItem> wmWorkItemList = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(wfNodes);
+                    for(WMWorkItem workItem : wmWorkItemList){
+                        wmWorkItem = workItem;
+                    }
+                }
             }
+            return wmWorkItem;
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_FIND_WORK_ITEM));
         }
-        return wmWorkItem;
     }
 
     @Override

@@ -402,9 +402,5 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
 
 
 
-    @Override
-    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
-        throw new WMUnsupportedOperationException("setTransition");
-    }
 
 }
