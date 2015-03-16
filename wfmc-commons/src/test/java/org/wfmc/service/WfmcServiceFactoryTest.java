@@ -22,9 +22,9 @@ public class WfmcServiceFactoryTest {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
-        Assertions.assertThat(wfmcService).isInstanceOf(WfmcServiceAudit_Impl.class);
-        Assertions.assertThat(((WfmcServiceAudit_Impl)wfmcService).getInternalService()).isInstanceOf(
-            WfmcServiceAudit_Impl.class);
+        Assertions.assertThat(wfmcService).isInstanceOf(WfmcServiceAuditImpl.class);
+        Assertions.assertThat(((WfmcServiceAuditImpl)wfmcService).getInternalService()).isInstanceOf(
+            WfmcServiceAuditImpl.class);
 
     }
 
@@ -35,8 +35,8 @@ public class WfmcServiceFactoryTest {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
-        Assertions.assertThat(wfmcService).isInstanceOf(WfmcServiceAudit_Impl.class);
-        Assertions.assertThat(((WfmcServiceAudit_Impl)((WfmcServiceAudit_Impl)wfmcService).getInternalService()).getWfmcServiceCache()).isNotNull();
+        Assertions.assertThat(wfmcService).isInstanceOf(WfmcServiceAuditImpl.class);
+        Assertions.assertThat(((WfmcServiceAuditImpl)((WfmcServiceAuditImpl)wfmcService).getInternalService()).getWfmcServiceCache()).isNotNull();
     }
 
     @Test
@@ -44,7 +44,7 @@ public class WfmcServiceFactoryTest {
         throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
-        WfmcServiceAudit_Impl wfmcService = (WfmcServiceAudit_Impl)wfmcServiceFactory.getInstance();
+        WfmcServiceAuditImpl wfmcService = (WfmcServiceAuditImpl)wfmcServiceFactory.getInstance();
         Assertions.assertThat(wfmcService.getDataSource().getConnection()).isNotNull();
     }
 

@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 public class FileUtils {
 
     //static members
-    private static final String extensionDelimiter = ".";
-    private static final FileUtils fileUtilsDMS = new FileUtils("/", "/");
-    private static final FileUtils fileUtilsOS = new FileUtils(System.getProperty("file.separator"), System.getProperty("file.separator"));
+    private static final String EXTENSION_DELIMITER = ".";
+    private static final FileUtils FILE_UTILS_DMS = new FileUtils("/", "/");
+    private static final FileUtils FILE_UTILS_OS = new FileUtils(System.getProperty("file.separator"), System.getProperty("file.separator"));
     private static MimetypesFileTypeMap mimetypesFileTypeMap = null;
 
     //instance members
@@ -107,15 +107,15 @@ public class FileUtils {
 
 
     public static String getExtensionDelimiter() {
-        return extensionDelimiter;
+        return EXTENSION_DELIMITER;
     }
 
     public static FileUtils getFileUtilsDMS() {
-        return fileUtilsDMS;
+        return FILE_UTILS_DMS;
     }
 
     public static FileUtils getFileUtilsOS() {
-        return fileUtilsOS;
+        return FILE_UTILS_OS;
     }
 
     public static FileUtils proposeFileUtils(String filePathName) {
@@ -156,7 +156,7 @@ public class FileUtils {
     }
 
     public String getFileNameWithExtension(String fileBaseName, String fileExtension) {
-        return getFileBaseName(fileBaseName) + extensionDelimiter + fileExtension;
+        return getFileBaseName(fileBaseName) + EXTENSION_DELIMITER + fileExtension;
     }
 
     public String getFileName(String filePathName) {
@@ -178,7 +178,7 @@ public class FileUtils {
     public String getFileExtension(String filePathName) {
         String fileExtension = "";
         String fileName = getFileName(filePathName);
-        int lastDelimiterIndex = fileName.lastIndexOf(extensionDelimiter);
+        int lastDelimiterIndex = fileName.lastIndexOf(EXTENSION_DELIMITER);
         if (lastDelimiterIndex != -1) {
             fileExtension = fileName.substring(lastDelimiterIndex + 1);
         }
@@ -188,7 +188,7 @@ public class FileUtils {
     public String getFileBaseName(String filePathName) {
         String fileName = getFileName(filePathName);
         String fileBaseName = fileName;
-        int lastDelimiterIndex = fileName.lastIndexOf(extensionDelimiter);
+        int lastDelimiterIndex = fileName.lastIndexOf(EXTENSION_DELIMITER);
         if (lastDelimiterIndex != -1) {
             fileBaseName = fileName.substring(0, lastDelimiterIndex);
         }

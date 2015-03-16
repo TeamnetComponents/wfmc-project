@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * Created by Lucian.Dragomir on 2/28/2015.
  */
-public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
+public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     private static final int MAX_RESULT = 1000;
     private static final String WF_SORD_LOCATION_TEMPLATE = "workflow.sord.location.template.path";

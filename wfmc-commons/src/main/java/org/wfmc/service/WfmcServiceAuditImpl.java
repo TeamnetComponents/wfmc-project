@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 /**
  * Created by Lucian.Dragomir on 3/16/2015.
  */
-public class WfmcServiceAudit_Impl extends WfmcServiceImpl_Abstract {
+public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
     private WfmcService internalService;
     private DataSource  dataSource;
 

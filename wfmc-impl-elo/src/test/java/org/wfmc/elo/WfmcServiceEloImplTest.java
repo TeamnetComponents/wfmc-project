@@ -36,9 +36,9 @@ import java.util.*;
  * @author adrian.zamfirescu
  * @since 20/02/2015
  */
-public class WfmcServiceImpl_EloTest {
-
-    private WfmcServiceImpl_Elo wfmcServiceImpl_Elo;
+public class WfmcServiceEloImplTest {
+    private static String STRADA = "strada";
+    private WfmcServiceEloImpl wfmcServiceEloImpl;
 
     private WMConnectInfo wmConnectInfo;
 
@@ -48,7 +48,7 @@ public class WfmcServiceImpl_EloTest {
     public void setUp() throws IOException {
 
         // create main service
-        wfmcServiceImpl_Elo = new WfmcServiceImpl_Elo();
+        wfmcServiceEloImpl = new WfmcServiceEloImpl();
 
         // create some test cache properties
         Properties cacheTestProperties = new Properties();
@@ -56,8 +56,8 @@ public class WfmcServiceImpl_EloTest {
 
         // create a test service cache
         WfmcServiceCache wfmcServiceCache = new WfmcServiceCacheImpl_Memory();
-        wfmcServiceCache.setWfmcService(wfmcServiceImpl_Elo);
-        wfmcServiceImpl_Elo.setWfmcServiceCache(wfmcServiceCache);
+        wfmcServiceCache.setWfmcService(wfmcServiceEloImpl);
+        wfmcServiceEloImpl.setWfmcServiceCache(wfmcServiceCache);
         wfmcServiceCache.__initialize(cacheTestProperties);
 
         // set the ELO connection attributes
@@ -69,61 +69,38 @@ public class WfmcServiceImpl_EloTest {
 
     @After
     public void cleanUp(){
-        wfmcServiceImpl_Elo.disconnect();
+        wfmcServiceEloImpl.disconnect();
     }
 
     @Test
-    public void should_create_elo_connection(){
+    public void shouldCreateEloConnection(){
 
         // given - all is set up
 
         // when
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         // then
-        Assertions.assertThat(wfmcServiceImpl_Elo.getIxConnection()).isNotNull();
+        Assertions.assertThat(wfmcServiceEloImpl.getIxConnection()).isNotNull();
 
     }
 
     @Test
-    public void check_elo_disconnection(){
+    public void checkEloDisconnection(){
         WMConnectInfo wmConnectInfo = new WMConnectInfo("Andra@"+configBundle.getString("login.name"),
                 configBundle.getString("login.password"),
                 configBundle.getString("cnn.name"),
                 configBundle.getString("ix.url"));
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
-        wfmcServiceImpl_Elo.disconnect();
+        wfmcServiceEloImpl.disconnect();
 
-        Assertions.assertThat(wfmcServiceImpl_Elo.getIxConnection() == null);
+        Assertions.assertThat(wfmcServiceEloImpl.getIxConnection() == null);
     }
 
-    @Test
-    public void check_list_work_items_for_groups(){
-//        //given
-//        String name = "Group";
-//        int comparison = WMFilter.EQ;
-//
-//        //when
-//        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-//        try {
-//            UserInfo[] groupsInfo = wfmcServiceImpl_Elo.getEloConnection().ix().checkoutUsers(null, CheckoutUsersC.ALL_GROUPS, LockC.YES);
-//            for (UserInfo userInfo : groupsInfo){
-//                String groupName = userInfo.getName();
-//                WMFilter wmFilter = new WMFilter(name, comparison , groupName);
-//                WMWorkItemIteratorImpl wmWorkItemIterator = (WMWorkItemIteratorImpl) wfmcServiceImpl_Elo.listWorkItems(wmFilter, false);
-//                while (wmWorkItemIterator.hasNext()){
-//                    Assertions.assertThat((wmWorkItemIterator.tsNext().getParticipant().getName())).isEqualTo(groupName);
-//                }
-//            }
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-        //TODO Daniel: de refacut
-    }
 
     @Ignore
-    public void should_start_elo_workflow_process_deprecated(){
+    public void shouldStartEloWorkflowProcessDeprecated(){
 
         // given
         String processInstanceId = "someProcessInstanceId";
@@ -132,14 +109,14 @@ public class WfmcServiceImpl_EloTest {
         wmProcessInstance.setName("Test Workflow Name");
         wmProcessInstance.setEloWfMCProcessInstanceAttributes(new ELOWfMCProcessInstanceAttributes("104")); //idSORD fisier TEST WF (se presupune ca acesta va exista permanent in arhiva ELO de test)
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.doReturn(wmProcessInstance).when(wfmcServiceImpl_Elo).getProcessInstance(Mockito.<String>any());
-        Mockito.doNothing().when(wfmcServiceImpl_Elo).abortProcessInstance(processInstanceId);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.doReturn(wmProcessInstance).when(wfmcServiceEloImpl).getProcessInstance(Mockito.<String>any());
+        Mockito.doNothing().when(wfmcServiceEloImpl).abortProcessInstance(processInstanceId);
 
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         // when
-        String workspaceId = wfmcServiceImpl_Elo.startProcess(processInstanceId);
+        String workspaceId = wfmcServiceEloImpl.startProcess(processInstanceId);
 
         // then
         Assertions.assertThat(workspaceId).isNotNull();
@@ -147,24 +124,24 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Test
-    public void should_create_process_instance(){
+    public void shouldCreateProcessInstance(){
 
         // given
         String processDefinitionId = "5";
         String processInstanceName = "TestProcInstName";
 
         // when
-        String processInstanceId = wfmcServiceImpl_Elo.createProcessInstance(processDefinitionId, processInstanceName);
+        String processInstanceId = wfmcServiceEloImpl.createProcessInstance(processDefinitionId, processInstanceName);
 
         // then
         Assertions.assertThat(processInstanceId).isNotNull();
-        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getProcessInstance(processInstanceId)).isNotNull();
+        Assertions.assertThat(wfmcServiceEloImpl.getWfmcServiceCache().getProcessInstance(processInstanceId)).isNotNull();
 
     }
 
 
     @Test
-    public void should_getWorkFlowProcess() throws RemoteException {
+    public void shouldGetWorkFlowProcess() throws RemoteException {
         //checking for the right transitions
 
         // given
@@ -172,7 +149,7 @@ public class WfmcServiceImpl_EloTest {
         String nodeId = "2";
 
         EloUtilsService eloUtilsService = Mockito.mock(EloUtilsService.class);
-        wfmcServiceImpl_Elo.setEloUtilsService(eloUtilsService);
+        wfmcServiceEloImpl.setEloUtilsService(eloUtilsService);
 
         WFNodeAssoc[] wfNodeAssoc = new WFNodeAssoc[6];
         wfNodeAssoc[0] = new WFNodeAssoc();
@@ -210,7 +187,7 @@ public class WfmcServiceImpl_EloTest {
         Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.<Integer>any())).thenReturn(new WFNode());
 
         // when
-        WorkflowProcess workFlowProcess = wfmcServiceImpl_Elo.getWorkFlowProcess(wfId);
+        WorkflowProcess workFlowProcess = wfmcServiceEloImpl.getWorkFlowProcess(wfId);
 
 
 
@@ -239,21 +216,21 @@ public class WfmcServiceImpl_EloTest {
 
 
     @Ignore
-    public void should_assign_process_instance_attribute_mask_id(){
+    public void shouldAssignPprocessInstanceAttributeMaskId(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = ELOConstants.MASK_ID;
         String attributeValue = "Dosar";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
 
         // then
         Assertions.assertThat(eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).isNotNull();
@@ -262,122 +239,122 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Ignore
-    public void should_assign_process_instance_attribute_mask_from_comment(){
+    public void shouldAssignProcessInstanceAttributeMaskFromComment(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = "Tip drum";
         String attributeValue = "Strada";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
         eloWfmcProcessInstance.setProcessDefinitionId("Template1");
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
 
         // then
         Assertions.assertThat(eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).isNotNull();
-//        Assertions.assertThat(((ELOWfMCProcessInstanceAttributes)eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).getMaskId()).isEqualTo();
+
         // TODO - complete test assertions after adding metadata
     }
 
     @Ignore//(expected = WMAttributeAssignmentException.class)
-    public void should_assign_process_instance_attribute_sord_id_exception(){
+    public void shouldAssignProcessInstanceAttributeSordIdException(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = ELOConstants.SORD_ID;
         String attributeValue = "-1";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
 
         // then
     }
 
     @Ignore//(expected = WMWorkflowException.class)
-    public void should_assign_process_instance_attribute_mask_id_exception(){
+    public void shouldAssignProcessInstanceAttributeMaskIdException(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = ELOConstants.MASK_ID;
         String attributeValue = "-1";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
 
     }
 
     @Ignore//(expected = WMWorkflowException.class)
-    public void should_assign_process_instance_attribute_mask_from_comment_exception(){
+    public void shouldAssignProcessInstanceAttributeMaskFromCommentException(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = "Tip drum";
         String attributeValue = "Strada";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
         eloWfmcProcessInstance.setProcessDefinitionId("Test");
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
     }
 
     @Ignore//(expected = WMWorkflowException.class)
-    public void should_assign_process_instance_attribute_mask_from_comment_workflow_not_exist_exception(){
+    public void shouldAssignProcessInstanceAttributeMaskFromCommentWorkflowNotExistException(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = "Tip drum";
         String attributeValue = "Strada";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
         EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
         eloWfmcProcessInstance.setProcessDefinitionId("-1");
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
     }
 
     @Ignore
-    public void should_assign_process_instance_attribute_deprecated(){
+    public void shouldAssignProcessInstanceAttributeDeprecated(){
 
         // given
         String processInstanceId = "TestProcInstId";
         String attributeName = "Tip drum";
-//        Object attributeValue = "Strada";
-        Object attributeValue = new String[] {"strada","autostrada"};
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        Object attributeValue = new String[] {STRADA,"autostrada"};
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
 
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
         EloWfmcProcessInstance eloWfmcProcessInstance = Mockito.mock(EloWfmcProcessInstance.class);
-        Mockito.when(wfmcServiceImpl_Elo.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
+        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
         ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = Mockito.mock(ELOWfMCProcessInstanceAttributes.class);
-        Mockito.when(eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).thenReturn(eloWfMCProcessInstanceAttributes);
+        Mockito.when(eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).thenReturn(
+            eloWfMCProcessInstanceAttributes);
         EloWfmcObjKey[] objKeys = new EloWfmcObjKey[5];
         for (int i = 0; i < 5 ; i++) {
             objKeys[i] = new EloWfmcObjKey();
@@ -388,7 +365,7 @@ public class WfmcServiceImpl_EloTest {
         Mockito.when(eloWfMCProcessInstanceAttributes.getObjKeys()).thenReturn(objKeys);
 
         // when
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
 
         // then
         if (attributeValue instanceof String[]) {
@@ -399,36 +376,36 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Test(expected = WMWorkflowException.class)
-    public void should_remove_process_instance_from_cache(){
+    public void shouldRemoveProcessInstanceFromCache(){
 
         // given
         String procInstId = "TestProcInstId";
 
         WMProcessInstance wmProcessInstance = new WMProcessInstanceImpl(procInstId, String.valueOf(UUID.randomUUID()), procInstId);
-        wfmcServiceImpl_Elo.getWfmcServiceCache().addProcessInstance(wmProcessInstance);
+        wfmcServiceEloImpl.getWfmcServiceCache().addProcessInstance(wmProcessInstance);
 
         // when
-        wfmcServiceImpl_Elo.terminateProcessInstance(procInstId);
+        wfmcServiceEloImpl.terminateProcessInstance(procInstId);
 
         // then
-         wfmcServiceImpl_Elo.getProcessInstance(procInstId);
+         wfmcServiceEloImpl.getProcessInstance(procInstId);
 
     }
 
     @Test
-    public void should_start_elo_workflow_process() throws RemoteException {
+    public void should_startEloWorkflowProcess() throws RemoteException {
 
         String procInstId = "testProcInstId";
 
         // given
-        wfmcServiceImpl_Elo = Mockito.spy(wfmcServiceImpl_Elo);
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
 
         EloUtilsService eloUtilsService = Mockito.mock(EloUtilsService.class);
         WfmcUtilsService wfmcUtilsService = Mockito.mock(WfmcUtilsService.class);
         WfmcServiceCache wfmcServiceCache = Mockito.mock(WfmcServiceCache.class);
-        wfmcServiceImpl_Elo.setWfmcServiceCache(wfmcServiceCache);
-        wfmcServiceImpl_Elo.setEloUtilsService(eloUtilsService);
-        wfmcServiceImpl_Elo.setWfmcUtilsService(wfmcUtilsService);
+        wfmcServiceEloImpl.setWfmcServiceCache(wfmcServiceCache);
+        wfmcServiceEloImpl.setEloUtilsService(eloUtilsService);
+        wfmcServiceEloImpl.setWfmcUtilsService(wfmcUtilsService);
 
         WMProcessInstance wmProcessInstance = new WMProcessInstanceImpl_Elo();
         Mockito.when(wfmcServiceCache.getProcessInstance(procInstId)).thenReturn(wmProcessInstance);
@@ -440,11 +417,8 @@ public class WfmcServiceImpl_EloTest {
         Mockito.when(wfmcUtilsService.toMap(wmProcessInstanceWMAttributeMap)).thenReturn(wmProcessInstanceAttributeMap);
 
         WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
-        Mockito.when(eloUtilsService.getWorkFlow(Mockito.<IXConnection>any(),
-                                                 Mockito.<String>any(),
-                                                 Mockito.<WFTypeZ>any(),
-                                                 Mockito.<WFDiagramZ>any(),
-                                                 Mockito.<LockZ>any())).thenReturn(wfDiagram);
+        Mockito.when(eloUtilsService.getWorkFlow(Mockito.<IXConnection>any(), Mockito.<String>any(),
+            Mockito.<WFTypeZ>any(), Mockito.<WFDiagramZ>any(), Mockito.<LockZ>any())).thenReturn(wfDiagram);
 
         WFNode[] wfNodes = new WFNode[25];
         wfNodes[0] = new WFNode();
@@ -457,19 +431,22 @@ public class WfmcServiceImpl_EloTest {
         wmProcessInstanceWMAttributeMap.put(ELOConstants.SORD_ID, new WMAttributeImpl("SORD", 1, sordId));
 
         Sord testSord = new Sord();
-        Mockito.when(eloUtilsService.getSord(Mockito.<IXConnection>any(), Mockito.eq(sordId), Mockito.<SordZ>any(), Mockito.<LockZ>any())).thenReturn(testSord);
+        Mockito.when(eloUtilsService.getSord(Mockito.<IXConnection>any(), Mockito.eq(sordId), Mockito.<SordZ>any(), Mockito.<LockZ>any())).thenReturn(
+            testSord);
 
         Mockito.doNothing().when(eloUtilsService).updateSordAttributes(testSord, wmProcessInstanceAttributeMap);
-        Mockito.when(eloUtilsService.saveSord(Mockito.<IXConnection>any(), Mockito.eq(testSord), Mockito.<SordZ>any(), Mockito.<LockZ>any())).thenReturn(Integer.valueOf(sordId));
+        Mockito.when(eloUtilsService.saveSord(Mockito.<IXConnection>any(), Mockito.eq(testSord), Mockito.<SordZ>any(),
+            Mockito.<LockZ>any())).thenReturn(Integer.valueOf(sordId));
 
         String processInstanceId = "123";
-        Mockito.when(eloUtilsService.startWorkFlow(Mockito.<IXConnection>any(), Mockito.<String>any(), Mockito.<String>any(), Mockito.eq(sordId))).thenReturn(processInstanceId);
+        Mockito.when(eloUtilsService.startWorkFlow(Mockito.<IXConnection>any(), Mockito.<String>any(),
+            Mockito.<String>any(), Mockito.eq(sordId))).thenReturn(processInstanceId);
 
         String newProcessInstanceId = "234";
-        Mockito.doReturn(newProcessInstanceId).when(wfmcServiceImpl_Elo).startProcess(processInstanceId);
+        Mockito.doReturn(newProcessInstanceId).when(wfmcServiceEloImpl).startProcess(processInstanceId);
 
         // when
-        String returnedProcInstId = wfmcServiceImpl_Elo.startProcess(procInstId);
+        String returnedProcInstId = wfmcServiceEloImpl.startProcess(procInstId);
 
         // then
         Mockito.verify(eloUtilsService).getSord(Mockito.<IXConnection>any(), Mockito.eq(sordId), Mockito.<SordZ>any(), Mockito.<LockZ>any());
@@ -480,7 +457,7 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Ignore
-    public void integration_workflow_test_deprecated(){
+    public void integrationWorkflowTestDeprecated(){
 
         // given
         String workflowTemplateId = "4";
@@ -488,11 +465,11 @@ public class WfmcServiceImpl_EloTest {
         String sordId = "104";
 
         // when
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        String processInstanceId = wfmcServiceImpl_Elo.createProcessInstance(workflowTemplateId, workflowName);
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
-        wfmcServiceImpl_Elo.startProcess(processInstanceId);
-        wfmcServiceImpl_Elo.disconnect();
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        String processInstanceId = wfmcServiceEloImpl.createProcessInstance(workflowTemplateId, workflowName);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
+        wfmcServiceEloImpl.startProcess(processInstanceId);
+        wfmcServiceEloImpl.disconnect();
 
         // then
         assert true; // should terminate peacefully
@@ -500,25 +477,26 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Test
-    public void should_reassign_work_item () throws RemoteException {
+    public void shouldReassignWorkItem () throws RemoteException {
         String sourceUser = "Andra";
         String targetUser = "Administrator";
         String workItemId = "7";
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
 
-        int test = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow("1", "test", "2");
-        WFDiagram wfDiagram = wfmcServiceImpl_Elo.getIxConnection().ix().checkoutWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+        int test = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow("1", "test", "2");
+        WFDiagram wfDiagram = wfmcServiceEloImpl.getIxConnection().ix().checkoutWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
         WFNode[] nodes = wfDiagram.getNodes();
         if ((nodes[Integer.parseInt(workItemId)].getName() != null) && (Integer.parseInt(workItemId) != 0)){
             nodes[Integer.valueOf(workItemId)].setUserName(sourceUser);
             wfDiagram.setNodes(nodes);
-            wfmcServiceImpl_Elo.getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
+            wfmcServiceEloImpl.getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
 
-            wfmcServiceImpl_Elo.reassignWorkItem(sourceUser, targetUser, String.valueOf(test), workItemId);
+            wfmcServiceEloImpl.reassignWorkItem(sourceUser, targetUser, String.valueOf(test), workItemId);
 
-            WFDiagram wfDiagram2 = wfmcServiceImpl_Elo.getIxConnection().ix().checkoutWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
-            Assertions.assertThat(wfDiagram2.getNodes()[Integer.parseInt(workItemId)].getUserName()).isEqualTo(targetUser);
-            wfmcServiceImpl_Elo.getIxConnection().ix().deleteWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, LockC.NO);
+            WFDiagram wfDiagram2 = wfmcServiceEloImpl.getIxConnection().ix().checkoutWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            Assertions.assertThat(wfDiagram2.getNodes()[Integer.parseInt(workItemId)].getUserName()).isEqualTo(
+                targetUser);
+            wfmcServiceEloImpl.getIxConnection().ix().deleteWorkFlow(String.valueOf(test), WFTypeC.ACTIVE, LockC.NO);
         } else {
 
         }
@@ -526,26 +504,26 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Test
-    public void test_error_resource_buldle(){
-        Assert.assertEquals(wfmcServiceImpl_Elo.errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED),
+    public void testErrorResource_buldle(){
+        Assert.assertEquals(wfmcServiceEloImpl.errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED),
                 "WMFilter type not supported!");
     }
 
     @Test(expected = WMUnsupportedOperationException.class)
-    public void test_listWorkItems_WMFilter_not_supported(){
+    public void testListWorkItemsWMFilterNotSupported(){
         WMFilter wmFilter = new WMFilter("testing sql filter not supported");
-        wfmcServiceImpl_Elo.listWorkItems(wmFilter, false);
+        wfmcServiceEloImpl.listWorkItems(wmFilter, false);
     }
 
     @Test
-    public void should_get_next_steps() throws RemoteException {
+    public void shouldGetNextSteps() throws RemoteException {
 
         // given
         String wfId = "1";
         String nodeId = "20";
 
         EloUtilsService eloUtilsService = Mockito.mock(EloUtilsService.class);
-        wfmcServiceImpl_Elo.setEloUtilsService(eloUtilsService);
+        wfmcServiceEloImpl.setEloUtilsService(eloUtilsService);
 
         WFNodeAssoc[] wfNodeAssoc = new WFNodeAssoc[5];
         wfNodeAssoc[0] = new WFNodeAssoc();
@@ -568,7 +546,7 @@ public class WfmcServiceImpl_EloTest {
         Mockito.when(eloUtilsService.getNode(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.<Integer>any())).thenReturn(new WFNode());
 
         // when
-        List<WMWorkItem> workItems = wfmcServiceImpl_Elo.getNextSteps(wfId, nodeId);
+        List<WMWorkItem> workItems = wfmcServiceEloImpl.getNextSteps(wfId, nodeId);
 
         // then
         Mockito.verify(eloUtilsService).getWorkFlow(Mockito.<IXConnection>any(), Mockito.eq(wfId), Mockito.eq(WFTypeC.ACTIVE), Mockito.eq(WFDiagramC.mbAll), Mockito.eq(LockC.NO));
@@ -576,68 +554,67 @@ public class WfmcServiceImpl_EloTest {
     }
 
     @Test
-    public void should_forward_task() {
+    public void shouldForwardTask() {
 
     }
 
     @Ignore
-    public void test_getProcessInstance_with_finished_workflow(){
+    public void testGetProcessInstanceWithFinishedWorkflow(){
         String flowId = "215";
 
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        WMProcessInstance wmProcessInstance = wfmcServiceImpl_Elo.getProcessInstance(flowId);
-        wfmcServiceImpl_Elo.disconnect();
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        WMProcessInstance wmProcessInstance = wfmcServiceEloImpl.getProcessInstance(flowId);
+        wfmcServiceEloImpl.disconnect();
 
         Assertions.assertThat(wmProcessInstance).isNotNull();
     }
 
     @Test
-    public void test_assignProcessInstanceAttribute_for_started_process_with_existing_attr_in_sord() throws RemoteException {
+    public void testAssignProcessInstanceAttributeFor_startedProcessWithExistingAttrIn_sord() throws RemoteException {
         // given
         String workflowTemplateId = "4";
         String workflowName = "Integration Test Workflow Name";
         String sordId = "104";
         String attributeName = "TIPDRUM";
 //        Object attributeValue = "Strada";
-        Object attributeValue = new String[] {"strada","autostrada"};
+        Object attributeValue = new String[] {STRADA,"autostrada"};
         // when
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        String processInstanceId = wfmcServiceImpl_Elo.createProcessInstance(workflowTemplateId, workflowName);
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
-        String eloProcessId = wfmcServiceImpl_Elo.startProcess(processInstanceId);
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        String processInstanceId = wfmcServiceEloImpl.createProcessInstance(workflowTemplateId, workflowName);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
+        String eloProcessId = wfmcServiceEloImpl.startProcess(processInstanceId);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
         //verify
         EloUtilsService eloUtilsService = new EloUtilsService();
-        Sord sord =  eloUtilsService.getSord(wfmcServiceImpl_Elo.getIxConnection(),sordId, SordC.mbAll, LockC.NO);
+        Sord sord =  eloUtilsService.getSord(wfmcServiceEloImpl.getIxConnection(),sordId, SordC.mbAll, LockC.NO);
         ObjKey[] objKeys = sord.getObjKeys();
         for (ObjKey objKey : Arrays.asList(objKeys)){
             if (objKey.getName().equals(attributeName)){
-                Assertions.assertThat(objKey.getData()[0]).isEqualTo("strada") ;
+                Assertions.assertThat(objKey.getData()[0]).isEqualTo(STRADA) ;
             }
         }
-        wfmcServiceImpl_Elo.disconnect();
+        wfmcServiceEloImpl.disconnect();
     }
 
     @Test(expected = WMInvalidAttributeException.class)
-    public void test_assignProcessInstanceAttribute_for_started_process_without_existing_attr_in_sord() throws RemoteException {
+    public void testAssignProcessInstanceAttributeForStartedProcessWithoutExistingAttrInSord() throws RemoteException {
         // given
         String workflowTemplateId = "4";
         String workflowName = "Integration Test Workflow Name";
         String sordId = "104";
         String attributeName = "TIP DRUM";
-//        Object attributeValue = "Strada";
-        Object attributeValue = new String[] {"strada","autostrada"};
+        Object attributeValue = new String[] {STRADA,"autostrada"};
         // when
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        String processInstanceId = wfmcServiceImpl_Elo.createProcessInstance(workflowTemplateId, workflowName);
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
-        String eloProcessId = wfmcServiceImpl_Elo.startProcess(processInstanceId);
-        wfmcServiceImpl_Elo.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
-        wfmcServiceImpl_Elo.disconnect();
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        String processInstanceId = wfmcServiceEloImpl.createProcessInstance(workflowTemplateId, workflowName);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, ELOConstants.SORD_ID, sordId);
+        String eloProcessId = wfmcServiceEloImpl.startProcess(processInstanceId);
+        wfmcServiceEloImpl.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
+        wfmcServiceEloImpl.disconnect();
     }
 
     @Test
-    public void should_assignWorkItemAttribute() {
+    public void shouldAssignWorkItemAttribute() {
         String processInstanceId = "5";
         String workItemId = "5";
         String attrName = WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString();
@@ -646,49 +623,53 @@ public class WfmcServiceImpl_EloTest {
 
         WMWorkItem wmWorkItem = new WMWorkItemImpl(processInstanceId, workItemId);
         for (int i = 0; i < size; i++) {
-            wfmcServiceImpl_Elo.assignWorkItemAttribute(processInstanceId, workItemId, attrName, Integer.parseInt((String)attrValue) +  i );
+            wfmcServiceEloImpl.assignWorkItemAttribute(processInstanceId, workItemId, attrName, Integer.parseInt(
+                (String) attrValue) + i);
         }
 
-        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId)).isNotNull();
-        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).tsNext().getValue()).isEqualTo(Integer.parseInt((String)attrValue));
-        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).getCount()).isEqualTo(size);
+        Assertions.assertThat(wfmcServiceEloImpl.getWfmcServiceCache().getWorkItemAttribute(processInstanceId,
+            workItemId)).isNotNull();
+        Assertions.assertThat(
+            wfmcServiceEloImpl.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).tsNext().getValue()).isEqualTo(
+            Integer.parseInt((String) attrValue));
+        Assertions.assertThat(
+            wfmcServiceEloImpl.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).getCount()).isEqualTo(
+            size);
 
     }
 
     @Test
-    public void should_listProcessInstances() throws RemoteException {
+    public void shouldListProcessInstances() throws RemoteException {
         String processDefinitionId = "5";
         String processName = "Test";
 
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
         WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance().isActive(true).addProcessDefinitionId(String.valueOf(processDefinitionId));
 
-        WMProcessInstanceIterator wmProcessInstanceIterator = wfmcServiceImpl_Elo.listProcessInstances(wmFilter, true);
+        WMProcessInstanceIterator wmProcessInstanceIterator = wfmcServiceEloImpl.listProcessInstances(wmFilter, true);
         List<WMProcessInstance> wmProcessInstances = new ArrayList<>();
         String newProcessDefinitionId = null;
         while (wmProcessInstanceIterator.hasNext()) {
             WMProcessInstance wmProcessInstance = wmProcessInstanceIterator.tsNext();
-//            newProcessDefinitionId = wmProcessInstance.getProcessDefinitionId();
+
             wmProcessInstances.add(wmProcessInstance);
         }
 
         Assertions.assertThat(wmProcessInstances).isNotNull();
-//        Assertions.assertThat(newProcessDefinitionId).isEqualTo(processDefinitionId);
-
-        wfmcServiceImpl_Elo.abortProcessInstance(String.valueOf(processInstanceId));
+        wfmcServiceEloImpl.abortProcessInstance(String.valueOf(processInstanceId));
     }
 
     @Test
-    public void should_listWorkItem() throws RemoteException {
+    public void shouldListWorkItem() throws RemoteException {
         String processDefinitionId = "5";
         String processName = "Test";
 
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
         WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId(String.valueOf(processInstanceId));
 
-        WMWorkItemIterator wmWorkItemIterator = wfmcServiceImpl_Elo.listWorkItems(wmFilter, true);
+        WMWorkItemIterator wmWorkItemIterator = wfmcServiceEloImpl.listWorkItems(wmFilter, true);
         List<WMWorkItem> wmWorkItems = new ArrayList<>();
         String newProcessInstanceId = null;
         while (wmWorkItemIterator.hasNext()) {
@@ -702,45 +683,49 @@ public class WfmcServiceImpl_EloTest {
         Assertions.assertThat(wmWorkItems).isNotNull();
         Assertions.assertThat(newProcessInstanceId).isEqualTo(String.valueOf(processInstanceId));
 
-        wfmcServiceImpl_Elo.abortProcessInstance(String.valueOf(processInstanceId));
+        wfmcServiceEloImpl.abortProcessInstance(String.valueOf(processInstanceId));
     }
 
     @Test
-    public void should_getWorkItem() throws RemoteException {
+    public void shouldGetWorkItem() throws RemoteException {
         String processDefinitionId = "5";
         String processName = "Test";
         String workItemId = "0";
 
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "5");
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "5");
 
-        WMWorkItem workItem = wfmcServiceImpl_Elo.getWorkItem(String.valueOf(processInstanceId), workItemId);
+        WMWorkItem workItem = wfmcServiceEloImpl.getWorkItem(String.valueOf(processInstanceId), workItemId);
 
         Assertions.assertThat(workItem).isNotNull();
         Assertions.assertThat(workItem.getName()).isNotEqualTo("");
 
-        wfmcServiceImpl_Elo.abortProcessInstance(String.valueOf(processInstanceId));
+        wfmcServiceEloImpl.abortProcessInstance(String.valueOf(processInstanceId));
     }
 
     @Test
-    public void should_completeWorkItem() throws RemoteException {
+    public void shouldCompleteWorkItem() throws RemoteException {
         String processDefinitionId = "5";
         String processName = "Test";
         String workItemId = "5";
         String attributeValue = "newValue";
 
-        wfmcServiceImpl_Elo.connect(wmConnectInfo);
-        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "5");
-        List<WMWorkItem> nextSteps = wfmcServiceImpl_Elo.getNextSteps(String.valueOf(processInstanceId), workItemId);
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "5");
+        List<WMWorkItem> nextSteps = wfmcServiceEloImpl.getNextSteps(String.valueOf(processInstanceId), workItemId);
         for (WMWorkItem wmWorkItem : nextSteps) {
-            wfmcServiceImpl_Elo.assignWorkItemAttribute(String.valueOf(processInstanceId), workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(),wmWorkItem.getId());
+            wfmcServiceEloImpl.assignWorkItemAttribute(String.valueOf(processInstanceId), workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(),wmWorkItem.getId());
         }
 
-        wfmcServiceImpl_Elo.completeWorkItem(String.valueOf(processInstanceId), workItemId);
-        wfmcServiceImpl_Elo.assignWorkItemAttribute(String.valueOf(processInstanceId), workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), attributeValue );
+        wfmcServiceEloImpl.completeWorkItem(String.valueOf(processInstanceId), workItemId);
+        wfmcServiceEloImpl.assignWorkItemAttribute(String.valueOf(processInstanceId), workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), attributeValue );
 
 
-        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).getCount()).isEqualTo(1);
-        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).tsNext().getValue()).isEqualTo(attributeValue);
+        Assertions.assertThat(
+            wfmcServiceEloImpl.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).getCount()).isEqualTo(
+            1);
+        Assertions.assertThat(
+            wfmcServiceEloImpl.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).tsNext().getValue()).isEqualTo(
+            attributeValue);
     }
 }

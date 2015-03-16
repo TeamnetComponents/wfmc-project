@@ -77,8 +77,8 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
                 ((WfmcServiceImpl_Abstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
             }
         }
-        if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAudit_Impl)){
-            ((WfmcServiceAudit_Impl)wfmcService).setInternalService(wfmcServiceForService);
+        if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAuditImpl)){
+            ((WfmcServiceAuditImpl)wfmcService).setInternalService(wfmcServiceForService);
         }
         return wfmcService;
     }
