@@ -71,10 +71,11 @@ public class WfmcServiceAudit_Impl extends WfmcServiceImpl_Abstract {
         finally {
             //log
             WMACreateProcessInstanceData wmaCreateProcessInstanceData = new WMACreateProcessInstanceData();
-            wmaCreateProcessInstanceData.
+           // wmaCreateProcessInstanceData.
 
         }
         //log after (including error catching )
+        return null;
     }
 
     @Override
@@ -408,13 +409,8 @@ public class WfmcServiceAudit_Impl extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
-        return super.getNextSteps(processInstanceId, workItemId);
-    }
-
-    @Override
-    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
-        super.setTransition(processInstanceId, currentWorkItemId, nextWorkItemIds);
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) {
+        return super.getNextSteps(processInstanceId,workItemId);
     }
 
     @Override

@@ -7,8 +7,7 @@ import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 
 import java.io.IOException;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Lucian.Dragomir on 2/10/2015.
@@ -401,6 +400,8 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     }
 
 
-
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
+        throw new WMUnsupportedOperationException("getNextSteps");
+    }
 
 }
