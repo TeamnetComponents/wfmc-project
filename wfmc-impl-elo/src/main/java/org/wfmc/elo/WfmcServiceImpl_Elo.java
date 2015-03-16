@@ -398,6 +398,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                 getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
                         wfEditNode.getNode().getComment(), nextNodesId);
                 getWfmcServiceCache().removeWorkItemAttributes(procInstId, workItemId);
+            } else {
+                throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_COMPLETE_WORK_ITEM));
             }
         } catch (RemoteException e) {
             throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_COMPLETE_WORK_ITEM));

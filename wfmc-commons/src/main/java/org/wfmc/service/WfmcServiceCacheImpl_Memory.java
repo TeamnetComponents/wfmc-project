@@ -9,8 +9,7 @@ import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMWorkItem;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,12 +27,12 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
     public static class DataCache {
         public Map<String, WMProcessInstance> wmProcessInstanceCache;
         public Map<String, Map<String, WMAttribute>> wmProcessInstanceAttributeCache;
-        public Map<WMWorkItem, Map<String, WMAttribute>> wmWorkItemAttributeCache;
+        public Map<WMWorkItem, List<WMAttribute>> wmWorkItemAttributeCache;
 
         public DataCache(long timeToExpire, long timeToLive, long timeToEvict) {
             this.wmProcessInstanceCache = new ExpirableMemoryCache<String, WMProcessInstance>(timeToExpire, timeToLive, timeToEvict);
             this.wmProcessInstanceAttributeCache = new ExpirableMemoryCache<String, Map<String, WMAttribute>>(timeToExpire, timeToLive, timeToEvict);
-            this.wmWorkItemAttributeCache = new ExpirableMemoryCache<WMWorkItem, Map<String, WMAttribute>>(timeToExpire, timeToLive, timeToEvict);
+            this.wmWorkItemAttributeCache = new ExpirableMemoryCache<WMWorkItem, List<WMAttribute>>(timeToExpire, timeToLive, timeToEvict);
         }
     }
 
@@ -109,8 +108,8 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
     @Override
     public WMAttributeIterator getWorkItemAttribute(String procInstId, String workItemId) {
         WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
-        Map<String, WMAttribute> wmAttributeMap = this.getCache().wmWorkItemAttributeCache.get(workItem);
-        return new WMAttributeIteratorImpl(wmAttributeMap.values().toArray());
+        List<WMAttribute> wmAttributeList = this.getCache().wmWorkItemAttributeCache.get(workItem);
+        return new WMAttributeIteratorImpl(wmAttributeList.toArray());
     }
 
     @Override
@@ -118,12 +117,12 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
         WMWorkItem wmWorkItem = new WMWorkItemImpl(procInstId, workItemId);
         if (wmWorkItem.getId() != null) {
             synchronized (wmWorkItem) {
-                Map<String, WMAttribute> wmAttributeMap = getCache().wmWorkItemAttributeCache.get(wmWorkItem);
-                if (wmAttributeMap == null) {
-                    wmAttributeMap = new ConcurrentHashMap<String, WMAttribute>();
+                List<WMAttribute> wmAttributeList = getCache().wmWorkItemAttributeCache.get(wmWorkItem);
+                if (wmAttributeList == null) {
+                    wmAttributeList = new ArrayList<>();
                 }
-                wmAttributeMap.put(wmAttribute.getName(), wmAttribute);
-                getCache().wmWorkItemAttributeCache.put(wmWorkItem, wmAttributeMap);
+                wmAttributeList.add(wmAttribute);
+                getCache().wmWorkItemAttributeCache.put(wmWorkItem, wmAttributeList);
             }
         }
     }
@@ -131,9 +130,9 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
     @Override
     public void removeWorkItemAttribute(String procInstId, String workItemId, String attrName) {
         WMWorkItem wmWorkItem = new WMWorkItemImpl(procInstId, workItemId);
-        Map<String, WMAttribute> wmAttributeMap = this.getCache().wmWorkItemAttributeCache.get(wmWorkItem);
-        if (wmAttributeMap != null) {
-            wmAttributeMap.remove(attrName);
+        List<WMAttribute> wmAttributeList = this.getCache().wmWorkItemAttributeCache.get(wmWorkItem);
+        if (wmAttributeList != null) {
+            wmAttributeList.clear();
         }
     }
 

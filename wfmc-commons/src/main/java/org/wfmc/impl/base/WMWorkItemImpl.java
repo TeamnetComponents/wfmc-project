@@ -151,12 +151,14 @@ public class WMWorkItemImpl extends WMWorkItem_Abstract {
             + ']';
     }
 
-        @Override
+    @Override
     public int hashCode() {
-
-        int hash = ( this.getProcessInstanceId() + this.getId()).hashCode();
-
-        return hash;
+        int result = _activityInstanceId != null ? _activityInstanceId.hashCode() : 0;
+        result = 31 * result + _toolIndex;
+        result = 31 * result + (_state != null ? _state.hashCode() : 0);
+        result = 31 * result + (_participant != null ? _participant.hashCode() : 0);
+        result = 31 * result + (_performer != null ? _performer.hashCode() : 0);
+        return result;
     }
 
     @Override

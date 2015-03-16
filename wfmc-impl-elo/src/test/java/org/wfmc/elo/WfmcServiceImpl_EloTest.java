@@ -18,6 +18,8 @@ import org.wfmc.elo.model.EloWfmcProcessInstance;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.base.WMAttributeImpl;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
+import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.impl.utils.WfmcUtilsService;
 import org.wfmc.service.ServiceFactory;
 import org.wfmc.service.WfmcServiceCache;
@@ -631,5 +633,24 @@ public class WfmcServiceImpl_EloTest {
         String eloProcessId = wfmcServiceImpl_Elo.startProcess(processInstanceId);
         wfmcServiceImpl_Elo.assignProcessInstanceAttribute(eloProcessId, attributeName, attributeValue);
         wfmcServiceImpl_Elo.disconnect();
+    }
+
+    @Test
+    public void should_assignWorkItemAttribute() {
+        String processInstanceId = "5";
+        String workItemId = "5";
+        String attrName = WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString();
+        Object attrValue = "5";
+        Integer size = 10;
+
+        WMWorkItem wmWorkItem = new WMWorkItemImpl(processInstanceId, workItemId);
+        for (int i = 0; i < size; i++) {
+            wfmcServiceImpl_Elo.assignWorkItemAttribute(processInstanceId, workItemId, attrName, Integer.parseInt((String)attrValue) +  i );
+        }
+
+        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId)).isNotNull();
+        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).tsNext().getValue()).isEqualTo(Integer.parseInt((String)attrValue));
+        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).getCount()).isEqualTo(size);
+
     }
 }
