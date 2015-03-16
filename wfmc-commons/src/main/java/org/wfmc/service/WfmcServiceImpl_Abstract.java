@@ -5,6 +5,7 @@ import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
 import java.io.IOException;
 import java.util.*;
@@ -402,6 +403,10 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
 
     public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
         throw new WMUnsupportedOperationException("getNextSteps");
+    }
+
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId){
+        throw new WMUnsupportedOperationException("getWorkFlowProcess");
     }
 
 }

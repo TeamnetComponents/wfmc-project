@@ -151,7 +151,7 @@ Este necesar un fisier de forma wapi-elo-renns.properties:
     #######------------------------------------------------------------------------------
     #######class named used for the service implementation
     instance.name=wapi-elo-renns
-    instance.class=org.wfmc.elo.WfmcServiceImpl_Elo
+    instance.class=org.wfmc.elo.WfmcServiceEloImpl
     
     #######------------------------------------------------------------------------------
     #######SPECIFIC SERVICE CONFIGURATION PARAMETERS

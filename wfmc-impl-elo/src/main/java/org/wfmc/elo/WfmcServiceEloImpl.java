@@ -33,18 +33,17 @@ import java.util.*;
 public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     private static final int MAX_RESULT = 1000;
-    private static final String WF_SORD_LOCATION_TEMPLATE = "workflow.sord.location.template.path";
 
     private IXConnection ixConnection;
 
     private EloUtilsService eloUtilsService = new EloUtilsService();
     private WfmcUtilsService wfmcUtilsService = new WfmcUtilsService();
 
-    protected ResourceBundle errorMessagesResourceBundle = ResourceBundle.getBundle("errorMessages");
+    private ResourceBundle errorMessagesResourceBundle = ResourceBundle.getBundle("errorMessages");
 
-    protected EloToWfMCObjectConverter eloToWfMCObjectConverter = new EloToWfMCObjectConverter();
+    private EloToWfMCObjectConverter eloToWfMCObjectConverter = new EloToWfMCObjectConverter();
 
-    protected WfMCToEloObjectConverter wfMCToEloObjectConverter = new WfMCToEloObjectConverter();
+    private WfMCToEloObjectConverter wfMCToEloObjectConverter = new WfMCToEloObjectConverter();
 
     private void borrowIxConnection(WMConnectInfo connectInfo) throws WMWorkflowException{
         Properties connProps = IXConnFactory.createConnProps(connectInfo.getScope());
@@ -102,8 +101,9 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {
         WMProcessInstance processInstanceInCache = getWfmcServiceCache().getProcessInstance(procInstId);
         //process instance wasn't created in ELO, is just in cache
-        if (processInstanceInCache != null)
+        if (processInstanceInCache != null) {
             return processInstanceInCache;
+        }
         //process instance exists in ELO, was created
         WFDiagram wfDiagram = null;
         WMProcessInstance wmProcessInstance;
@@ -326,12 +326,11 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
                 WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks);
                 return new WMWorkItemIteratorImpl(wmWorkItems);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
             }
         } else {
             throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
         }
-        throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
     }
 
     @Override
@@ -344,7 +343,7 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
                 WMProcessInstance[] wmProcessInstances = eloToWfMCObjectConverter.convertWFDiagramsToWMProcessInstances(wfDiagrams);
                 return new WMProcessInstanceIteratorImpl(wmProcessInstances);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
             }
 
         }
@@ -435,11 +434,8 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
         try {
 
             WFDiagram wfDiagram = eloUtilsService.getWorkFlowTemplate(getIxConnection(),processDefinitionId,"",WFDiagramC.mbAll,LockC.NO);
-            //System.out.println("wf"+ wfDiagram);
 
             WFNodeAssoc[] asocieri = wfDiagram.getMatrix().getAssocs();
-
-
             int idTranzitie = 0;
             Transition[] tranzitii = new Transition[asocieri.length];
             for(int i =0; i<asocieri.length;i++){
@@ -449,14 +445,11 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
                 //nu am gasit in elo, dar ii setez id-ul pt ca e folosit de hashcode si crapa daca e null cand folsoim in anumite colectii
                 t.setId(idTranzitie++ + "");
                 tranzitii[i] = t;
-
             }
             wp.setTransition(tranzitii);
             wp.setName(wfDiagram.getName());
-
-
         } catch (RemoteException | PropertyVetoException e) {
-            e.printStackTrace();
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
         }
 
         return wp;
@@ -480,11 +473,20 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
                 }
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_FIND_WORK_ITEM));
         }
-
-
         return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
     }
 
+    public WfMCToEloObjectConverter getWfMCToEloObjectConverter() {
+        return wfMCToEloObjectConverter;
+    }
+
+    public ResourceBundle getErrorMessagesResourceBundle() {
+        return errorMessagesResourceBundle;
+    }
+
+    public EloToWfMCObjectConverter getEloToWfMCObjectConverter() {
+        return eloToWfMCObjectConverter;
+    }
 }
