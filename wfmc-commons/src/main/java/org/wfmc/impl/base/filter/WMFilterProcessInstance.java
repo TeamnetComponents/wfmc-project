@@ -15,6 +15,7 @@ public class WMFilterProcessInstance extends WMFilter {
     String processInstanceId;
     String processDefinitionId;
     List<WMParticipant> wmParticipantList;
+    Boolean isActive;
 
     public WMFilterProcessInstance() {
         super("");
@@ -43,6 +44,11 @@ public class WMFilterProcessInstance extends WMFilter {
 
     public WMFilterProcessInstance addProcessDefinitionId(String processDefinitionId) {
         this.processDefinitionId = processDefinitionId;
+        return this;
+    }
+
+    public WMFilterProcessInstance isActive (Boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
@@ -76,5 +82,13 @@ public class WMFilterProcessInstance extends WMFilter {
 
     public void setWmParticipantList(List<WMParticipant> wmParticipantList) {
         this.wmParticipantList = wmParticipantList;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }
