@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
-import org.wfmc.wapi.WMFilter;
 
 /**
  * Created by andras on 3/5/2015.
@@ -24,8 +23,8 @@ public class WfMCToEloObjectConverterTest {
 
     @Test
     public void test_convertWMFilterWorkItemToFindTasksInfo_with_participants(){
-        WMFilterWorkItem wmFilterWorkItem = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("firstParticipant")
-                .addWorkItemParticipant("secondParticipant");
+        WMFilterWorkItem wmFilterWorkItem = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("firstParticipant")
+                .addWorkItemParticipantName("secondParticipant");
         FindTasksInfo findTasksInfo =  wfMCToEloObjectConverter.convertWMFilterWorkItemToFindTasksInfo(wmFilterWorkItem);
 
         Assert.assertEquals(findTasksInfo.getUserIds().length,2);

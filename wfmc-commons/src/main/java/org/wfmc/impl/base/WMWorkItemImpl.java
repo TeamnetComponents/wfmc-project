@@ -81,6 +81,11 @@ public class WMWorkItemImpl extends WMWorkItem_Abstract {
         _performer = performer;
     }
 
+    public WMWorkItemImpl(String procInstId, String workItemId) {
+        this.setId(workItemId);
+        this.setProcessInstanceId(procInstId);
+    }
+
     public final WMWorkItemState getState() {
         return _state;
     }
@@ -144,5 +149,32 @@ public class WMWorkItemImpl extends WMWorkItem_Abstract {
             + ", _completedDate=" + getCompletedDate()
             + ", _temporalStatus=" + getTemporalStatus()
             + ']';
+    }
+
+    @Override
+    public int hashCode() {
+        int result = _activityInstanceId != null ? _activityInstanceId.hashCode() : 0;
+        result = 31 * result + _toolIndex;
+        result = 31 * result + (_state != null ? _state.hashCode() : 0);
+        result = 31 * result + (_participant != null ? _participant.hashCode() : 0);
+        result = 31 * result + (_performer != null ? _performer.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WMWorkItemImpl that = (WMWorkItemImpl) o;
+
+        if (_toolIndex != that._toolIndex) return false;
+        if (_activityInstanceId != null ? !_activityInstanceId.equals(that._activityInstanceId) : that._activityInstanceId != null)
+            return false;
+        if (_participant != null ? !_participant.equals(that._participant) : that._participant != null) return false;
+        if (_performer != null ? !_performer.equals(that._performer) : that._performer != null) return false;
+        if (_state != null ? !_state.equals(that._state) : that._state != null) return false;
+
+        return true;
     }
 }

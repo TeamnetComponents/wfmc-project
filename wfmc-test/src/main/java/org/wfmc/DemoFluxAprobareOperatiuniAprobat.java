@@ -1,5 +1,6 @@
 package org.wfmc;
 
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
@@ -9,19 +10,19 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Ioan.Ivan on 3/6/2015.
- */
+* Created by Ioan.Ivan on 3/6/2015.
+*/
 public class DemoFluxAprobareOperatiuniAprobat {
 
     public static void main(String[] arg) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        String serviceProperties = "G:\\Fisier\\wapi-elo-renns.properties";
+        String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         String processInstanceName =  "Instanta flux aprobare operatiuni 3";
 
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
-
-        wfmcService.connect(new WMConnectInfo("Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
+        //naming convention for user: {ApplicationUser}@{ImpersonatedUser}   ; ImpersonatedUser = Userul de login in ELO(licenta); Administrator pt DEV
+        wfmcService.connect(new WMConnectInfo("Andra@Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
         // Pas 1. Create process instance
         String procInstIdTemp = wfmcService.createProcessInstance("3", processInstanceName);
         //Pas 2. Asign process attribute
@@ -29,7 +30,7 @@ public class DemoFluxAprobareOperatiuniAprobat {
         String procInstId = wfmcService.startProcess(procInstIdTemp);
 
         //Pas 4. Get avaible tasks for REDACTARE_RASPUNS taskType
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Administrator").
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("Administrator").
                 addWorkItemName(FluxAprobareOperatiuniNodes.REDACTARE_RASPUNS);
         WMWorkItemIterator wmWorkItemIterator = wfmcService.listWorkItems(wmFilter, true);
 
@@ -39,7 +40,7 @@ public class DemoFluxAprobareOperatiuniAprobat {
             WMWorkItem wmWorkItem = wmWorkItemIterator.tsNext();
             if (wmWorkItem.getProcessInstanceId().equals(procInstId)) {
                 curentWorkItemId = wmWorkItem.getId();
-                wfmcService.reassignWorkItem("Administrator","Andra",procInstId, curentWorkItemId);
+                wfmcService.reassignWorkItem("Administrator","Andra", procInstId, curentWorkItemId);
 
             }
         }
@@ -50,12 +51,14 @@ public class DemoFluxAprobareOperatiuniAprobat {
         //Pas 7. Forward task to TRIMITE
         for (WMWorkItem wmWorkItem : nextSteps) {
             if (wmWorkItem.getName().equals(FluxAprobareOperatiuniNodes.TRIMITE)) {
-                wfmcService.setTransition(procInstId, curentWorkItemId, new String[]{wmWorkItem.getId()});
+                wfmcService.assignWorkItemAttribute(procInstId, curentWorkItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), wmWorkItem.getId());
             }
         }
 
+        wfmcService.completeWorkItem(procInstId, curentWorkItemId);
+
         //Pas 8. Get avaible tasks for APROBARE_RASPUNS taskType
-        WMFilter wmFilter1 = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName(FluxAprobareOperatiuniNodes.APROBARE_RASPUNS).addWorkItemParticipant("Administrator");
+        WMFilter wmFilter1 = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName(FluxAprobareOperatiuniNodes.APROBARE_RASPUNS).addWorkItemParticipantName("Administrator");
         WMWorkItemIterator wmWorkItemIterator1 = wfmcService.listWorkItems(wmFilter1, true);
 
         //Pas 9. Claim task APROBARE_RASPUNS
@@ -73,9 +76,12 @@ public class DemoFluxAprobareOperatiuniAprobat {
         //Pas 11. Forward task to APROBAT
         for (WMWorkItem wmWorkItem : nextSteps1) {
             if(wmWorkItem.getName().equals(FluxAprobareOperatiuniNodes.APROBAT)) {
-                wfmcService.setTransition(procInstId, curentWorkItemId, new String[]{wmWorkItem.getId()});
+                wfmcService.assignWorkItemAttribute(procInstId, curentWorkItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), wmWorkItem.getId());
             }
         }
+
+        wfmcService.completeWorkItem(procInstId, curentWorkItemId);
+
         System.out.println("Process instance id = " + procInstId);
         //Pas 12. Check if workflow was finished
         WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);

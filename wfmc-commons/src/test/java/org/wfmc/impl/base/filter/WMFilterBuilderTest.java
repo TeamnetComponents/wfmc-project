@@ -1,7 +1,6 @@
 package org.wfmc.impl.base.filter;
 
 import junit.framework.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.wfmc.wapi.WMFilter;
 
@@ -15,7 +14,7 @@ public class WMFilterBuilderTest {
     public void test_build_with_2_participants(){
         String firstParticipant = "firstParticipant";
         String secondParticipant = "secondParticipant";
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant(firstParticipant).addWorkItemParticipant(secondParticipant);
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName(firstParticipant).addWorkItemParticipantName(secondParticipant);
 
         Assert.assertEquals(((WMFilterWorkItem)wmFilter).getWmParticipantList().size(),2);
     }

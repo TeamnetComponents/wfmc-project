@@ -29,4 +29,14 @@ public interface WfmcServiceCache extends Service {
 
     public void removeProcessInstanceAttributes(String procInstId);
 
+    //WMAttribute for WMWorkItem cache
+
+    public WMAttributeIterator getWorkItemAttribute (String procInstId, String workItemId);
+
+    public void addWorkItemAttribute (String procInstId, String workItemId, WMAttribute wmAttribute);
+
+    public void removeWorkItemAttribute (String procInstId, String workItemId, String attrName);
+
+    public void removeWorkItemAttributes (String procInstId, String workItemId);
+
 }

@@ -1,5 +1,6 @@
 package org.wfmc;
 
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
@@ -15,13 +16,13 @@ import java.util.List;
 public class DemoFluxHotarareConsiliuLocalAprobat {
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        String serviceProperties = "C:\\Users\\ioan.ivan\\Desktop\\wapi-elo-renns.properties";
+        String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         String processInstanceName = "Instanta flux hotarare consiliu local 2";
 
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
-
-        wfmcService.connect(new WMConnectInfo("Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
+        //naming convention for user: {ApplicationUser}@{ImpersonatedUser}   ; ImpersonatedUser = Userul de login in ELO(licenta); Administrator pt DEV
+        wfmcService.connect(new WMConnectInfo("Andra@Administrator", "elo@RENNS2015", "Wfmc Test", "http://10.6.38.90:8080/ix-elo/ix"));
         // Pas 1. Create process instance
         String procInstIdTemp = wfmcService.createProcessInstance("5", processInstanceName);
 
@@ -34,7 +35,7 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         String processInstanceId = wfmcService.startProcess(procInstIdTemp);
 
         //Pas 4. Get avaible task for Automatizare Asteptare and user = ELO Service.
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("ELO Service").
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("ELO Service").
                 addWorkItemName(FluxHotarareConsiliuLocalNodes.AUTOMATIZARE_ASTEPTARE);
 
         WMWorkItemIterator wmWorkItemIterator = wfmcService.listWorkItems(wmFilter, true);
@@ -55,7 +56,7 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         }
 
         //Pas 6. Check if the work item was assigned to Andra by getting avaible task for Automatizare Asteptare and user = Andra.
-        WMFilter wmFilterForAndra = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipant("Andra").
+        WMFilter wmFilterForAndra = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName("Andra").
                 addWorkItemName(FluxHotarareConsiliuLocalNodes.AUTOMATIZARE_ASTEPTARE);
         WMWorkItemIterator wmWorkItemIteratorForAndra = wfmcService.listWorkItems(wmFilterForAndra, true);
         while (wmWorkItemIteratorForAndra.hasNext()){
@@ -75,9 +76,10 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         //Pas 8. Forward task to Aprobat
         for (WMWorkItem wmWorkItem : nextSteps) {
             if(wmWorkItem.getName().equals(FluxHotarareConsiliuLocalNodes.APROBAT)) {
-                wfmcService.setTransition(processInstanceId, currentWorkItemId, new String[]{wmWorkItem.getId()});
+                wfmcService.assignWorkItemAttribute(processInstanceId, currentWorkItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), wmWorkItem.getId());
             }
         }
+        wfmcService.completeWorkItem(processInstanceId, currentWorkItemId);
 
         //Pas 9. Check if workflow was finished
         WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);

@@ -3,7 +3,6 @@ package org.wfmc.elo.utils;
 import de.elo.ix.client.*;
 import org.wfmc.impl.utils.FileUtils;
 
-import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -58,6 +57,7 @@ public class EloUtilsService {
     public Sord createSord(IXConnection ixConnection, String parentPathNameOrId, String maskId, String name) throws de.elo.utils.net.RemoteException {
         Sord sord = null;
         sord = ixConnection.ix().createSord(parentPathNameOrId, maskId, SordC.mbAll);
+        sord.setName(name);
         return sord;
     }
 
@@ -86,10 +86,10 @@ public class EloUtilsService {
             if (attributes.containsKey(objKeys[i].getName())) {
                 if (isArray(attributes.get(objKeys[i].getName()))) {
                     List<String> objKeyValue = new ArrayList<>();
-                    for (Object value : ((Array[]) attributes.get(objKeys[i].getName()))) {
+                    for (Object value : ((String[]) attributes.get(objKeys[i].getName()))) {
                         objKeyValue.add(String.valueOf(value));
                     }
-                    objKeys[i].setData((String[]) objKeyValue.toArray(new String[objKeyValue.size()]));
+                    objKeys[i].setData(objKeyValue.toArray(new String[objKeyValue.size()]));
                 } else {
                     objKeys[i].setData(new String[]{attributes.get(objKeys[i].getName()).toString()});
                 }
@@ -98,9 +98,43 @@ public class EloUtilsService {
         sord.setObjKeys(objKeys);
     }
 
+    public boolean sordContainsAttribute(Sord sord, String attributeName){
+        ObjKey[] objKeys = sord.getObjKeys();
+        for (int i = 0; i < objKeys.length; i++) {
+            if (objKeys[i].getName().equals(attributeName)){
+                return  true;
+            }
+        }
+        return false;
+    }
+
     public int saveSord(IXConnection ixConnection, Sord sord, SordZ sordZ, LockZ unlockZ) throws de.elo.utils.net.RemoteException {
         return ixConnection.ix().checkinSord(sord, sordZ, unlockZ);
     }
+
+
+    public WFDiagram getWorkFlowTemplate(IXConnection ixConnection, String processDefinitionId,String versionId, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
+        WFDiagram wfDiagram = null;
+        try {
+
+            wfDiagram = ixConnection.ix().checkoutWorkflowTemplate(processDefinitionId, null, WFDiagramC.mbAll, LockC.NO);
+
+
+        } catch (RemoteException e) {
+            IXError ixError = IXError.parseException((de.elo.utils.net.RemoteException) e);
+            if (ixError.code != 5023) //cale incorecta
+            {
+                throw e;
+            } else {
+                return null;
+            }
+        } catch (NullPointerException e){
+            throw e;
+        }
+        return wfDiagram;
+    }
+
+
 
 
     public WFDiagram getWorkFlow(IXConnection ixConnection, String flowId, WFTypeZ wfTypeZ, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
@@ -115,6 +149,8 @@ public class EloUtilsService {
             } else {
                 return null;
             }
+        } catch (NullPointerException e){
+            throw e;
         }
         return wfDiagram;
     }
@@ -132,4 +168,41 @@ public class EloUtilsService {
         return null;
     }
 
+    public String[] splitLoginUsers(String userIdentification) {
+        String[] userNames = userIdentification.split("@");
+        return userNames;
+    }
+
+    public Integer createUserGroup(IXConnection ixConnection, String groupName, String rightsAsUserId) {
+        try {
+            UserInfo group = ixConnection.ix().createUser(rightsAsUserId);
+            group.setType(UserInfoC.TYPE_GROUP);
+            group.setName(groupName);
+            int[] ints = ixConnection.ix().checkinUsers(new UserInfo[]{group}, CheckinUsersC.NEW_USER, LockC.YES);
+            return ints[0];
+        } catch (de.elo.utils.net.RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean checkIfGroupExist(IXConnection ixConnection, String groupName) {
+        try {
+            ixConnection.ix().checkoutUsers(new String[]{groupName}, CheckoutUsersC.ALL_GROUPS, LockC.NO);
+            return true;
+        } catch (de.elo.utils.net.RemoteException e) {
+            return false;
+        }
+    }
+
+    public boolean existSord (IXConnection ixConnection, String pathNameOrId) {
+        boolean existSord = false;
+        try {
+            ixConnection.ix().checkoutSord(pathNameOrId, SordC.mbAll, LockC.NO);
+            existSord = true;
+        } catch (de.elo.utils.net.RemoteException e) {
+            existSord = false;
+        }
+        return existSord;
+    }
 }

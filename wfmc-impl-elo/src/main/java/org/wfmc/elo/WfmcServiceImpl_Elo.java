@@ -8,8 +8,9 @@ import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.utils.EloToWfMCObjectConverter;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.elo.utils.WfMCToEloObjectConverter;
-import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
+import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.impl.base.WMWorkItemIteratorImpl;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
@@ -20,7 +21,10 @@ import org.wfmc.impl.utils.WfmcUtilsService;
 import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.service.WfmcServiceImpl_Abstract;
 import org.wfmc.wapi.*;
+import org.wfmc.xpdl.model.transition.Transition;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
+import java.beans.PropertyVetoException;
 import java.util.*;
 
 /**
@@ -42,16 +46,20 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
 
     protected WfMCToEloObjectConverter wfMCToEloObjectConverter = new WfMCToEloObjectConverter();
 
-    private void borrowIxConnection(WMConnectInfo connectInfo) {
+    private void borrowIxConnection(WMConnectInfo connectInfo) throws WMWorkflowException{
         Properties connProps = IXConnFactory.createConnProps(connectInfo.getScope());
         Properties sessOpts = IXConnFactory.createSessionOptions("IX-Example", "1.0");
         IXConnFactory connFact = null;
         try {
             connFact = new IXConnFactory(connProps, sessOpts);
-            ixConnection = connFact.create(connectInfo.getUserIdentification(),
+            String[] usersSplit = eloUtilsService.splitLoginUsers(connectInfo.getUserIdentification());
+            ixConnection = connFact.create(usersSplit[1],
                     connectInfo.getPassword(),
                     connectInfo.getEngineName(),
-                    connectInfo.getUserIdentification());
+                    usersSplit[1]);
+            if (!eloUtilsService.checkIfGroupExist(getIxConnection(), usersSplit[0])) {
+                eloUtilsService.createUserGroup(getIxConnection(), usersSplit[0], null);
+            }
         } catch (RemoteException remoteException) {
             throw new WMWorkflowException(remoteException);
         }
@@ -115,23 +123,39 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             }
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
+        } catch (NullPointerException e){
+            throw new WMWorkflowException(e);
         }
         return wmProcessInstance;
     }
 
     @Override
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
-
         //detect process templateId of this instance
         WMProcessInstance wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
+        if (wmProcessInstance != null) {
+            // process is not in ELO, only in cache
+            super.assignProcessInstanceAttribute(procInstId, attrName, attrValue);
+            return;
+        }
+        try {
+            // 1. search for workflow
+            WFDiagram wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            // 2. get sord
+            Sord wfSord = eloUtilsService.getSord(getIxConnection(), wfDiagram.getObjId(), SordC.mbAll, LockC.YES);
+            // 3. update sord attrs
+            if (!eloUtilsService.sordContainsAttribute(wfSord, attrName)){
+                throw new WMInvalidAttributeException(attrName);
+            }
+            Map<String, Object> attrMap = new HashMap<>();
+            attrMap.put(attrName, attrValue);
+            eloUtilsService.updateSordAttributes(wfSord, attrMap);
+            // 4. save sord
+            eloUtilsService.saveSord(getIxConnection(), wfSord, SordC.mbAll, LockC.YES);
+        } catch (RemoteException e){
+            throw  new WMWorkflowException(e);
+        }
 
-        //detect mask associated to process template
-//        String maskId = getEloMask(wmProcessInstance.getProcessDefinitionId());
-
-        //test if attribute name exists in ELO mask associated to the process and if attrValue is according to the definition
-
-        //if everything is ok then
-        super.assignProcessInstanceAttribute(procInstId, attrName, attrValue);
     }
 
     @Override
@@ -174,7 +198,8 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
             else {
                 String maskId = null;
                 String sordDirectory = null;
-                String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId();
+                String maskPath = null;
+                String sordName = wmProcessInstance.getName() + " - T" + wmProcessInstance.getId().replace("-",":");
                 //daca am primit mask id
                 if (wmProcessInstanceWMAttributeMap.containsKey(ELOConstants.MASK_ID)) {
                     maskId = (String) wmProcessInstanceWMAttributeMap.get(ELOConstants.MASK_ID).getValue();
@@ -187,14 +212,34 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     throw new WMExecuteException("The mask information does not exist.");
                 }
                 //determin directorul unde trebuie creat sord-ul
-                sordDirectory = processDefinitionAttributes.get(ELOConstants.DIR_TEMPLATE);
+                sordDirectory = processDefinitionAttributes.get(ELOConstants.PATH_TEMPLATE);
+                maskPath = processDefinitionAttributes.get(ELOConstants.PATH_MASK_ID);
                 if (StringUtils.isEmpty(sordDirectory)) {
                     throw new WMExecuteException("The directory information does not exist.");
                 }
                 sordDirectory = FileUtils.replaceTemporalItems(sordDirectory);
                 sordDirectory = TemplateEngine.getInstance().getValueFromTemplate(sordDirectory, wmProcessInstanceAttributeMap);
                 sordDirectory = eloUtilsService.fileUtilsRegular.convertPathName(sordDirectory, eloUtilsService.fileUtilsElo);
-                String[] pathNames = new String[]{};
+                String[] pathNames = sordDirectory.split("¶");
+                String pathName = null;
+                for (int i = 1; i < pathNames.length; i++) {
+                    if (i == 1) {
+                        pathName = pathNames[0] + "¶" + pathNames[i];
+                        if (!eloUtilsService.existSord(getIxConnection(),pathName)) {
+                            Sord newSord = eloUtilsService.createSord(getIxConnection(), "1",maskPath , pathNames[i]);
+                            eloUtilsService.saveSord(getIxConnection(),newSord, SordC.mbAll, LockC.YES);
+                        }
+                    } else {
+                        if (eloUtilsService.existSord(getIxConnection(), pathName + "¶" + pathNames[i])) {
+                            pathName = pathName + "¶" + pathNames[i];
+                        } else  {
+                            Sord newSord = eloUtilsService.createSord(getIxConnection(), pathName,  maskPath , pathNames[i]);
+                            eloUtilsService.saveSord(getIxConnection(),newSord, SordC.mbAll, LockC.YES);
+                            pathName = pathName + "¶" + pathNames[i];
+                            //pathName = newSord.getRefPaths()[0].getPathAsString();
+                        }
+                    }
+                }
                 sord = eloUtilsService.createSord(getIxConnection(), sordDirectory, maskId, sordName);
             }
 
@@ -255,12 +300,12 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
                     getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
                     getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
                 } else {
-                    throw new WMInvalidWorkItemException("This work item do not belong to " + sourceUser);
+                    throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
                 }
             } else if (nodes[Integer.parseInt(workItemId)].getType() == 1){
-                throw new WMInvalidWorkItemException("This is a begin node and can not be modified");
+                throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
             } else {
-                throw new WMInvalidWorkItemException("Work item with id " + workItemId + " do not exist!");
+                throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
             }
         } catch (RemoteException e) {
             throw new WMWorkflowException(e);
@@ -290,63 +335,11 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
-        try {
-            Integer processInstanceIdAsInt = Integer.parseInt(processInstanceId);
-            Integer currentWorkItemIdAsInt = Integer.parseInt(currentWorkItemId);
-
-            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
-            List<WMWorkItem> nextSteps = getNextSteps(processInstanceId, currentWorkItemId);
-            for (int i = 0; i< nextWorkItemIds.length; i++) {
-                boolean isNextWorkItemASuccessor = false;
-                for (WMWorkItem wmWorkItem : nextSteps) {
-                    if (nextWorkItemIds[i].equals(wmWorkItem.getId())){
-                        isNextWorkItemASuccessor = true;
-                    }
-                }
-                if (!isNextWorkItemASuccessor) {
-                    throw new WMInvalidWorkItemException(nextWorkItemIds[i]);
-                }
-            }
-            int[] nextWorkItemIdsAsInt = new int[nextWorkItemIds.length];
-            for (int i = 0; i < nextWorkItemIds.length; i++) {
-                nextWorkItemIdsAsInt[i] = Integer.parseInt(nextWorkItemIds[i]);
-            }
-            getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
-                    wfEditNode.getNode().getComment(), nextWorkItemIdsAsInt);
-        } catch (RemoteException e) {
-            throw new WMWorkflowException(e);
-        }
-    }
-    
-    @Override
-    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
-
-
-        Integer workItemIdAsInt = Integer.parseInt(workItemId);
-        List<WFNode> nextNodes = new ArrayList<>();
-
-        try{
-            WFNodeAssoc[] wfNodeAssoc = eloUtilsService.getWorkFlow(getIxConnection(),processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO).getMatrix().getAssocs();
-            for (WFNodeAssoc wfNode : wfNodeAssoc) {
-                if (workItemIdAsInt.compareTo(wfNode.getNodeFrom()) == 0 ) {
-                    nextNodes.add(eloUtilsService.getNode(getIxConnection(), processInstanceId, wfNode.getNodeTo()));
-                }
-            }
-        }
-        catch(RemoteException e){
-            throw new WMWorkflowException(e);
-        }
-
-        return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
-    }
-
-    @Override
     public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException {
         if (filter instanceof WMFilterProcessInstance) {
             try {
                 FindWorkflowInfo findWorkflowInfo = wfMCToEloObjectConverter.convertWMFilterProcessInstanceToFindWorkflowInfo((WMFilterProcessInstance)filter);
-                FindResult findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, 10, WFDiagramC.mbAll);
+                FindResult findResult = getIxConnection().ix().findFirstWorkflows(findWorkflowInfo, MAX_RESULT, WFDiagramC.mbAll);
                 WFDiagram[] wfDiagrams = findResult.getWorkflows();
                 WMProcessInstance[] wmProcessInstances = eloToWfMCObjectConverter.convertWFDiagramsToWMProcessInstances(wfDiagrams);
                 return new WMProcessInstanceIteratorImpl(wmProcessInstances);
@@ -357,4 +350,141 @@ public class WfmcServiceImpl_Elo extends WfmcServiceImpl_Abstract {
         }
         return null;
     }
+
+    @Override
+    public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
+        WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
+        if ((workItem.getId() != null) && (WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString().equals(attrName))){
+            super.assignWorkItemAttribute(procInstId, workItemId, attrName, attrValue);
+        }
+    }
+
+    @Override
+    public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
+        WMAttributeIterator workItemAttribute = getWfmcServiceCache().getWorkItemAttribute(procInstId, workItemId);
+
+        int[] nextNodesId = new int[workItemAttribute.getCount()];
+        if (workItemAttribute != null) {
+            int i = 0;
+            while (workItemAttribute.hasNext()){
+                WMAttribute wmAttribute = workItemAttribute.tsNext();
+                nextNodesId[i++] = Integer.parseInt((String)wmAttribute.getValue());
+            }
+        }
+
+        Integer processInstanceIdAsInt = Integer.parseInt(procInstId);
+        Integer currentWorkItemIdAsInt = Integer.parseInt(workItemId);
+
+        try {
+            WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
+            List<WMWorkItem> nextSteps = getNextSteps(procInstId, workItemId);
+
+            List<String> nextStepsId = new ArrayList<>();
+            for (WMWorkItem wmWorkItem : nextSteps){
+                String id = wmWorkItem.getId();
+                nextStepsId.add(id);
+            }
+
+            boolean isNextWorkItemASuccessor = false;
+            for (int i = 0; i < nextNodesId.length; i++) {
+                if (nextStepsId.contains(String.valueOf(nextNodesId[i]))) {
+                    isNextWorkItemASuccessor = true;
+                } else {
+                    isNextWorkItemASuccessor = false;
+                    break;
+                }
+            }
+            if (isNextWorkItemASuccessor) {
+                getIxConnection().ix().endEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, false, false, wfEditNode.getNode().getName(),
+                        wfEditNode.getNode().getComment(), nextNodesId);
+                getWfmcServiceCache().removeWorkItemAttributes(procInstId, workItemId);
+            } else {
+                throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_COMPLETE_WORK_ITEM));
+            }
+        } catch (RemoteException e) {
+            throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_COMPLETE_WORK_ITEM));
+        }
+    }
+
+    @Override
+    public WMWorkItem getWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
+
+        try {
+            WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            WFNode[] nodes = wfDiagram.getNodes();
+            WMWorkItem wmWorkItem = null;
+            List<WFNode> wfNodes = new ArrayList<>();
+            for (WFNode wfNode : nodes) {
+                if (Integer.parseInt(workItemId) == wfNode.getId()) {
+                    wfNodes.add(wfNode);
+                    List<WMWorkItem> wmWorkItemList = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(wfNodes);
+                    for(WMWorkItem workItem : wmWorkItemList){
+                        wmWorkItem = workItem;
+                    }
+                }
+            }
+            return wmWorkItem;
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_FIND_WORK_ITEM));
+        }
+    }
+
+    @Override
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) {
+        WorkflowProcess wp = new WorkflowProcess();
+        try {
+
+            WFDiagram wfDiagram = eloUtilsService.getWorkFlowTemplate(getIxConnection(),processDefinitionId,"",WFDiagramC.mbAll,LockC.NO);
+            //System.out.println("wf"+ wfDiagram);
+
+            WFNodeAssoc[] asocieri = wfDiagram.getMatrix().getAssocs();
+
+
+            int idTranzitie = 0;
+            Transition[] tranzitii = new Transition[asocieri.length];
+            for(int i =0; i<asocieri.length;i++){
+                Transition t = new Transition();
+                t.setFrom(asocieri[i].getNodeFrom()+"");
+                t.setTo(asocieri[i].getNodeTo()+"");
+                //nu am gasit in elo, dar ii setez id-ul pt ca e folosit de hashcode si crapa daca e null cand folsoim in anumite colectii
+                t.setId(idTranzitie++ + "");
+                tranzitii[i] = t;
+
+            }
+            wp.setTransition(tranzitii);
+            wp.setName(wfDiagram.getName());
+
+
+        } catch (RemoteException | PropertyVetoException e) {
+            e.printStackTrace();
+        }
+
+        return wp;
+    }
+
+
+
+
+    @Override
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId)  {
+        List<WFNode> nextNodes= new LinkedList<WFNode>();
+        try {
+            WFDiagram workFlow = eloUtilsService.getWorkFlow(getIxConnection(), processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            WorkflowProcess workFlowProcess =  eloToWfMCObjectConverter.convertWfDiagramToWorkflowProcess(workFlow);
+            Transition[] transitions = workFlowProcess.getTransition();
+            for(Transition t: transitions){
+                if(t.getFrom().equals(workItemId+""))
+                {
+                    WFNode node = eloUtilsService.getNode(getIxConnection(), processInstanceId, Integer.parseInt(t.getTo()));
+                    nextNodes.add(node);
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
+    }
+
 }

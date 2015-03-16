@@ -7,7 +7,6 @@ import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -347,7 +346,8 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
 
     @Override
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
-        throw new WMUnsupportedOperationException("assignWorkItemAttribute");
+        WMAttribute wmAttribute = new WMAttributeImpl(attrName, WMAttribute.DEFAULT_TYPE, attrValue);
+        wfmcServiceCache.addWorkItemAttribute(procInstId, workItemId, wmAttribute);
     }
 
     @Override
@@ -400,14 +400,7 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
         throw new WMUnsupportedOperationException("terminateApp");
     }
 
-    @Override
-    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
-        throw new WMUnsupportedOperationException("getNextSteps");
-    }
 
-    @Override
-    public void setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds) throws WMWorkflowException {
-        throw new WMUnsupportedOperationException("setTransition");
-    }
+
 
 }
