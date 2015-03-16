@@ -25,9 +25,9 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
     private Map<String, DataCache> cacheMap = new ConcurrentHashMap<String, DataCache>();
 
     public static class DataCache {
-        public Map<String, WMProcessInstance> wmProcessInstanceCache;
-        public Map<String, Map<String, WMAttribute>> wmProcessInstanceAttributeCache;
-        public Map<WMWorkItem, List<WMAttribute>> wmWorkItemAttributeCache;
+        private Map<String, WMProcessInstance> wmProcessInstanceCache;
+        private Map<String, Map<String, WMAttribute>> wmProcessInstanceAttributeCache;
+        private Map<WMWorkItem, List<WMAttribute>> wmWorkItemAttributeCache;
 
         public DataCache(long timeToExpire, long timeToLive, long timeToEvict) {
             this.wmProcessInstanceCache = new ExpirableMemoryCache<String, WMProcessInstance>(timeToExpire, timeToLive, timeToEvict);

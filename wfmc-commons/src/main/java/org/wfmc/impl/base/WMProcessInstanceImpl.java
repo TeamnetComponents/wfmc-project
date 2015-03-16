@@ -50,9 +50,7 @@ import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMProcessInstanceState;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 public class WMProcessInstanceImpl implements WMProcessInstance, Serializable {
 
@@ -87,7 +85,7 @@ public class WMProcessInstanceImpl implements WMProcessInstance, Serializable {
                                  String processDefinitionId, String parentActivityInstanceId,
                                  String parentProcessInstanceId, WMProcessInstanceState state,
                                  int priority,
-                                 WMParticipant[] participants, Date createdDate, Date startedDate,
+                                 List<WMParticipant> participants, Date createdDate, Date startedDate,
                                  Date targetDate, Date dueDate, Date completedDate,
                                  Date activityTargetDate, Date activityDueDate) {
 
@@ -98,7 +96,7 @@ public class WMProcessInstanceImpl implements WMProcessInstance, Serializable {
         _processDefinitionId = processDefinitionId;
         _state = state;
         _priority = priority;
-        _participants = participants;
+        _participants = participants.toArray(_participants);
         _createdDate = createdDate;
         _startedDate = startedDate;
         _dueDate = dueDate;
@@ -164,8 +162,8 @@ public class WMProcessInstanceImpl implements WMProcessInstance, Serializable {
         return _participants;
     }
 
-    public void setParticipants(WMParticipant[] participants) {
-        _participants = participants;
+    public void setParticipants(List<WMParticipant> participants) {
+        this._participants = participants.toArray(this._participants);
     }
 
     public int getPriority() {

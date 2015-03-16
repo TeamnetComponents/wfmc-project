@@ -147,7 +147,7 @@ public class FileUtils {
 
             //it is just to keep the exception catch-er required when Files/FileSystems from nio is used with jdk1.7
             if (false) {
-                throw new IOException();
+               throw new IOException();
             }
         } catch (IOException e) {
             return "application/octet-stream";

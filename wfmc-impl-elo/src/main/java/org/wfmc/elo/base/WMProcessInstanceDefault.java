@@ -1,5 +1,7 @@
 package org.wfmc.elo.base;
 
+import java.util.List;
+
 import org.wfmc.wapi.WMParticipant;
 import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMProcessInstanceState;
@@ -67,7 +69,7 @@ public class WMProcessInstanceDefault implements WMProcessInstance{
         return participants;
     }
 
-    public void setParticipants(WMParticipant[] participants) {
-        this.participants = participants;
+    public void setParticipants(List<WMParticipant> participants) {
+        this.participants = participants.toArray(this.participants);
     }
 }

@@ -105,9 +105,9 @@ public class DatabaseUtils {
         sequenceSql = sequenceSql.toUpperCase().trim();
         if (!sequenceSql.startsWith("SELECT ")) {
             //if oracle
-            if (true) {
+           // if (true) {
                 sequenceSql = "SELECT " + sequenceSql + ".NEXTVAL FROM DUAL";
-            }
+            //}
 
             //if db2
         }

@@ -12,14 +12,11 @@ import org.mockito.Mockito;
 import org.wfmc.elo.base.WMErrorElo;
 import org.wfmc.elo.base.WMProcessInstanceImpl_Elo;
 import org.wfmc.elo.model.ELOConstants;
-import org.wfmc.elo.model.ELOWfMCProcessInstanceAttributes;
-import org.wfmc.elo.model.EloWfmcObjKey;
 import org.wfmc.elo.model.EloWfmcProcessInstance;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.impl.base.WMAttributeImpl;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMWorkItemAttributeNames;
-import org.wfmc.impl.base.WMWorkItemImpl;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.impl.utils.WfmcUtilsService;
 import org.wfmc.service.ServiceFactory;
@@ -100,31 +97,6 @@ public class WfmcServiceEloImplTest {
     }
 
 
-    @Ignore
-    public void shouldStartEloWorkflowProcessDeprecated(){
-
-        // given
-        String processInstanceId = "someProcessInstanceId";
-        EloWfmcProcessInstance wmProcessInstance = new EloWfmcProcessInstance();
-        // setting the template ID
-        wmProcessInstance.setProcessDefinitionId("4");
-        wmProcessInstance.setName("Test Workflow Name");
-        //idSORD fisier TEST WF (se presupune ca acesta va exista permanent in arhiva ELO de test)
-        wmProcessInstance.setEloWfMCProcessInstanceAttributes(new ELOWfMCProcessInstanceAttributes("104"));
-
-        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
-        Mockito.doReturn(wmProcessInstance).when(wfmcServiceEloImpl).getProcessInstance(Mockito.<String>any());
-        Mockito.doNothing().when(wfmcServiceEloImpl).abortProcessInstance(processInstanceId);
-
-        wfmcServiceEloImpl.connect(wmConnectInfo);
-
-        // when
-        String workspaceId = wfmcServiceEloImpl.startProcess(processInstanceId);
-
-        // then
-        Assertions.assertThat(workspaceId).isNotNull();
-
-    }
 
     @Test
     public void shouldCreateProcessInstance(){
@@ -214,31 +186,6 @@ public class WfmcServiceEloImplTest {
         Assertions.assertThat(to).hasSize(2);
         Assertions.assertThat(to).contains("4","5");
 
-    }
-
-
-
-    @Ignore
-    public void shouldAssignPprocessInstanceAttributeMaskId(){
-
-        // given
-        String processInstanceId = "TestProcInstId";
-        String attributeName = ELOConstants.MASK_ID;
-        String attributeValue = "Dosar";
-        wfmcServiceEloImpl.connect(wmConnectInfo);
-
-        EloWfmcProcessInstance eloWfmcProcessInstance = new EloWfmcProcessInstance();
-
-        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
-        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
-
-        // when
-        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
-
-        // then
-        Assertions.assertThat(eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).isNotNull();
-        Assertions.assertThat(((ELOWfMCProcessInstanceAttributes)eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).getMaskId()).isEqualTo("Dosar");
-        // TODO - complete test assertions after adding metadata
     }
 
     @Ignore
@@ -342,41 +289,6 @@ public class WfmcServiceEloImplTest {
         wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
     }
 
-    @Ignore
-    public void shouldAssignProcessInstanceAttributeDeprecated(){
-
-        // given
-        String processInstanceId = "TestProcInstId";
-        String attributeName = "Tip drum";
-        Object attributeValue = new String[] {STRADA,"autostrada"};
-        wfmcServiceEloImpl.connect(wmConnectInfo);
-
-
-        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
-        EloWfmcProcessInstance eloWfmcProcessInstance = Mockito.mock(EloWfmcProcessInstance.class);
-        Mockito.when(wfmcServiceEloImpl.getProcessInstance(processInstanceId)).thenReturn(eloWfmcProcessInstance);
-        ELOWfMCProcessInstanceAttributes eloWfMCProcessInstanceAttributes = Mockito.mock(ELOWfMCProcessInstanceAttributes.class);
-        Mockito.when(eloWfmcProcessInstance.getEloWfMCProcessInstanceAttributes()).thenReturn(
-            eloWfMCProcessInstanceAttributes);
-        EloWfmcObjKey[] objKeys = new EloWfmcObjKey[5];
-        for (int i = 0; i < 5 ; i++) {
-            objKeys[i] = new EloWfmcObjKey();
-            if (i == 2) {
-                objKeys[i].setName(attributeName);
-            }
-        }
-        Mockito.when(eloWfMCProcessInstanceAttributes.getObjKeys()).thenReturn(objKeys);
-
-        // when
-        wfmcServiceEloImpl.assignProcessInstanceAttribute(processInstanceId, attributeName, attributeValue);
-
-        // then
-        if (attributeValue instanceof String[]) {
-            Assertions.assertThat(objKeys[2].getValue()).isEqualTo((String[])attributeValue);
-        } else {
-            Assertions.assertThat(objKeys[2].getValue()).isEqualTo(new String[]{attributeValue.toString()});
-        }
-    }
 
     @Test(expected = WMWorkflowException.class)
     public void shouldRemoveProcessInstanceFromCache(){

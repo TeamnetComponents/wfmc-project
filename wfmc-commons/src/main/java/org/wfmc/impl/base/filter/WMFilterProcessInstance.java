@@ -11,11 +11,11 @@ import java.util.List;
  * Created by Lucian.Dragomir on 3/4/2015.
  */
 public class WMFilterProcessInstance extends WMFilter {
-    String processInstanceName;
-    String processInstanceId;
-    String processDefinitionId;
-    List<WMParticipant> wmParticipantList;
-    Boolean isActive;
+    private String processInstanceName;
+    private String processInstanceId;
+    private String processDefinitionId;
+    private List<WMParticipant> wmParticipantList;
+    private Boolean isActive;
 
     public WMFilterProcessInstance() {
         super("");
