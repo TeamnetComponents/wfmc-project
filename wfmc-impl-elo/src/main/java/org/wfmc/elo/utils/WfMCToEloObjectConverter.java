@@ -60,12 +60,20 @@ public class WfMCToEloObjectConverter {
             findWorkflowInfo.setUserIds(eloUserIdsArray);
         }
 
-        if (wmFilterProcessInstance.getProcessInstanceId() != null) {
-           findWorkflowInfo.setTemplateId(wmFilterProcessInstance.getProcessInstanceId());
+        if (wmFilterProcessInstance.getProcessDefinitionId() != null) {
+           findWorkflowInfo.setTemplateId(wmFilterProcessInstance.getProcessDefinitionId());
+        }
+
+        if (wmFilterProcessInstance.getIsActive() != null) {
+            if (wmFilterProcessInstance.getIsActive()) {
+                findWorkflowInfo.setType(WFTypeC.ACTIVE);
+            } else {
+                findWorkflowInfo.setType(WFTypeC.FINISHED);
+            }
         }
 
         //todo: cum facem cu tipul de proces? cum il trimitem in filtru?  - ma refer la findWorkflowInfo.setType(WFTypeC.ACTIVE);etc
-         findWorkflowInfo.setType(WFTypeC.FINISHED);
+//         findWorkflowInfo.setType(WFTypeC.ACTIVE);
         return  findWorkflowInfo;
     }
 }
