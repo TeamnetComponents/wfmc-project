@@ -20,6 +20,7 @@ import org.wfmc.impl.base.WMAttributeImpl;
 import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.WMWorkItemImpl;
+import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.impl.utils.WfmcUtilsService;
 import org.wfmc.service.ServiceFactory;
 import org.wfmc.service.WfmcServiceCache;
@@ -652,5 +653,94 @@ public class WfmcServiceImpl_EloTest {
         Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).tsNext().getValue()).isEqualTo(Integer.parseInt((String)attrValue));
         Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(processInstanceId, workItemId).getCount()).isEqualTo(size);
 
+    }
+
+    @Test
+    public void should_listProcessInstances() throws RemoteException {
+        String processDefinitionId = "5";
+        String processName = "Test";
+
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance().isActive(true).addProcessDefinitionId(String.valueOf(processDefinitionId));
+
+        WMProcessInstanceIterator wmProcessInstanceIterator = wfmcServiceImpl_Elo.listProcessInstances(wmFilter, true);
+        List<WMProcessInstance> wmProcessInstances = new ArrayList<>();
+        String newProcessDefinitionId = null;
+        while (wmProcessInstanceIterator.hasNext()) {
+            WMProcessInstance wmProcessInstance = wmProcessInstanceIterator.tsNext();
+//            newProcessDefinitionId = wmProcessInstance.getProcessDefinitionId();
+            wmProcessInstances.add(wmProcessInstance);
+        }
+
+        Assertions.assertThat(wmProcessInstances).isNotNull();
+//        Assertions.assertThat(newProcessDefinitionId).isEqualTo(processDefinitionId);
+
+        wfmcServiceImpl_Elo.abortProcessInstance(String.valueOf(processInstanceId));
+    }
+
+    @Test
+    public void should_listWorkItem() throws RemoteException {
+        String processDefinitionId = "5";
+        String processName = "Test";
+
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId(String.valueOf(processInstanceId));
+
+        WMWorkItemIterator wmWorkItemIterator = wfmcServiceImpl_Elo.listWorkItems(wmFilter, true);
+        List<WMWorkItem> wmWorkItems = new ArrayList<>();
+        String newProcessInstanceId = null;
+        while (wmWorkItemIterator.hasNext()) {
+            WMWorkItem wmWorkItem = wmWorkItemIterator.tsNext();
+            if (String.valueOf(processInstanceId).equals(wmWorkItem.getProcessInstanceId())) {
+                newProcessInstanceId = wmWorkItem.getProcessInstanceId();
+                wmWorkItems.add(wmWorkItem);
+            }
+        }
+
+        Assertions.assertThat(wmWorkItems).isNotNull();
+        Assertions.assertThat(newProcessInstanceId).isEqualTo(String.valueOf(processInstanceId));
+
+        wfmcServiceImpl_Elo.abortProcessInstance(String.valueOf(processInstanceId));
+    }
+
+    @Test
+    public void should_getWorkItem() throws RemoteException {
+        String processDefinitionId = "5";
+        String processName = "Test";
+        String workItemId = "0";
+
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "5");
+
+        WMWorkItem workItem = wfmcServiceImpl_Elo.getWorkItem(String.valueOf(processInstanceId), workItemId);
+
+        Assertions.assertThat(workItem).isNotNull();
+        Assertions.assertThat(workItem.getName()).isNotEqualTo("");
+
+        wfmcServiceImpl_Elo.abortProcessInstance(String.valueOf(processInstanceId));
+    }
+
+    @Test
+    public void should_completeWorkItem() throws RemoteException {
+        String processDefinitionId = "5";
+        String processName = "Test";
+        String workItemId = "5";
+        String attributeValue = "newValue";
+
+        wfmcServiceImpl_Elo.connect(wmConnectInfo);
+        int processInstanceId = wfmcServiceImpl_Elo.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "5");
+        List<WMWorkItem> nextSteps = wfmcServiceImpl_Elo.getNextSteps(String.valueOf(processInstanceId), workItemId);
+        for (WMWorkItem wmWorkItem : nextSteps) {
+            wfmcServiceImpl_Elo.assignWorkItemAttribute(String.valueOf(processInstanceId), workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(),wmWorkItem.getId());
+        }
+
+        wfmcServiceImpl_Elo.completeWorkItem(String.valueOf(processInstanceId), workItemId);
+        wfmcServiceImpl_Elo.assignWorkItemAttribute(String.valueOf(processInstanceId), workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), attributeValue );
+
+
+        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).getCount()).isEqualTo(1);
+        Assertions.assertThat(wfmcServiceImpl_Elo.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).tsNext().getValue()).isEqualTo(attributeValue);
     }
 }
