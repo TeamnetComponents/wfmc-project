@@ -1,5 +1,6 @@
 package org.wfmc;
 
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
@@ -9,8 +10,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Mihai.Niculae on 3/6/2015.
- */
+* Created by Mihai.Niculae on 3/6/2015.
+*/
 public class DemoFluxAprobareOperatiuniNode10 {
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
@@ -61,29 +62,40 @@ public class DemoFluxAprobareOperatiuniNode10 {
 
         for (WMWorkItem wmWorkItem : nextSteps) {
             if (wmWorkItem.getName().equals(FluxAprobareOperatiuniNodes.RESPINGE)) {
-                wfmcService.setTransition(processInstanceId, currentWmWorkItemId, new String[]{currentWmWorkItemId = wmWorkItem.getId()});
+                wfmcService.assignWorkItemAttribute(processInstanceId, currentWmWorkItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), wmWorkItem.getId());
             break;
             }
         }
+        wfmcService.completeWorkItem(processInstanceId, currentWmWorkItemId);
 
-        //Pas 8 : Gasire next steps pt pasul actual, in acest caz pt currentWmWorkItemId - > id-ul lui Respinge
+        //Pas 8 : Gasire toate Taskuri de tip Respinge
+
+        WMFilter wmFilter1 = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName(FluxAprobareOperatiuniNodes.RESPINGE).addWorkItemParticipantName(sourceUser);
+        WMWorkItemIterator wmWorkItemIterator1 = wfmcService.listWorkItems(wmFilter1, true);
+        while (wmWorkItemIterator1.hasNext()) {
+            WMWorkItem wmWorkItem = wmWorkItemIterator1.tsNext();
+            if (wmWorkItem.getProcessInstanceId().equals(processInstanceId)) {
+                currentWmWorkItemId = wmWorkItem.getId();
+            }
+        }
+
+        //Pas 8.1 : Gasire next steps pt pasul actual, in acest caz pt currentWmWorkItemId - > id-ul lui Respinge
 
          nextSteps = wfmcService.getNextSteps(processInstanceId, currentWmWorkItemId);
 
 
-
-        // Pas 9 : Forward pe Nod0 (memrgem pe Nod0)
+        // Pas 9 : Forward pe Nod10 (memrgem pe Nod0)
        //nu l-am mai adaugat la enumeratie, trebuia?
 
         for (WMWorkItem wmWorkItem : nextSteps) {
         //    System.out.println("Node" + wmWorkItem.getName());
-            if (wmWorkItem.getName().equals("node 10")) {
-
-
-                wfmcService.setTransition(processInstanceId, currentWmWorkItemId, new String[]{currentWmWorkItemId = wmWorkItem.getId()});
+            if (wmWorkItem.getName().equals(FluxAprobareOperatiuniNodes.NODE10)) {
+                wfmcService.assignWorkItemAttribute(processInstanceId, currentWmWorkItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), wmWorkItem.getId());
                 break;
             }
         }
+
+        wfmcService.completeWorkItem(processInstanceId, currentWmWorkItemId);
 
         //Ultimul pas : Verificam ca workflow-ul s-a terminat
 
