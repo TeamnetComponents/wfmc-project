@@ -15,6 +15,7 @@ public abstract class ServiceFactory<T extends Service> {
     public static final String INSTANCE_CLASS = "instance.class";
     public static final String INSTANCE_SOURCE = "instance.source";
     public static final String INSTANCE_SOURCE_TYPE = "instance.source.type";
+    public static final String INSTANCE_SERVICE_CLASS = "instance.service.class";
 
     private static final String PROPERTIES_FILE_SUFFIX = ".properties";
 
@@ -163,6 +164,30 @@ public abstract class ServiceFactory<T extends Service> {
         String serviceClassName = context.getProperty(getPropertyInstanceClass());
         if (serviceClassName == null)
             throw new IllegalArgumentException(getPropertyInstanceClass());
+        Class serviceClazz = Class.forName(serviceClassName);
+
+        //the provided class must implement the Service interface.
+        if (!Service.class.isAssignableFrom(serviceClazz)) {
+            throw new IllegalArgumentException("The class " + serviceClassName + " must implement the interface " + Service.class.getName());
+        }
+
+        //return a new instance of WfmcService class
+        instance = (T) serviceClazz.newInstance();
+
+        //send the factory parameters to the instance
+        instance.__initialize(context);
+
+        return instance;
+    }
+
+
+    public T getServiceInstance() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
+        T instance = null;
+
+        //ensure that serviceClassName is provided.
+        String serviceClassName = context.getProperty(INSTANCE_SERVICE_CLASS);
+        if (serviceClassName == null)
+            throw new IllegalArgumentException(INSTANCE_SERVICE_CLASS);
         Class serviceClazz = Class.forName(serviceClassName);
 
         //the provided class must implement the Service interface.

@@ -31,6 +31,13 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
         WfmcService wfmcService = null;
         wfmcService = super.getInstance();
 
+        WfmcService wfmcServiceForService = null;
+        try {
+            wfmcServiceForService = super.getServiceInstance();
+        } catch (IllegalArgumentException e){
+            //do nothing
+        }
+
         //prepare service cache
 
         //get parent paths to optimize configuration file detection
@@ -62,8 +69,16 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
                 }
             }
             WfmcServiceCache wfmcServiceCache = wfmcServiceCacheFactory.getInstance();
-            wfmcServiceCache.setWfmcService(wfmcService);
-            ((WfmcServiceImpl_Abstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
+            if(wfmcServiceForService != null){
+                wfmcServiceCache.setWfmcService(wfmcServiceForService);
+                ((WfmcServiceImpl_Abstract) wfmcServiceForService).setWfmcServiceCache(wfmcServiceCache);
+            } else {
+                wfmcServiceCache.setWfmcService(wfmcService);
+                ((WfmcServiceImpl_Abstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
+            }
+        }
+        if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAudit_Impl)){
+            ((WfmcServiceAudit_Impl)wfmcService).setInternalService(wfmcServiceForService);
         }
         return wfmcService;
     }

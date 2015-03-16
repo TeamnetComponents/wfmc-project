@@ -14,7 +14,7 @@ import java.util.*;
  */
 public abstract class WfmcServiceImpl_Abstract implements WfmcService {
 
-    private Properties context;
+    protected Properties context;
     protected String serviceInstance;
     private WfmcServiceCache wfmcServiceCache;
 
