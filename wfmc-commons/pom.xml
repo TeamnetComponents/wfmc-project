@@ -20,6 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-lang.version>2.6</commons-lang.version>
         <velocity.version>1.7</velocity.version>
+        <commons-dbcp.version>1.4</commons-dbcp.version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,11 @@
             <artifactId>junit</artifactId>
             <version>4.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp.version}</version>
         </dependency>
     </dependencies>
     <build>

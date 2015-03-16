@@ -4,6 +4,7 @@ import org.wfmc.audit.WMACreateProcessInstanceData;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
 import java.io.IOException;
 import java.util.List;
@@ -399,6 +400,11 @@ public class WfmcServiceAudit_Impl extends WfmcServiceImpl_Abstract {
     @Override
     public void terminateApp(int toolAgentHandle, String procInstId, String workItemId) throws WMWorkflowException {
         super.terminateApp(toolAgentHandle, procInstId, workItemId);
+    }
+
+    @Override
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) {
+        return null;
     }
 
     @Override
