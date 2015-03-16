@@ -1,5 +1,6 @@
 package org.wfmc;
 
+import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
@@ -75,9 +76,10 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         //Pas 8. Forward task to Aprobat
         for (WMWorkItem wmWorkItem : nextSteps) {
             if(wmWorkItem.getName().equals(FluxHotarareConsiliuLocalNodes.APROBAT)) {
-                wfmcService.setTransition(processInstanceId, currentWorkItemId, new String[]{wmWorkItem.getId()});
+                wfmcService.assignWorkItemAttribute(processInstanceId, currentWorkItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), wmWorkItem.getId());
             }
         }
+        wfmcService.completeWorkItem(processInstanceId, currentWorkItemId);
 
         //Pas 9. Check if workflow was finished
         WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);
