@@ -158,6 +158,8 @@ public class WMWorkItemImpl extends WMWorkItem_Abstract {
         result = 31 * result + (_state != null ? _state.hashCode() : 0);
         result = 31 * result + (_participant != null ? _participant.hashCode() : 0);
         result = 31 * result + (_performer != null ? _performer.hashCode() : 0);
+        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
+        result = 31 * result + (getProcessInstanceId() != null ? getProcessInstanceId().hashCode() : 0);
         return result;
     }
 
