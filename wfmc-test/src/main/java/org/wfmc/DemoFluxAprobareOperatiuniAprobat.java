@@ -15,7 +15,7 @@ import java.util.List;
 public class DemoFluxAprobareOperatiuniAprobat {
 
     public static void main(String[] arg) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
+        String serviceProperties = "C:\\Users\\ioan.ivan\\Desktop\\wapi-elo-renns.properties"; //"D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         String processInstanceName =  "Instanta flux aprobare operatiuni 3";
 
 
@@ -84,7 +84,7 @@ public class DemoFluxAprobareOperatiuniAprobat {
 
         System.out.println("Process instance id = " + procInstId);
         //Pas 12. Check if workflow was finished
-        WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);
+        WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().isActive(false).addProcessInstanceName(processInstanceName);
         WMProcessInstanceIterator wmProcessInstanceIterator = wfmcService.listProcessInstances(wmFilter2, true);
         while (wmProcessInstanceIterator.hasNext()) {
             WMProcessInstance wmProcessInstance = wmProcessInstanceIterator.tsNext();

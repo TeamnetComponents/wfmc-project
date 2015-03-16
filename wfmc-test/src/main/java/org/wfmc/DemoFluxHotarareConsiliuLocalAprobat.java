@@ -82,7 +82,7 @@ public class DemoFluxHotarareConsiliuLocalAprobat {
         wfmcService.completeWorkItem(processInstanceId, currentWorkItemId);
 
         //Pas 9. Check if workflow was finished
-        WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);
+        WMFilter wmFilter2 = WMFilterBuilder.createWMFilterProcessInstance().isActive(false).addProcessInstanceName(processInstanceName);
         WMProcessInstanceIterator wmProcessInstanceIterator = wfmcService.listProcessInstances(wmFilter2, true);
         while (wmProcessInstanceIterator.hasNext()) {
             WMProcessInstance wmProcessInstanceTemp = wmProcessInstanceIterator.tsNext();

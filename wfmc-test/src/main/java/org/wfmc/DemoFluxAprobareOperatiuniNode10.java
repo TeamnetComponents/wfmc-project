@@ -99,7 +99,7 @@ public class DemoFluxAprobareOperatiuniNode10 {
 
         //Ultimul pas : Verificam ca workflow-ul s-a terminat
 
-        WMFilter filtru = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName(processInstanceName);
+        WMFilter filtru = WMFilterBuilder.createWMFilterProcessInstance().isActive(false).addProcessInstanceName(processInstanceName);
         WMProcessInstanceIterator wmWorkItemsIterator = wfmcService.listProcessInstances(filtru, true);
         System.out.println("Numar instante proces :" +  wmWorkItemsIterator.getCount());
         while(wmWorkItemsIterator.hasNext()){
