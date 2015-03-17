@@ -43,15 +43,14 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
 
         String status= "OK";
         try {
-            return internalService.createProcessInstance(procDefId, procInstName);
-        }
-        catch(Exception ex){
+            String tempProcessInstanceId =  internalService.createProcessInstance(procDefId, procInstName);
+        } catch(Exception ex){
             status = ex.getMessage();
         }
         finally {
             //log
-            WMACreateProcessInstanceData wmaCreateProcessInstanceData = new WMACreateProcessInstanceData();
-           // TODO
+
+           // TODO apel AuditWorkflowHandler pentru operatia de create PI
 
         }
         //log after (including error catching )
