@@ -294,14 +294,10 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
             WFDiagram wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             WFNode[] nodes = wfDiagram.getNodes();
             if ((nodes[Integer.parseInt(workItemId)].getName() != "") && (nodes[Integer.parseInt(workItemId)].getType() != 1)) {
-                if (sourceUser.equals(nodes[Integer.parseInt(workItemId)].getUserName())) {
-                    nodes[Integer.parseInt(workItemId)].setUserName(targetUser);
-                    wfDiagram.setNodes(nodes);
-                    getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
-                    getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
-                } else {
-                    throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
-                }
+                nodes[Integer.parseInt(workItemId)].setUserName(targetUser);
+                wfDiagram.setNodes(nodes);
+                getIxConnection().ix().checkinWorkFlow(wfDiagram, WFDiagramC.mbAll, LockC.NO);
+                getIxConnection().ix().checkoutWorkFlow(String.valueOf(wfDiagram.getId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             } else if (nodes[Integer.parseInt(workItemId)].getType() == 1){
                 throw new WMInvalidWorkItemException(nodes[Integer.parseInt(workItemId)].getName());
             } else {
