@@ -45,7 +45,7 @@ import java.util.Properties;
         }
         finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-//            String session = internalService.getSession();
+//            String session = internalService.getSessionId();
             auditWorkflowHandler.createProcessInstanceAudit(procDefId, procInstName, tempProcessInstanceId, getDataSource());
            // TODO apel AuditWorkflowHandler pentru operatia de create PI
 

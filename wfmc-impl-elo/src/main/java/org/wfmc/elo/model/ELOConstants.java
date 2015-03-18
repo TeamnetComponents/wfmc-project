@@ -6,8 +6,8 @@ package org.wfmc.elo.model;
 public class ELOConstants {
     public static final String SORD_ID = ".Sord";
     public static final String MASK_ID = ".Mask";
-    public static final String PATH_TEMPLATE = ".Dir";
-    public static final String PATH_HISTORY_TEMPLATE = ".PathHistory";
-    public static final String PATH_MASK_ID = ".PathMask";
+    public static final String DIR_TEMPLATE = ".Dir";
+    public static final String DIR_HISTORY_TEMPLATE = ".DirHistory";
+    public static final String DIR_MASK_ID = ".DirMask";
 
 }

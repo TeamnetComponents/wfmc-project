@@ -213,8 +213,8 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
                     throw new WMExecuteException("The mask information does not exist.");
                 }
                 //determin directorul unde trebuie creat sord-ul
-                sordDirectory = processDefinitionAttributes.get(ELOConstants.PATH_TEMPLATE);
-                maskPath = processDefinitionAttributes.get(ELOConstants.PATH_MASK_ID);
+                sordDirectory = processDefinitionAttributes.get(ELOConstants.DIR_TEMPLATE);
+                maskPath = processDefinitionAttributes.get(ELOConstants.DIR_MASK_ID);
                 if (StringUtils.isEmpty(sordDirectory)) {
                     throw new WMExecuteException("The directory information does not exist.");
                 }
@@ -485,7 +485,7 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public String getSession() {
+    public String getSessionId() {
         return ixConnection.getJSESSIONID();
     }
 

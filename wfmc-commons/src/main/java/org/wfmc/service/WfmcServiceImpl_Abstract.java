@@ -50,7 +50,7 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     }
 
     @Override
-    public String getSession() {
+    public String getSessionId() {
         return this.sessionId;
     }
 

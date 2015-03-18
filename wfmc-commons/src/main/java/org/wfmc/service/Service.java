@@ -20,5 +20,5 @@ public interface Service {
 
     public String getName();
 
-    public String getSession();
+    public String getSessionId();
 }

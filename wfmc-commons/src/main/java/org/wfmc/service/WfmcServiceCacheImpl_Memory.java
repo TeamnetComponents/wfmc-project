@@ -201,7 +201,7 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
     }
 
     @Override
-    public String getSession() {
+    public String getSessionId() {
         return this.sessionId;
     }
 
