@@ -39,4 +39,12 @@ public interface WfmcServiceCache extends Service {
 
     public void removeWorkItemAttributes (String procInstId, String workItemId);
 
+    // User cache
+
+    public String getUserName(String sessionId);
+
+    public void addUserName (String sessionId, String userName);
+
+    public void removeUserName (String sessionId);
+
 }

@@ -19,4 +19,6 @@ public interface Service {
     public Properties getContext();
 
     public String getName();
+
+    public String getSession();
 }

@@ -18,6 +18,7 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     protected Properties context;
     protected String serviceInstance;
     private WfmcServiceCache wfmcServiceCache;
+    private String sessionId;
 
 
     public WfmcServiceCache getWfmcServiceCache() {
@@ -46,6 +47,11 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     @Override
     public String getName() {
         return (String) context.get(ServiceFactory.INSTANCE_NAME);
+    }
+
+    @Override
+    public String getSession() {
+        return this.sessionId;
     }
 
     @Override

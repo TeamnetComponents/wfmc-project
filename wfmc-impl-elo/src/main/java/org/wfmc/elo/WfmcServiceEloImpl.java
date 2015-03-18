@@ -8,10 +8,7 @@ import org.wfmc.elo.model.ELOConstants;
 import org.wfmc.elo.utils.EloToWfMCObjectConverter;
 import org.wfmc.elo.utils.EloUtilsService;
 import org.wfmc.elo.utils.WfMCToEloObjectConverter;
-import org.wfmc.impl.base.WMProcessInstanceIteratorImpl;
-import org.wfmc.impl.base.WMWorkItemAttributeNames;
-import org.wfmc.impl.base.WMWorkItemImpl;
-import org.wfmc.impl.base.WMWorkItemIteratorImpl;
+import org.wfmc.impl.base.*;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
 import org.wfmc.impl.utils.FileUtils;
@@ -59,6 +56,8 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
             if (!eloUtilsService.checkIfGroupExist(getIxConnection(), usersSplit[0])) {
                 eloUtilsService.createUserGroup(getIxConnection(), usersSplit[0], null);
             }
+            String jsessionid = ixConnection.getJSESSIONID();
+            getWfmcServiceCache().addUserName(jsessionid, usersSplit[0]);
         } catch (RemoteException remoteException) {
             throw new WMWorkflowException(remoteException);
         }
@@ -66,7 +65,9 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     private void releaseIXConnection() {
         if (ixConnection != null) {
+            String jsessionid = ixConnection.getJSESSIONID();
             ixConnection.logout();
+            getWfmcServiceCache().removeUserName(jsessionid);
             ixConnection = null;
         }
         ixConnection = null;
@@ -451,9 +452,6 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
         return wp;
     }
 
-
-
-
     @Override
     public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId)  {
         List<WFNode> nextNodes= new LinkedList<WFNode>();
@@ -485,4 +483,10 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     public EloToWfMCObjectConverter getEloToWfMCObjectConverter() {
         return eloToWfMCObjectConverter;
     }
+
+    @Override
+    public String getSession() {
+        return ixConnection.getJSESSIONID();
+    }
+
 }
