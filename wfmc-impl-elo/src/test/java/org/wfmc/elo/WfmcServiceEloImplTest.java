@@ -581,7 +581,7 @@ public class WfmcServiceEloImplTest {
 
         wfmcServiceEloImpl.connect(wmConnectInfo);
         int processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
-        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId(String.valueOf(processInstanceId));
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem();
 
         WMWorkItemIterator wmWorkItemIterator = wfmcServiceEloImpl.listWorkItems(wmFilter, true);
         List<WMWorkItem> wmWorkItems = new ArrayList<>();

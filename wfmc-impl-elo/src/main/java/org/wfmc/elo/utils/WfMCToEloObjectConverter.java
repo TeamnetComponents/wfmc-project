@@ -37,9 +37,6 @@ public class WfMCToEloObjectConverter {
             findTasksInfo.setAllUsers(true);
         }
         findTasksInfo.setInclWorkflows(true);
-        if (wmFilterWorkItem.getProcessInstanceId() != null) {
-            //TODO:
-        }
 
         return  findTasksInfo;
     }
