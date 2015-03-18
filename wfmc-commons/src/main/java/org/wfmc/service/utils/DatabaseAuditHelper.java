@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+//import javax.activation.DataSource;
+
 /**
  * Created by andras on 3/17/2015.
  */
@@ -18,9 +20,9 @@ public class DatabaseAuditHelper {
             Connection connection = dataSource.getConnection();
 
 
-            preparedStatement = connection.prepareStatement("INSERT INTO WMAAuditEntry  (ID,processDefinitionId, " +
-                    " activityDefinitionId,  initialProcessInstanceId,  currentProcessInstanceId,  activityInstanceId,  \n" +
-                    "                          workItemId,  processState,  eventCode,  domainId,  nodeId,  userId, roleId,  time,  informationId)  VALUES\n" +
+            preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID, " +
+                    " ACTIVITY_DEFINITION_ID,  INITIAL_PROCESS_INSTANCE_ID,  CURRENT_PROCESS_INSTANCE_ID,  ACTIVITY_INSTANCE_ID,  \n" +
+                    "                          WORK_ITEM_ID,  PROCESS_STATE,  EVENT_CODE,  DOMAIN_ID,  NODE_ID,  USER_ID, ROLE_ID,  time,  INFORMATION_ID)  VALUES\n" +
                     "  (WMAAuditEntry_Sequence.nextval,?,?," +
                     "?,?,?,?,?,?,?,?,?,?,SYSDATE,?)");
             preparedStatement.setString(1,wmaCreateProcessInstanceData.getProcessDefinitionId());
@@ -48,4 +50,6 @@ public class DatabaseAuditHelper {
                 }
         }
     }
+
+
 }
