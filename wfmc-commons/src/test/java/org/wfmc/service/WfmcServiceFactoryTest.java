@@ -5,13 +5,19 @@ import org.junit.Test;
 import org.wfmc.audit.WMACreateProcessInstanceData;
 import org.wfmc.audit.WMAEventCode;
 import org.wfmc.service.utils.DatabaseAuditHelper;
+import org.wfmc.wapi.WMProcessInstanceState;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -39,6 +45,7 @@ public class WfmcServiceFactoryTest {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
         WfmcService wfmcService = wfmcServiceFactory.getInstance();
+
         Assertions.assertThat(wfmcService).isInstanceOf(WfmcServiceAuditImpl.class);
         Assertions.assertThat(((WfmcServiceAuditImpl)((WfmcServiceAuditImpl)wfmcService).getInternalService()).getWfmcServiceCache()).isNotNull();
     }
@@ -52,6 +59,7 @@ public class WfmcServiceFactoryTest {
         Assertions.assertThat(wfmcService.getDataSource().getConnection()).isNotNull();
     }
 
+
     @Test
     public void testInsertCreateProcessInstanceAudit()
             throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
@@ -61,36 +69,133 @@ public class WfmcServiceFactoryTest {
 
 
 
+        //pregatesc instanta de test
+
         WMACreateProcessInstanceData w = new WMACreateProcessInstanceData();
-        w.setProcessDefinitionId("procDefId4");
-        w.setInitialProcessInstanceId("iniprocId");
-        w.setActivityDefinitionId("actDefId");
-        w.setCurrentProcessInstanceId("procInsId");
+        w.setProcessDefinitionId("pdTest");
+        w.setInitialProcessInstanceId("TestInsId");
+        w.setActivityDefinitionId("Testaid");
+        w.setCurrentProcessInstanceId("TestPIid");
         w.setActivityInstanceId("actInsId");
-        w.setWorkItemId("wiId");
-        w.setProcessState(null);
+        w.setWorkItemId("TestwiId");
         w.setEventCode(WMAEventCode.WAITING_ON_EVENT);
-        w.setNodeId("nodeId");
-        w.setUserId("userId");
-        w.setRoleId("roleId");
-        w.setDomainId("domid");
+        w.setNodeId("TestnodeId");
+        w.setUserId("TestuserId");
+        w.setRoleId("TestroleId");
+        w.setDomainId("Testdomid");
+        w.setProcessState(WMProcessInstanceState.CLOSED_COMPLETED_TAG);
 
-        w.setTimestamp(null);
-        w.setInformationId("infId");
+        w.setInformationId("TestinfId");
 
 
-        //apel insert
+
 
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
         WfmcServiceAuditImpl wfmcService = (WfmcServiceAuditImpl)wfmcServiceFactory.getInstance();
         DataSource dS = wfmcService.getDataSource();
         Assertions.assertThat(wfmcService.getDataSource().getConnection()).isNotNull();
-        databaseAuditHelper.insertCreateProcessInstanceAudit(dS,w);
+
+
+
+
+        Connection con = wfmcService.getDataSource().getConnection();
+
+
+        // Vad cate/daca sunt obiecte in bd cu prop inainte de inserare
+
+        PreparedStatement preparedStatement = con.prepareStatement("SELECT COUNT(*) FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
+                        "WHERE " +
+                  "PROCESS_DEFINITION_ID = ? AND " +
+                  "ACTIVITY_DEFINITION_ID = ?  AND " +
+                  "INITIAL_PROCESS_INSTANCE_ID = ? AND " +
+                  "CURRENT_PROCESS_INSTANCE_ID = ? AND " +
+                "ACTIVITY_INSTANCE_ID = ? AND " +
+                "WORK_ITEM_ID = ? AND " +
+                "PROCESS_STATE = ?  AND " +
+                "EVENT_CODE = ?     AND " +
+                "DOMAIN_ID = ?      AND " +
+                "NODE_ID = ?        AND " +
+                "USER_ID= ?         AND " +
+                "ROLE_ID = ?        AND " +
+                "INFORMATION_ID = ? "
+        );
+
+        preparedStatement.setString(1,w.getProcessDefinitionId());
+        preparedStatement.setString(2, w.getActivityDefinitionId());
+        preparedStatement.setString(3,w.getInitialProcessInstanceId());
+        preparedStatement.setString(4, w.getCurrentProcessInstanceId() );
+        preparedStatement.setString(5, w.getActivityInstanceId() );
+        preparedStatement.setString(6, w.getWorkItemId() );
+        preparedStatement.setString(7, w.getProcessState() );
+        preparedStatement.setInt(8,w.getEventCode().value());
+        preparedStatement.setString(9, w.getDomainId() );
+        preparedStatement.setString(10, w.getNodeId() );
+        preparedStatement.setString(11, w.getUserId() );
+        preparedStatement.setString(12, w.getRoleId() );
+        preparedStatement.setString(13, w.getInformationId() );
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        int nrInitial = 0;
+                if(resultSet.next())
+            nrInitial = resultSet.getInt(1);
+
+
+        resultSet.close();
+
+        //inserez
+
+        databaseAuditHelper.insertCreateProcessInstanceAudit(wfmcService.getDataSource(),w);
+
+        //citesc din nou
+
+        ResultSet resultSet1 = preparedStatement.executeQuery();
+        int nrFin = nrInitial;
+        if(resultSet1.next()){
+            nrFin = resultSet1.getInt(1);
+        }
+
+        assertEquals(nrInitial,nrFin-1); //aici doar verificam ca a fost adaugat randul nostru
+
+
+        // sterg
+
+
+        preparedStatement=  con.prepareStatement("DELETE FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
+                "WHERE " +
+                "PROCESS_DEFINITION_ID = ? AND " +
+                "ACTIVITY_DEFINITION_ID = ?  AND " +
+                "INITIAL_PROCESS_INSTANCE_ID = ? AND " +
+                "CURRENT_PROCESS_INSTANCE_ID = ? AND " +
+                "ACTIVITY_INSTANCE_ID = ? AND " +
+                "WORK_ITEM_ID = ? AND " +
+                "PROCESS_STATE = ?  AND " +
+                "EVENT_CODE = ?     AND " +
+                "DOMAIN_ID = ?      AND " +
+                "NODE_ID = ?        AND " +
+                "USER_ID= ?         AND " +
+                "ROLE_ID = ?        AND " +
+                "INFORMATION_ID = ? ");
+
+        preparedStatement.setString(1,w.getProcessDefinitionId());
+        preparedStatement.setString(2, w.getActivityDefinitionId());
+        preparedStatement.setString(3,w.getInitialProcessInstanceId());
+        preparedStatement.setString(4, w.getCurrentProcessInstanceId() );
+        preparedStatement.setString(5, w.getActivityInstanceId() );
+        preparedStatement.setString(6, w.getWorkItemId() );
+        preparedStatement.setString(7, w.getProcessState() );
+        preparedStatement.setInt(8,w.getEventCode().value());
+        preparedStatement.setString(9, w.getDomainId() );
+        preparedStatement.setString(10, w.getNodeId() );
+        preparedStatement.setString(11, w.getUserId() );
+        preparedStatement.setString(12, w.getRoleId() );
+        preparedStatement.setString(13, w.getInformationId() );
+
+        preparedStatement.executeUpdate();
 
     }
 
-    static Properties convertResourceBundleToProperties(ResourceBundle resource) {
+        static Properties convertResourceBundleToProperties(ResourceBundle resource) {
         Properties properties = new Properties();
 
         Enumeration<String> keys = resource.getKeys();
