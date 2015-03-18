@@ -1,21 +1,16 @@
 package org.wfmc.service;
 
-import org.wfmc.audit.WMACreateProcessInstanceData;
 import org.wfmc.impl.utils.DatabaseUtils;
-import org.wfmc.wapi.*;
-import org.wfmc.wapi2.WMEntity;
-import org.wfmc.wapi2.WMEntityIterator;
-import org.wfmc.xpdl.model.workflow.WorkflowProcess;
+import org.wfmc.wapi.WMWorkflowException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Created by Lucian.Dragomir on 3/16/2015.
  */
-public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
+    public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
     private WfmcService internalService;
     private DataSource  dataSource;
 
@@ -38,23 +33,25 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
     }
 
 
-    @Override
-    public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
 
+    public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
+        String tempProcessInstanceId = null;
         String status= "OK";
         try {
-            String tempProcessInstanceId =  internalService.createProcessInstance(procDefId, procInstName);
+            tempProcessInstanceId =  internalService.createProcessInstance(procDefId, procInstName);
         } catch(Exception ex){
             status = ex.getMessage();
+            return null;
         }
         finally {
-            //log
-
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+//            String session = internalService.getSession();
+            auditWorkflowHandler.createProcessInstanceAudit(procDefId, procInstName, tempProcessInstanceId, getDataSource());
            // TODO apel AuditWorkflowHandler pentru operatia de create PI
 
         }
         //log after (including error catching )
-        return null;
+        return tempProcessInstanceId;
     }
 
 }
