@@ -22,9 +22,9 @@ public class DatabaseAuditHelper {
 
             preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID, " +
                     " ACTIVITY_DEFINITION_ID,  INITIAL_PROCESS_INSTANCE_ID,  CURRENT_PROCESS_INSTANCE_ID,  ACTIVITY_INSTANCE_ID,  \n" +
-                    "                          WORK_ITEM_ID,  PROCESS_STATE,  EVENT_CODE,  DOMAIN_ID,  NODE_ID,  USER_ID, ROLE_ID,  time,  INFORMATION_ID)  VALUES\n" +
+                    "                          WORK_ITEM_ID,  PROCESS_STATE,  EVENT_CODE,  DOMAIN_ID,  NODE_ID,  USER_ID, ROLE_ID,  time,  INFORMATION_ID,PROCESS_DEF_BUSINESS_NAME)  VALUES\n" +
                     "  (WMAAuditEntry_Sequence.nextval,?,?," +
-                    "?,?,?,?,?,?,?,?,?,?,SYSDATE,?)");
+                    "?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?)");
             preparedStatement.setString(1,wmaCreateProcessInstanceData.getProcessDefinitionId());
             preparedStatement.setString(2,wmaCreateProcessInstanceData.getActivityDefinitionId());
             preparedStatement.setString(3,wmaCreateProcessInstanceData.getInitialProcessInstanceId());
@@ -38,6 +38,7 @@ public class DatabaseAuditHelper {
             preparedStatement.setString(11,wmaCreateProcessInstanceData.getUserId());
             preparedStatement.setString(12,wmaCreateProcessInstanceData.getRoleId());
             preparedStatement.setString(13,wmaCreateProcessInstanceData.getInformationId());
+            preparedStatement.setString(14,wmaCreateProcessInstanceData.getProcessDefinitionBusinessName());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
