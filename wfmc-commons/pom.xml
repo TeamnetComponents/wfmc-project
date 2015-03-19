@@ -10,7 +10,7 @@
 
     <groupId>org.wfmc</groupId>
     <artifactId>wfmc-commons</artifactId>
-    <version>1.0</version>
+    <version>3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>wfmc-commons</name>
