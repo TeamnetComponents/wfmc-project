@@ -644,4 +644,135 @@ public class WfmcServiceEloImplTest {
             wfmcServiceEloImpl.getWfmcServiceCache().getWorkItemAttribute(String.valueOf(processInstanceId), workItemId).tsNext().getValue()).isEqualTo(
             attributeValue);
     }
+
+
+    @Test
+    public void shoudListProcessInstanceAttributes() throws RemoteException, WMWorkflowException {
+        String processInstanceId = "5";
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
+        Sord sord = Mockito.mock(Sord.class);
+
+        ObjKey objKey = new ObjKey();
+        ObjKey objKey2 = new ObjKey();
+        objKey.setName("Attribute 1");
+        objKey.setData(new String[]{"Value 1"});
+        objKey2.setName("Attribute 2");
+        objKey2.setData(new String[]{"Value 2"});
+        ObjKey[] objKeys = new ObjKey[]{objKey, objKey2};
+        WMFilter filter = new WMFilter("sda", WMFilter.EQ, "dsada");
+
+        IXConnection ixConnection = Mockito.mock(IXConnection.class);
+        Mockito.when(wfmcServiceEloImpl.getIxConnection()).thenReturn(ixConnection);
+        IXConnIXServicePortIF_2 ixConnIXServicePortIF_2 = Mockito.mock(IXConnIXServicePortIF_2.class);
+        Mockito.when(ixConnection.ix()).thenReturn(ixConnIXServicePortIF_2);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutWorkFlow(Mockito.any(String.class), Mockito.any(WFTypeZ.class), Mockito.any(WFDiagramZ.class), Mockito.any(LockZ.class))).thenReturn(wfDiagram);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutSord(Mockito.any(String.class), Mockito.any(SordZ.class), Mockito.any(LockZ.class))).thenReturn(sord);
+        Mockito.when(sord.getObjKeys()).thenReturn(objKeys);
+
+        WMAttributeIterator wmAttributeIterator = wfmcServiceEloImpl.listProcessInstanceAttributes(processInstanceId, filter, true);
+
+        Assertions.assertThat(wmAttributeIterator).isNotNull();
+        Assertions.assertThat(wmAttributeIterator.getCount()).isEqualTo(2);
+        Assertions.assertThat(wmAttributeIterator.tsNext().getValue()).isEqualTo(new String[]{"Value 1"});
+        Assertions.assertThat(wmAttributeIterator.tsNext().getName()).isEqualTo("Attribute 2");
+    }
+
+    @Test
+    public void shoudGetProcessInstanceAttributeValue() throws RemoteException, WMWorkflowException {
+        String processInstanceId = "5";
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
+        Sord sord = Mockito.mock(Sord.class);
+
+        ObjKey objKey = new ObjKey();
+        ObjKey objKey2 = new ObjKey();
+        objKey.setName("Attribute 1");
+        objKey.setData(new String[]{"Value 1"});
+        objKey2.setName("Attribute 2");
+        objKey2.setData(new String[]{"Value 2"});
+        ObjKey[] objKeys = new ObjKey[]{objKey, objKey2};
+
+        IXConnection ixConnection = Mockito.mock(IXConnection.class);
+        Mockito.when(wfmcServiceEloImpl.getIxConnection()).thenReturn(ixConnection);
+        IXConnIXServicePortIF_2 ixConnIXServicePortIF_2 = Mockito.mock(IXConnIXServicePortIF_2.class);
+        Mockito.when(ixConnection.ix()).thenReturn(ixConnIXServicePortIF_2);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutWorkFlow(Mockito.any(String.class), Mockito.any(WFTypeZ.class), Mockito.any(WFDiagramZ.class), Mockito.any(LockZ.class))).thenReturn(wfDiagram);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutSord(Mockito.any(String.class), Mockito.any(SordZ.class), Mockito.any(LockZ.class))).thenReturn(sord);
+        Mockito.when(sord.getObjKeys()).thenReturn(objKeys);
+
+        WMAttribute processInstanceAttributeValue = wfmcServiceEloImpl.getProcessInstanceAttributeValue(processInstanceId, "Attribute 1");
+        WMAttribute processInstanceAttributeValue2 = wfmcServiceEloImpl.getProcessInstanceAttributeValue(processInstanceId, "Attribute 2");
+
+        Assertions.assertThat(processInstanceAttributeValue.getValue()).isEqualTo(new String[] {"Value 1"});
+        Assertions.assertThat(processInstanceAttributeValue.getName()).isEqualTo("Attribute 1");
+        Assertions.assertThat(processInstanceAttributeValue2.getValue()).isEqualTo(new String[] {"Value 2"});
+        Assertions.assertThat(processInstanceAttributeValue2.getName()).isEqualTo("Attribute 2");
+    }
+
+    @Test
+    public void shoudListWorkItemAttributes() throws RemoteException, WMWorkflowException {
+        String workItemId = "3";
+        String processInstanceId = "5";
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
+        Sord sord = Mockito.mock(Sord.class);
+
+        ObjKey objKey = new ObjKey();
+        ObjKey objKey2 = new ObjKey();
+        objKey.setName("Attribute 1");
+        objKey.setData(new String[]{"Value 1"});
+        objKey2.setName("Attribute 2");
+        objKey2.setData(new String[]{"Value 2"});
+        ObjKey[] objKeys = new ObjKey[]{objKey, objKey2};
+        WMFilter filter = new WMFilter("sda", WMFilter.EQ, "dsada");
+
+        IXConnection ixConnection = Mockito.mock(IXConnection.class);
+        Mockito.when(wfmcServiceEloImpl.getIxConnection()).thenReturn(ixConnection);
+        IXConnIXServicePortIF_2 ixConnIXServicePortIF_2 = Mockito.mock(IXConnIXServicePortIF_2.class);
+        Mockito.when(ixConnection.ix()).thenReturn(ixConnIXServicePortIF_2);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutWorkFlow(Mockito.any(String.class), Mockito.any(WFTypeZ.class), Mockito.any(WFDiagramZ.class), Mockito.any(LockZ.class))).thenReturn(wfDiagram);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutSord(Mockito.any(String.class), Mockito.any(SordZ.class), Mockito.any(LockZ.class))).thenReturn(sord);
+        Mockito.when(sord.getObjKeys()).thenReturn(objKeys);
+
+        WMAttributeIterator wmAttributeIterator = wfmcServiceEloImpl.listWorkItemAttributes(processInstanceId, workItemId, filter, true);
+
+        Assertions.assertThat(wmAttributeIterator).isNotNull();
+        Assertions.assertThat(wmAttributeIterator.getCount()).isEqualTo(2);
+        Assertions.assertThat(wmAttributeIterator.tsNext().getValue()).isEqualTo(new String[]{"Value 1"});
+        Assertions.assertThat(wmAttributeIterator.tsNext().getName()).isEqualTo("Attribute 2");
+    }
+
+    @Test
+    public void shoudGetWorkItemAttributeValue() throws RemoteException, WMWorkflowException {
+        String workItemId = "3";
+        String processInstanceId = "5";
+        wfmcServiceEloImpl = Mockito.spy(wfmcServiceEloImpl);
+        WFDiagram wfDiagram = Mockito.mock(WFDiagram.class);
+        Sord sord = Mockito.mock(Sord.class);
+
+        ObjKey objKey = new ObjKey();
+        ObjKey objKey2 = new ObjKey();
+        objKey.setName("Attribute 1");
+        objKey.setData(new String[]{"Value 1"});
+        objKey2.setName("Attribute 2");
+        objKey2.setData(new String[]{"Value 2"});
+        ObjKey[] objKeys = new ObjKey[]{objKey, objKey2};
+
+        IXConnection ixConnection = Mockito.mock(IXConnection.class);
+        Mockito.when(wfmcServiceEloImpl.getIxConnection()).thenReturn(ixConnection);
+        IXConnIXServicePortIF_2 ixConnIXServicePortIF_2 = Mockito.mock(IXConnIXServicePortIF_2.class);
+        Mockito.when(ixConnection.ix()).thenReturn(ixConnIXServicePortIF_2);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutWorkFlow(Mockito.any(String.class), Mockito.any(WFTypeZ.class), Mockito.any(WFDiagramZ.class), Mockito.any(LockZ.class))).thenReturn(wfDiagram);
+        Mockito.when(ixConnIXServicePortIF_2.checkoutSord(Mockito.any(String.class), Mockito.any(SordZ.class), Mockito.any(LockZ.class))).thenReturn(sord);
+        Mockito.when(sord.getObjKeys()).thenReturn(objKeys);
+
+        WMAttribute workItemAttributeValue = wfmcServiceEloImpl.getWorkItemAttributeValue(processInstanceId, workItemId, "Attribute 1");
+        WMAttribute workItemAttributeValue2 = wfmcServiceEloImpl.getWorkItemAttributeValue(processInstanceId, workItemId, "Attribute 2");
+
+        Assertions.assertThat(workItemAttributeValue.getValue()).isEqualTo(new String[] {"Value 1"});
+        Assertions.assertThat(workItemAttributeValue.getName()).isEqualTo("Attribute 1");
+        Assertions.assertThat(workItemAttributeValue2.getValue()).isEqualTo(new String[] {"Value 2"});
+        Assertions.assertThat(workItemAttributeValue2.getName()).isEqualTo("Attribute 2");
+    }
 }

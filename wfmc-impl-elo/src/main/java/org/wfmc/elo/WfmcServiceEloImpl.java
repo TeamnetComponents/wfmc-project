@@ -494,4 +494,77 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
         return  getWfmcServiceCache().getUserName(getSessionId());
     }
 
+    @Override
+    public WMAttributeIterator listProcessInstanceAttributes(String procInstId, WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        try {
+            WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            String objId = wfDiagram.getObjId();
+            Sord sord = getIxConnection().ix().checkoutSord(objId, SordC.mbAll, LockC.NO);
+            ObjKey[] objKeys = sord.getObjKeys();
+            List<WMAttribute> wmAttributeList = new ArrayList<>();
+            for (ObjKey objKey : objKeys) {
+                WMAttribute wmAttribute = new WMAttributeImpl(objKey.getName(), WMAttribute.DEFAULT_TYPE, objKey.getData());
+                wmAttributeList.add(wmAttribute);
+            }
+            return new WMAttributeIteratorImpl(wmAttributeList.toArray());
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
+        }
+    }
+
+    @Override
+    public WMAttribute getProcessInstanceAttributeValue(String procInstId, String attrName) throws WMWorkflowException {
+        try {
+            WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            String objId = wfDiagram.getObjId();
+            Sord sord = getIxConnection().ix().checkoutSord(objId, SordC.mbAll, LockC.NO);
+            ObjKey[] objKeys = sord.getObjKeys();
+            WMAttribute wmAttribute = null;
+            for (ObjKey objKey : objKeys) {
+                if (attrName.equals(objKey.getName())){
+                    wmAttribute = new WMAttributeImpl(objKey.getName(), WMAttribute.DEFAULT_TYPE, objKey.getData());
+                }
+            }
+            return wmAttribute;
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
+        }
+    }
+
+    @Override
+    public WMAttributeIterator listWorkItemAttributes(String procInstId, String workItemId, WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        try {
+            WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            String objId = wfDiagram.getObjId();
+            Sord sord = getIxConnection().ix().checkoutSord(objId, SordC.mbAll, LockC.NO);
+            ObjKey[] objKeys = sord.getObjKeys();
+            List<WMAttribute> wmAttributeList = new ArrayList<>();
+            for (ObjKey objKey : objKeys) {
+                WMAttribute wmAttribute = new WMAttributeImpl(objKey.getName(), WMAttribute.DEFAULT_TYPE, objKey.getData());
+                wmAttributeList.add(wmAttribute);
+            }
+            return new WMAttributeIteratorImpl(wmAttributeList.toArray());
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
+        }
+    }
+
+    @Override
+    public WMAttribute getWorkItemAttributeValue(String procInstId, String workItemId, String attrName) throws WMWorkflowException {
+        try {
+            WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            String objId = wfDiagram.getObjId();
+            Sord sord = getIxConnection().ix().checkoutSord(objId, SordC.mbAll, LockC.NO);
+            ObjKey[] objKeys = sord.getObjKeys();
+            WMAttribute wmAttribute = null;
+            for (ObjKey objKey : objKeys) {
+                if (attrName.equals(objKey.getName())){
+                    wmAttribute = new WMAttributeImpl(objKey.getName(), WMAttribute.DEFAULT_TYPE, objKey.getData());
+                }
+            }
+            return wmAttribute;
+        } catch (RemoteException e) {
+            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
+        }
+    }
 }
