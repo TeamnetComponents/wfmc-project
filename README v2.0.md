@@ -177,7 +177,7 @@ Pentru apelarea metodei avem nevoie de procInstId care este id-ul returnat de cr
         String processInstanceId = wfmcService.startProcess(procInstIdTemp);
 
 #####6.*public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException*
-Construirea unui filtru este prezentata in ???. Exemplu pentru apelarea acestei metode:
+Construirea unui filtru este prezentata la punctul 16. Exemplu pentru apelarea acestei metode:
 
         WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem()
                 .addWorkItemParticipantName("Administrator")
@@ -218,7 +218,7 @@ Aduce o instanta de proces activ sau daca nu exista una activa, o sa caute dupa 
 **ATENTIE! Dupa terminarea unui proces, id-ul procesului terminat nu o sa fie acelasi cu id-ul pe care l-a avut cat timp a fost activ.**
 
 #####13.*public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException*
-Detalii despre construirea filtrului gasiti in ??? . Exemplu:
+Detalii despre construirea filtrului gasiti la punctul 16 . Exemplu:
 
         WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance().
             isActive(true).
@@ -234,6 +234,47 @@ Returneaza un WMWorkItem in functe de id-ul procesului din care face parte si id
 Returneaza process definition cu id-ul processDefinitionId. Exemplu:
 
         wfmcService.getWorkFlowProcess(processDefinitionId);
+
+##16. Creare filtru.
+
+Exista doua tipuri de filtre: unul pentru instantele de proces si altul pentru work item-uri.
+
+#####1.*Filtru pentru instantele de proces.*
+
+Se creaza in modul urmator: 
+
+    WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance();
+
+Acest filtru suporta urmatoarele:
+* filtrarea in functie de numele instantei de proces. Exemplu:
+
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance().addProcessInstanceName (processInstanceName);
+        
+* filtrarea in functie de id-ul unui process definition dupa care a fost creata instanta. Exemplu:
+        
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance().addProcessDefinitionId(processDefinitionId);
+
+* filtrarea in functie de starea procesului. Activ sau terminat. Pentru a aduce procese active variabila processStatus o sa fie true, iar pentru cele terminate false. Exemplu:
+
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterProcessInstance().isActive(processStatus);
+
+#####2.*Filtru pentru work item-uri.*
+Se creaza in modul urmator:
+
+    WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem();
+    
+Acest filtru suporta urmatoarele:
+* filtrarea in functie de numele work item-ului. Exemplu:
+
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().addWorkItemName(workItemName);
+
+* filtrarea in functie de o lista de participanti (WMParticipant). Exemplu:
+
+        WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem().getWmParticipantList(wmParticipantList);
+        
+* filtrarea in functie de numele utilizatorului. Exemplu :
+
+        WMFilter wmFilter1 = WMFilterBuilder.createWMFilterWorkItem().addWorkItemParticipantName(participantName1).addWorkItemParticipantName(participantName2);
 
 ##Flux complet
 Clasa [DemoFluxHotarareConsiliuLocalAprobat](http://git-components.teamnet.ro/blob/components%2Fjava%2Fwfmc-project.git/master/wfmc-test%2Fsrc%2Fmain%2Fjava%2Forg%2Fwfmc%2FDemoFluxAprobareOperatiuniAprobat.java) din wfmc-test :
@@ -314,4 +355,22 @@ Clasa [DemoFluxHotarareConsiliuLocalAprobat](http://git-components.teamnet.ro/bl
             System.out.println(wmProcessInstanceTemp == null || wmProcessInstance.getState() == null ? "Process instance state = " + "null": "Process instance state = " + wmProcessInstanceTemp.getState().stringValue() );
         }
     }
-}
+    
+
+##Modificari fata de v1.0.
+
+#####1.*Inlocuirea metodei setTransition(String processInstanceId, String currentWorkItemId, String[] nextWorkItemIds)*
+
+Metoda setTransition a fost inlocuita de metodele:
+* assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) 
+* completeWorkItem(String procInstId, String workItemId)
+
+Urmatoarele work item-uri (String[] nextWorkItemIds din metoda setTransition) prin care va trece procesul se dau cu metoda assignWorkItemAttribute prin apeluri succesive. Id-ul work item-urilor este reprezentat de attrValue din metoda assignWorkItemAttribute.
+
+Dupa ce au fost date id-urile urmatoarelor work item-uri se apeleaza metoda completeWorkItem.
+
+#####2.*implementare metoda listProcessInstances(listProcessInstances(WMFilter filter, boolean countFlag);*
+
+#####3.*getWorkItem(String procInstId, String workItemId);*
+
+#####4.*getWorkFlowProcess(String processDefinitionId);*
