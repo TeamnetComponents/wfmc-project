@@ -12,7 +12,8 @@ import javax.sql.DataSource;
  */
 public class AuditWorkflowHandler {
 
-    public void createProcessInstanceAudit(String procDefId, String procInstName, String tempInstId, DataSource dataSource){
+    public void createProcessInstanceAudit(String procDefId, String procInstName, String tempInstId, DataSource dataSource,
+        String username){
         WMACreateProcessInstanceData wmaCreateProcessInstanceData = new WMACreateProcessInstanceData();
         wmaCreateProcessInstanceData.setProcessDefinitionBusinessName(procInstName);
 
@@ -20,11 +21,7 @@ public class AuditWorkflowHandler {
         wmaCreateProcessInstanceData.setInitialProcessInstanceId(tempInstId);
         wmaCreateProcessInstanceData.setEventCode(WMAEventCode.CREATED_PROCESS_INSTANCE);
         wmaCreateProcessInstanceData.setProcessState(WMProcessInstanceState.OPEN_NOTRUNNING_NOTSTARTED_TAG);
-
-//        WfmcServiceCacheImpl_Memory wfmcServiceCacheImpl_memory = new WfmcServiceCacheImpl_Memory();
-//        String userName = wfmcServiceCacheImpl_memory.getUserName(sessionId);
-//        wmaCreateProcessInstanceData.setUserId(userName);
-
+        wmaCreateProcessInstanceData.setUserId(username);
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
         databaseAuditHelper.insertCreateProcessInstanceAudit(dataSource, wmaCreateProcessInstanceData);
     }
