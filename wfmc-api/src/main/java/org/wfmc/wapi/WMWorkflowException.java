@@ -55,7 +55,7 @@ package org.wfmc.wapi;
  * @author Anthony Eden
  * @author Adrian Price
  */
-public class WMWorkflowException extends RuntimeException {
+public class WMWorkflowException extends Exception {
     private static final long serialVersionUID = -3554661197812277075L;
     private final WMError _error;
 

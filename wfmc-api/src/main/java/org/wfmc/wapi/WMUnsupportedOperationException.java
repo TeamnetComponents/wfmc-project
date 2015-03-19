@@ -3,12 +3,12 @@ package org.wfmc.wapi;
 /**
  * @author Adrian Price
  */
-public class WMUnsupportedOperationException extends WMWorkflowException {
+public class WMUnsupportedOperationException extends RuntimeException {
     private static final long serialVersionUID = -5759667029599116053L;
     private final String operation;
 
     public WMUnsupportedOperationException(String operation) {
-        super(new WMError(WMError.WM_UNSUPPORTED));
+        new WMError(WMError.WM_UNSUPPORTED);
         this.operation = operation;
     }
 

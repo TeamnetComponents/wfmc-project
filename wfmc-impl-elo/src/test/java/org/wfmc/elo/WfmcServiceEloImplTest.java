@@ -19,9 +19,8 @@ import org.wfmc.impl.base.WMProcessInstanceImpl;
 import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.impl.utils.WfmcUtilsService;
-import org.wfmc.service.ServiceFactory;
-import org.wfmc.service.WfmcServiceCache;
-import org.wfmc.service.WfmcServiceCacheImpl_Memory;
+import org.wfmc.service.*;
+import org.wfmc.service.WfmcServiceCacheMemoryImpl;
 import org.wfmc.wapi.*;
 import org.wfmc.xpdl.model.transition.Transition;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
@@ -52,7 +51,7 @@ public class WfmcServiceEloImplTest {
         cacheTestProperties.setProperty(ServiceFactory.INSTANCE_NAME, "testCache");
 
         // create a test service cache
-        WfmcServiceCache wfmcServiceCache = new WfmcServiceCacheImpl_Memory();
+        WfmcServiceCache wfmcServiceCache = new WfmcServiceCacheMemoryImpl();
         wfmcServiceCache.setWfmcService(wfmcServiceEloImpl);
         wfmcServiceEloImpl.setWfmcServiceCache(wfmcServiceCache);
         wfmcServiceCache.__initialize(cacheTestProperties);
@@ -66,12 +65,12 @@ public class WfmcServiceEloImplTest {
     }
 
     @After
-    public void cleanUp(){
+    public void cleanUp() throws WMWorkflowException {
         wfmcServiceEloImpl.disconnect();
     }
 
     @Test
-    public void shouldCreateEloConnection(){
+    public void shouldCreateEloConnection() throws WMWorkflowException {
 
         // given - all is set up
 
@@ -84,7 +83,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void checkEloDisconnection(){
+    public void checkEloDisconnection() throws WMWorkflowException {
         WMConnectInfo wmConnectInfo = new WMConnectInfo("Andra@"+configBundle.getString("login.name"),
                 configBundle.getString("login.password"),
                 configBundle.getString("cnn.name"),
@@ -99,7 +98,7 @@ public class WfmcServiceEloImplTest {
 
 
     @Test
-    public void shouldCreateProcessInstance(){
+    public void shouldCreateProcessInstance() throws WMWorkflowException {
 
         // given
         String processDefinitionId = "5";
@@ -116,7 +115,7 @@ public class WfmcServiceEloImplTest {
 
 
     @Test
-    public void shouldGetWorkFlowProcess() throws RemoteException {
+    public void shouldGetWorkFlowProcess() throws RemoteException, WMWorkflowException {
         //checking for the right transitions
 
         // given
@@ -189,7 +188,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore
-    public void shouldAssignProcessInstanceAttributeMaskFromComment(){
+    public void shouldAssignProcessInstanceAttributeMaskFromComment() throws WMWorkflowException {
 
         // given
         String processInstanceId = "TestProcInstId";
@@ -213,7 +212,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore
-    public void shouldAssignProcessInstanceAttributeSordIdException(){
+    public void shouldAssignProcessInstanceAttributeSordIdException() throws WMWorkflowException {
 
         // given
         String processInstanceId = "TestProcInstId";
@@ -233,7 +232,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore
-    public void shouldAssignProcessInstanceAttributeMaskIdException(){
+    public void shouldAssignProcessInstanceAttributeMaskIdException() throws WMWorkflowException {
 
         // given
         String processInstanceId = "TestProcInstId";
@@ -252,7 +251,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore
-    public void shouldAssignProcessInstanceAttributeMaskFromCommentException(){
+    public void shouldAssignProcessInstanceAttributeMaskFromCommentException() throws WMWorkflowException {
 
         // given
         String processInstanceId = "TestProcInstId";
@@ -271,7 +270,8 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore//(expected = WMWorkflowException.class)
-    public void shouldAssignProcessInstanceAttributeMaskFromCommentWorkflowNotExistException(){
+    public void shouldAssignProcessInstanceAttributeMaskFromCommentWorkflowNotExistException()
+        throws WMWorkflowException {
 
         // given
         String processInstanceId = "TestProcInstId";
@@ -291,7 +291,7 @@ public class WfmcServiceEloImplTest {
 
 
     @Test(expected = WMWorkflowException.class)
-    public void shouldRemoveProcessInstanceFromCache(){
+    public void shouldRemoveProcessInstanceFromCache() throws WMWorkflowException {
 
         // given
         String procInstId = "TestProcInstId";
@@ -308,7 +308,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldStartEloWorkflowProcess() throws RemoteException {
+    public void shouldStartEloWorkflowProcess() throws RemoteException, WMWorkflowException {
 
         String procInstId = "testProcInstId";
 
@@ -372,7 +372,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore
-    public void integrationWorkflowTestDeprecated(){
+    public void integrationWorkflowTestDeprecated() throws WMWorkflowException {
 
         // given
         String workflowTemplateId = "4";
@@ -393,7 +393,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldReassignWorkItem () throws RemoteException {
+    public void shouldReassignWorkItem () throws RemoteException, WMWorkflowException {
         String sourceUser = "Andra";
         String targetUser = "Administrator";
         String workItemId = "7";
@@ -426,7 +426,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test(expected = WMUnsupportedOperationException.class)
-    public void testListWorkItemsWMFilterNotSupported(){
+    public void testListWorkItemsWMFilterNotSupported() throws WMWorkflowException {
         WMFilter wmFilter = new WMFilter("testing sql filter not supported");
         wfmcServiceEloImpl.listWorkItems(wmFilter, false);
     }
@@ -475,7 +475,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Ignore
-    public void testGetProcessInstanceWithFinishedWorkflow(){
+    public void testGetProcessInstanceWithFinishedWorkflow() throws WMWorkflowException {
         String flowId = "215";
 
         wfmcServiceEloImpl.connect(wmConnectInfo);
@@ -486,7 +486,8 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void testAssignProcessInstanceAttributeForStartedProcessWithExistingAttrInSord() throws RemoteException {
+    public void testAssignProcessInstanceAttributeForStartedProcessWithExistingAttrInSord()
+        throws RemoteException, WMWorkflowException {
         // given
         String workflowTemplateId = "4";
         String workflowName = "Integration Test Workflow Name";
@@ -513,7 +514,8 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test(expected = WMInvalidAttributeException.class)
-    public void testAssignProcessInstanceAttributeForStartedProcessWithoutExistingAttrInSord() throws RemoteException {
+    public void testAssignProcessInstanceAttributeForStartedProcessWithoutExistingAttrInSord()
+        throws RemoteException, WMWorkflowException {
         // given
         String workflowTemplateId = "4";
         String workflowName = "Integration Test Workflow Name";
@@ -530,7 +532,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldAssignWorkItemAttribute() {
+    public void shouldAssignWorkItemAttribute() throws WMWorkflowException {
         String processInstanceId = "5";
         String workItemId = "5";
         String attrName = WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString();
@@ -554,7 +556,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldListProcessInstances() throws RemoteException {
+    public void shouldListProcessInstances() throws RemoteException, WMWorkflowException {
         String processDefinitionId = "5";
         String processName = "Test";
 
@@ -575,7 +577,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldListWorkItem() throws RemoteException {
+    public void shouldListWorkItem() throws RemoteException, WMWorkflowException {
         String processDefinitionId = "5";
         String processName = "Test";
 
@@ -601,7 +603,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldGetWorkItem() throws RemoteException {
+    public void shouldGetWorkItem() throws RemoteException, WMWorkflowException {
         String processDefinitionId = "5";
         String processName = "Test";
         String workItemId = "0";
@@ -618,7 +620,7 @@ public class WfmcServiceEloImplTest {
     }
 
     @Test
-    public void shouldCompleteWorkItem() throws RemoteException {
+    public void shouldCompleteWorkItem() throws RemoteException, WMWorkflowException {
         String processDefinitionId = "5";
         String processName = "Test";
         String workItemId = "5";

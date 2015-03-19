@@ -14,7 +14,9 @@ import java.util.List;
 */
 public class DemoFluxAprobareOperatiuniNode10 {
 
-    public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public static void main(String[] args)
+        throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException, WMWorkflowException
+    {
         String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         String processInstanceName =  "Instanta flux aprobare operatiuni";
         String sourceUser = "Administrator";

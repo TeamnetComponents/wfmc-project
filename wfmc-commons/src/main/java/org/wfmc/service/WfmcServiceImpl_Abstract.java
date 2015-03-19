@@ -407,12 +407,16 @@ public abstract class WfmcServiceImpl_Abstract implements WfmcService {
     }
 
 
-    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMUnsupportedOperationException {
         throw new WMUnsupportedOperationException("getNextSteps");
     }
 
-    public WorkflowProcess getWorkFlowProcess(String processDefinitionId){
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) throws WMWorkflowException{
         throw new WMUnsupportedOperationException("getWorkFlowProcess");
     }
 
+    @Override
+    public String getSessionUsername() {
+        throw new WMUnsupportedOperationException("getSessionUsername");
+    }
 }

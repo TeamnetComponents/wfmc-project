@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Lucian.Dragomir on 2/28/2015.
  */
-public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
+public class WfmcServiceCacheMemoryImpl implements WfmcServiceCache {
 
     public static final String TIME_TO_EXPIRE = "time.to.expire";
     public static final String TIME_TO_LIVE = "time.to.live";
@@ -225,4 +225,8 @@ public class WfmcServiceCacheImpl_Memory implements WfmcServiceCache {
         return wfmcService.getServiceInstance() + "-" + processInstanceId;
     }
 
+    @Override
+    public String getSessionUsername() {
+        return null;
+    }
 }

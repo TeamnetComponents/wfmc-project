@@ -3,6 +3,7 @@ package org.wfmc;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
 import org.wfmc.wapi.WMConnectInfo;
+import org.wfmc.wapi.WMWorkflowException;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -14,7 +15,9 @@ import java.util.ResourceBundle;
  */
 public class TestIntegrareAuditCreateProcessInstance {
 
-    public static void main(String[] args) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args)
+        throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, WMWorkflowException
+    {
         String processInstanceName = "Instanta flux aprobare operatiuni 3";
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns_audit");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));

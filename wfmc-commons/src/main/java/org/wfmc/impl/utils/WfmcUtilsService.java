@@ -1,8 +1,6 @@
 package org.wfmc.impl.utils;
 
-import org.wfmc.wapi.WMAttribute;
-import org.wfmc.wapi.WMAttributeIterator;
-import org.wfmc.wapi.WMIterator;
+import org.wfmc.wapi.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +23,9 @@ public class WfmcUtilsService {
         return list;
     }
 
-    public Map<String, WMAttribute> toWMAttributeMap(WMAttributeIterator wmAttributeIterator) {
+    public Map<String, WMAttribute> toWMAttributeMap(WMAttributeIterator wmAttributeIterator)
+        throws WMNoMoreDataException
+    {
         Map<String, WMAttribute> wmAttributeMap = new HashMap<String, WMAttribute>();
         if (wmAttributeIterator != null) {
             while (wmAttributeIterator.hasNext()) {
@@ -36,7 +36,7 @@ public class WfmcUtilsService {
         return wmAttributeMap;
     }
 
-    public Map<String, Object> toMap(WMAttributeIterator wmAttributeIterator) {
+    public Map<String, Object> toMap(WMAttributeIterator wmAttributeIterator) throws WMNoMoreDataException {
         Map<String, Object> map = new HashMap<String, Object>();
         if (wmAttributeIterator != null) {
             while (wmAttributeIterator.hasNext()) {

@@ -426,7 +426,7 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) {
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) throws WMWorkflowException{
         WorkflowProcess wp = new WorkflowProcess();
         try {
 
@@ -453,7 +453,7 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     }
 
     @Override
-    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId)  {
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMUnsupportedOperationException {
         List<WFNode> nextNodes= new LinkedList<WFNode>();
         try {
             WFDiagram workFlow = eloUtilsService.getWorkFlow(getIxConnection(), processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
@@ -467,7 +467,7 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
                 }
             }
         } catch (RemoteException e) {
-            throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_FIND_WORK_ITEM));
+            throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_FIND_WORK_ITEM));
         }
         return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
     }
@@ -487,6 +487,11 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     @Override
     public String getSessionId() {
         return ixConnection.getJSESSIONID();
+    }
+
+    @Override
+    public String getSessionUsername(){
+        return  getWfmcServiceCache().getUserName(getSessionId());
     }
 
 }

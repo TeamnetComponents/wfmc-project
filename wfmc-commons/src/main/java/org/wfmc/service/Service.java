@@ -21,4 +21,6 @@ public interface Service {
     public String getName();
 
     public String getSessionId();
+
+    public String getSessionUsername();
 }

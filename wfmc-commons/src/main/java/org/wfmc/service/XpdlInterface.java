@@ -1,6 +1,6 @@
 package org.wfmc.service;
 
-import org.wfmc.wapi.WMWorkItem;
+import org.wfmc.wapi.*;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.List;
  */
 public interface XpdlInterface {
 
-    public WorkflowProcess getWorkFlowProcess(String processDefinitionId);
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) throws WMWorkflowException;
 
 
-    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId);
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException;
 
 
 

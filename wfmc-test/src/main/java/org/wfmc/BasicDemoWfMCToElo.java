@@ -4,10 +4,7 @@ import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.impl.base.filter.WMFilterBuilder;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
-import org.wfmc.wapi.WMConnectInfo;
-import org.wfmc.wapi.WMFilter;
-import org.wfmc.wapi.WMWorkItem;
-import org.wfmc.wapi.WMWorkItemIterator;
+import org.wfmc.wapi.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +14,9 @@ import java.util.List;
 */
 public class BasicDemoWfMCToElo {
 
-    public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public static void main(String[] args)
+        throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException, WMWorkflowException
+    {
         String serviceProperties = "D:\\projects\\wfmc-project\\wfmc-test\\src\\main\\resources\\wapi-elo-renns.properties";
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(serviceProperties);
         WfmcService wfmcService = wfmcServiceFactory.getInstance();

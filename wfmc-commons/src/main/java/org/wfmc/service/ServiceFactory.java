@@ -76,9 +76,9 @@ public abstract class ServiceFactory<T extends Service> {
 //            WMWorkflowException
 //        }
 
-        if (contextToLoad == null) {
-            throw new WMWorkflowException("Unable to find configuration for context <" + contextName + "> .");
-        }
+//        if (contextToLoad == null) {
+//            throw new WMWorkflowException("Unable to find configuration for context <" + contextName + "> .");
+//        }
 
         setContext(contextToLoad);
         setDefaultProperties();
@@ -149,12 +149,12 @@ public abstract class ServiceFactory<T extends Service> {
     }
 
     private void validateContext() {
-        if (!this.context.containsKey(INSTANCE_NAME)) {
-            throw new WMWorkflowException("The instance name is not defined.");
-        }
-        if (!this.context.containsKey(INSTANCE_CLASS)) {
-            throw new WMWorkflowException("The instance class is not defined.");
-        }
+//        if (!this.context.containsKey(INSTANCE_NAME)) {
+//            throw new WMWorkflowException("The instance name is not defined.");
+//        }
+//        if (!this.context.containsKey(INSTANCE_CLASS)) {
+//            throw new WMWorkflowException("The instance class is not defined.");
+//        }
     }
 
     public T getInstance() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
