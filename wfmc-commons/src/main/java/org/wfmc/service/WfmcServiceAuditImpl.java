@@ -2,12 +2,12 @@ package org.wfmc.service;
 
 import org.wfmc.impl.utils.DatabaseUtils;
 import org.wfmc.wapi.WMConnectInfo;
+import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMWorkflowException;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.UUID;
 
 /**
  * Created by Lucian.Dragomir on 3/16/2015.
@@ -55,6 +55,26 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
         }
         //log after (including error catching )
         return tempProcessInstanceId;
+    }
+
+    @Override
+    public String startProcess(String procInstId) throws WMWorkflowException {
+        String currentProcessInstanceId =  null;
+        String status = "OK";
+        WMProcessInstance processInstance = null;
+        try {
+            processInstance = internalService.getProcessInstance(procInstId);
+            currentProcessInstanceId = internalService.startProcess(procInstId);
+        } catch (Exception ex) {
+            status = ex.getMessage();
+            return null;
+        } finally {
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+            String username = getUserNameFormInternalServiceCache();
+            auditWorkflowHandler.startProcessInstanceAudit(procInstId, currentProcessInstanceId, getDataSource(), username, processInstance);
+        }
+
+        return currentProcessInstanceId;
     }
 
     private String getUserNameFormInternalServiceCache() {
