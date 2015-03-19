@@ -2,6 +2,7 @@ package org.wfmc.service.utils;
 
 import org.wfmc.audit.WMAAssignProcessInstanceAttributeData;
 import org.wfmc.audit.WMAAuditEntry;
+import org.wfmc.audit.WMAChangeProcessInstanceStateData;
 import org.wfmc.audit.WMACreateProcessInstanceData;
 
 import javax.sql.DataSource;
@@ -68,7 +69,7 @@ public class DatabaseAuditHelper {
                     "  (WMAAuditEntry_Sequence.nextval,?,?," +
                     "?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?,?,?,?,?)");
 
-            basicDataPreparedStatement(preparedStatement,wmaAssignProcessInstanceAttributeData);
+            basicDataPreparedStatement(preparedStatement, wmaAssignProcessInstanceAttributeData);
 
             preparedStatement.setString(14, wmaAssignProcessInstanceAttributeData.getAttributeName());
             preparedStatement.setInt(15, wmaAssignProcessInstanceAttributeData.getAttributeType());
@@ -86,6 +87,44 @@ public class DatabaseAuditHelper {
                     e1.printStackTrace();
                 }
             e.printStackTrace();
+        }
+    }
+
+    public void insertAbortProcessInstanceAudit(DataSource dataSource, WMAChangeProcessInstanceStateData wmaChangeProcessInstanceStateData) {
+        PreparedStatement preparedStatement = null;
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+
+            preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID, " +
+                    "ACTIVITY_DEFINITION_ID, INITIAL_PROCESS_INSTANCE_ID, CURRENT_PROCESS_INSTANCE_ID, " +
+                    "ACTIVITY_INSTANCE_ID, WORK_ITEM_ID, PROCESS_STATE, EVENT_CODE, DOMAIN_ID, NODE_ID, " +
+                    "USER_ID, ROLE_ID, time, INFORMATION_ID, PREVIOUS_PROCESS_INST_STATE, " +
+                    "NEW_PROCESS_INSTANCE_STATE)  " +
+                    "VALUES (WMAAuditEntry_Sequence.nextval,?,?,?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?)");
+
+            basicDataPreparedStatement(preparedStatement, wmaChangeProcessInstanceStateData);
+            preparedStatement.setString(14, wmaChangeProcessInstanceStateData.getPreviousProcessState());
+            preparedStatement.setString(15, wmaChangeProcessInstanceStateData.getNewProcessState());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

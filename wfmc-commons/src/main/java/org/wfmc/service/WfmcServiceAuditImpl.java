@@ -101,6 +101,20 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
         }
     }
 
+    @Override
+    public void abortProcessInstance(String procInstId) throws WMWorkflowException {
+        String status = "OK";
+        try {
+            internalService.abortProcessInstance(procInstId);
+        } catch (Exception ex) {
+            status = ex.getMessage();
+        } finally {
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+            String username = getUserNameFormInternalServiceCache();
+            auditWorkflowHandler.abortProcessInstanceAudit(procInstId, getDataSource(), username);
+        }
+    }
+
     private String getUserNameFormInternalServiceCache() {
             return internalService.getSessionUsername();
     }

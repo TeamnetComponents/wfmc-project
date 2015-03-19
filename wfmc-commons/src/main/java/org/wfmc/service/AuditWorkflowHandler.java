@@ -1,8 +1,6 @@
 package org.wfmc.service;
 
-import org.wfmc.audit.WMAAssignProcessInstanceAttributeData;
-import org.wfmc.audit.WMACreateProcessInstanceData;
-import org.wfmc.audit.WMAEventCode;
+import org.wfmc.audit.*;
 import org.wfmc.service.utils.DatabaseAuditHelper;
 import org.wfmc.wapi.WMAttribute;
 import org.wfmc.wapi.WMProcessInstance;
@@ -81,4 +79,20 @@ public class AuditWorkflowHandler {
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
         databaseAuditHelper.insertAssignProcessInstanceAttributeAudit(dataSource, wmaAssignProcessInstanceAttributeData);
     }
+
+    public void abortProcessInstanceAudit (String processInstanceId, DataSource dataSource, String username) {
+        WMAChangeProcessInstanceStateData wmaChangeProcessInstanceStateData = new WMAChangeProcessInstanceStateData();
+        wmaChangeProcessInstanceStateData.setPreviousProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
+        wmaChangeProcessInstanceStateData.setNewProcessState(WMProcessInstanceState.CLOSED_ABORTED_TAG);
+
+        wmaChangeProcessInstanceStateData.setCurrentProcessInstanceId(null);
+        wmaChangeProcessInstanceStateData.setInitialProcessInstanceId(processInstanceId);
+        wmaChangeProcessInstanceStateData.setEventCode(WMAEventCode.ABORTED_PROCESS_INSTANCE);
+        wmaChangeProcessInstanceStateData.setProcessState(WMProcessInstanceState.CLOSED_ABORTED_TAG);
+        wmaChangeProcessInstanceStateData.setUserId(username);
+
+        DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
+        databaseAuditHelper.insertAbortProcessInstanceAudit(dataSource, wmaChangeProcessInstanceStateData);
+    }
+
 }
