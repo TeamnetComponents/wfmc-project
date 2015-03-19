@@ -496,6 +496,10 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMAttributeIterator listProcessInstanceAttributes(String procInstId, WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        WMProcessInstance processInstance = getWfmcServiceCache().getProcessInstance(procInstId);
+        if (processInstance != null) {
+            return getWfmcServiceCache().getProcessInstanceAttributes(procInstId);
+        }
         try {
             WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             String objId = wfDiagram.getObjId();
@@ -514,6 +518,17 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMAttribute getProcessInstanceAttributeValue(String procInstId, String attrName) throws WMWorkflowException {
+        WMProcessInstance processInstance = getWfmcServiceCache().getProcessInstance(procInstId);
+        if (processInstance != null) {
+            WMAttributeIterator processInstanceAttributes = getWfmcServiceCache().getProcessInstanceAttributes(procInstId);
+            // process is not in ELO, only in cache
+            while (processInstanceAttributes.hasNext()) {
+                WMAttribute wmAttribute = processInstanceAttributes.tsNext();
+                if (attrName.equals(wmAttribute.getName())) {
+                    return wmAttribute;
+                }
+            }
+        }
         try {
             WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             String objId = wfDiagram.getObjId();
@@ -533,6 +548,10 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMAttributeIterator listWorkItemAttributes(String procInstId, String workItemId, WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        WMProcessInstance processInstance = getWfmcServiceCache().getProcessInstance(procInstId);
+        if (processInstance != null) {
+            return getWfmcServiceCache().getProcessInstanceAttributes(procInstId);
+        }
         try {
             WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             String objId = wfDiagram.getObjId();
@@ -551,6 +570,17 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
 
     @Override
     public WMAttribute getWorkItemAttributeValue(String procInstId, String workItemId, String attrName) throws WMWorkflowException {
+        WMProcessInstance processInstance = getWfmcServiceCache().getProcessInstance(procInstId);
+        if (processInstance != null) {
+            WMAttributeIterator processInstanceAttributes = getWfmcServiceCache().getProcessInstanceAttributes(procInstId);
+            // process is not in ELO, only in cache
+            while (processInstanceAttributes.hasNext()) {
+                WMAttribute wmAttribute = processInstanceAttributes.tsNext();
+                if (attrName.equals(wmAttribute.getName())) {
+                    return wmAttribute;
+                }
+            }
+        }
         try {
             WFDiagram wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
             String objId = wfDiagram.getObjId();
