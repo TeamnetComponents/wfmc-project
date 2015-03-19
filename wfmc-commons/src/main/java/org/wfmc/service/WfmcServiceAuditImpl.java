@@ -1,6 +1,7 @@
 package org.wfmc.service;
 
 import org.wfmc.impl.utils.DatabaseUtils;
+import org.wfmc.wapi.WMAttribute;
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMWorkflowException;
@@ -75,6 +76,29 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
         }
 
         return currentProcessInstanceId;
+    }
+
+    @Override
+    public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
+        WMProcessInstance processInstance = null;
+        String status = "OK";
+        Object previousProcessInstanceAttributeValue = null;
+        try {
+            try {
+                WMAttribute processInstanceAttribute = internalService.getProcessInstanceAttributeValue(procInstId, attrName);
+                previousProcessInstanceAttributeValue = processInstanceAttribute.getValue();
+            } catch (Exception ex) {
+                previousProcessInstanceAttributeValue = null;
+            }
+            processInstance = internalService.getProcessInstance(procInstId);
+            internalService.assignProcessInstanceAttribute(procInstId, attrName, attrValue);
+        } catch (Exception ex) {
+            status = ex.getMessage();
+        } finally {
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+            String username = getUserNameFormInternalServiceCache();
+            auditWorkflowHandler.assignProcessInstanceAttributeAudit(procInstId, attrName, attrValue, getDataSource(), username, processInstance, previousProcessInstanceAttributeValue);
+        }
     }
 
     private String getUserNameFormInternalServiceCache() {
