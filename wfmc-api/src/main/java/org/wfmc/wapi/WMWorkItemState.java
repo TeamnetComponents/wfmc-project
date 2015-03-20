@@ -299,13 +299,6 @@ public final class WMWorkItemState extends WMObjectState {
         return ACTIONS[_state];
     }
 
-    public static void main(String[] args) {
-//INSERT INTO WM_WORK_ITEM_STATE(ID,NAme)         VALUES (-1,'Gigi');
-
-        WMWorkItemState wmWorkItemState = WMWorkItemState.valueOf(0);
-        for(int i = 0; i<6;i++){
-        System.out.println("INSERT INTO WM_WORK_ITEM_STATE(ID,NAme) VALUES ( " + i  +", " + "'" + WMWorkItemState.valueOf(i) + "' );");
-        }
-        }
+	
 
 }
