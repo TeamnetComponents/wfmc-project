@@ -40,6 +40,7 @@ public class AuditWorkflowHandler {
 
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
         databaseAuditHelper.insertCreateProcessInstanceAudit(dataSource, wmaCreateProcessInstanceData);
+        databaseAuditHelper.updateIdCreateProcessInstanceAudit(dataSource, initialProcessInstanceId, currentProcessInstanceId);
     }
 
     public void assignProcessInstanceAttributeAudit (String procInstId, String attrName, Object attrValue, DataSource dataSource, String username,
