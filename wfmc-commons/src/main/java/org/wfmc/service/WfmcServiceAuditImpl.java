@@ -117,10 +117,6 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
         }
     }
 
-    private String getUserNameFormInternalServiceCache() {
-            return internalService.getSessionUsername();
-    }
-
     @Override
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
         WMProcessInstance processInstance = null;
@@ -143,4 +139,26 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
             auditWorkflowHandler.assignWorkItemAttributeAudit(procInstId, workItemId, attrName, attrValue, getDataSource(), username, processInstance, previousProcessInstanceAttributeValue);
         }
     }
+
+    @Override
+    public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
+        WMProcessInstance processInstance = null;
+        String status = "OK";
+
+        try {
+            processInstance = internalService.getProcessInstance(procInstId);
+            internalService.reassignWorkItem(sourceUser, targetUser, procInstId, workItemId);
+        } catch (Exception ex) {
+            status = ex.getMessage();
+        } finally {
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+            String username = getUserNameFormInternalServiceCache();
+            auditWorkflowHandler.reassignWorkItemAudit(sourceUser, targetUser, procInstId, workItemId, getDataSource(), username, processInstance);
+        }
+    }
+
+    private String getUserNameFormInternalServiceCache() {
+        return internalService.getSessionUsername();
+    }
+
 }

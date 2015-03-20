@@ -2,10 +2,7 @@ package org.wfmc.service;
 
 import org.wfmc.audit.*;
 import org.wfmc.service.utils.DatabaseAuditHelper;
-import org.wfmc.wapi.WMAttribute;
-import org.wfmc.wapi.WMProcessInstance;
-import org.wfmc.wapi.WMProcessInstanceState;
-import org.wfmc.wapi.WMWorkItemState;
+import org.wfmc.wapi.*;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -133,4 +130,27 @@ public class AuditWorkflowHandler {
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
         databaseAuditHelper.insertAssignWorkItemAttributeAudit(dataSource, wmaAssignWorkItemAttributeData);
     }
+
+    public void reassignWorkItemAudit(String sourceUser, String targetUser, String procInstId, String workItemId, DataSource dataSource, String username, WMProcessInstance processInstance) {
+        WMAAssignWorkItemData wmaAssignWorkItemData = new WMAAssignWorkItemData();
+        wmaAssignWorkItemData.setTargetDomainId(null);
+        wmaAssignWorkItemData.setTargetNodeId(null);
+        wmaAssignWorkItemData.setTargetUserId(targetUser);
+        wmaAssignWorkItemData.setTargetRoleId(null);
+
+        wmaAssignWorkItemData.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
+        wmaAssignWorkItemData.setPreviousWorkItemState(WMWorkItemState.OPEN_SUSPENDED_TAG);
+
+        wmaAssignWorkItemData.setWorkItemId(workItemId);
+        wmaAssignWorkItemData.setProcessDefinitionId(processInstance.getProcessDefinitionId());
+        wmaAssignWorkItemData.setCurrentProcessInstanceId(procInstId);
+        wmaAssignWorkItemData.setInitialProcessInstanceId(procInstId);
+        wmaAssignWorkItemData.setEventCode(WMAEventCode.REASSIGNED_WORK_ITEM);
+        wmaAssignWorkItemData.setProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
+        wmaAssignWorkItemData.setUserId(username);
+
+        DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
+        databaseAuditHelper.insertReassignWorkItemAudit(dataSource, wmaAssignWorkItemData);
+    }
+
 }
