@@ -64,6 +64,9 @@ public class WfmcServiceFactoryTest {
     @Test
     public void testInsertAssignProcessInstanceAttributeAudit() throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
 
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try{
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
@@ -95,8 +98,8 @@ public class WfmcServiceFactoryTest {
         w.setNewAttributeValue("NewVal");
 
 
-        Connection con = dS.getConnection();
-        PreparedStatement preparedStatement = con.prepareStatement("SELECT COUNT(*) FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
+         con = dS.getConnection();
+         preparedStatement = con.prepareStatement("SELECT COUNT(*) FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
                         "WHERE " +
                         "PROCESS_DEFINITION_ID = ? AND " +
                         "ACTIVITY_DEFINITION_ID = ?  AND " +
@@ -138,7 +141,6 @@ public class WfmcServiceFactoryTest {
             nrRanduriInitiale = resultSetInital.getInt(1);
         }
         databaseAuditHelper.insertAssignProcessInstanceAttributeAudit(dS, w);
-
         ResultSet resultSetFinal = preparedStatement.executeQuery();
 
         int nrRanduriFinal = nrRanduriInitiale;
@@ -151,7 +153,6 @@ public class WfmcServiceFactoryTest {
         assertEquals(nrRanduriInitiale,nrRanduriFinal-1);
 
         //Stergem din bd ce am inserat
-
         preparedStatement= con.prepareStatement("DELETE FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
                 "WHERE " +
                 "PROCESS_DEFINITION_ID = ? AND " +
@@ -183,17 +184,36 @@ public class WfmcServiceFactoryTest {
         preparedStatement.setString(18,w.getNewAttributeValue());
         preparedStatement.setInt(19,w.getNewAttributeLength());
 
-        preparedStatement.execute();
+        preparedStatement.execute();}finally {
+            if(preparedStatement!=null)
+                preparedStatement.close();
+            if(con!=null)
+                con.close();
+        }
     }
 
 
 
     @Test
+    public void testUpdateIdCreateProcessInstanceAudit() throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+        ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
+        WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
+        WfmcServiceAuditImpl wfmcService = (WfmcServiceAuditImpl)wfmcServiceFactory.getInstance();
+        DataSource dS = wfmcService.getDataSource();
+
+
+        //test simplu sa vedem ca functioneaza metoda
+        new DatabaseAuditHelper().updateIdCreateProcessInstanceAudit(dS,"7cdac577-f592-4433-b93a-4e392d513e16","eloId");
+
+    }
+
+    @Test
     public void testInsertCreateProcessInstanceAudit()
             throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
 
-
-
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try{
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
 
 
@@ -228,12 +248,12 @@ public class WfmcServiceFactoryTest {
 
 
 
-        Connection con = wfmcService.getDataSource().getConnection();
+         con = wfmcService.getDataSource().getConnection();
 
 
         // Vad cate/daca sunt obiecte in bd cu prop inainte de inserare
 
-        PreparedStatement preparedStatement = con.prepareStatement("SELECT COUNT(*) FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
+         preparedStatement = con.prepareStatement("SELECT COUNT(*) FROM WMS_AUDIT.WM_AUDIT_ENTRY " +
                         "WHERE " +
                         "PROCESS_DEFINITION_ID = ? AND " +
                         "ACTIVITY_DEFINITION_ID = ?  AND " +
@@ -312,7 +332,11 @@ public class WfmcServiceFactoryTest {
         DatabaseAuditHelper.basicDataPreparedStatement(preparedStatement,w);
         preparedStatement.setString(14, w.getProcessDefinitionBusinessName() );
         preparedStatement.executeUpdate();
-
+        }finally{
+            if(preparedStatement!=null)
+                preparedStatement.close();
+            if(con!=null)
+                con.close();}
     }
 
     static Properties convertResourceBundleToProperties(ResourceBundle resource) {

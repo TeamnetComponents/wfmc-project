@@ -5,6 +5,7 @@ import org.wfmc.audit.*;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 //import javax.activation.DataSource;
@@ -16,8 +17,9 @@ public class DatabaseAuditHelper {
 
     public void insertCreateProcessInstanceAudit(DataSource dataSource, WMACreateProcessInstanceData wmaCreateProcessInstanceData){
         PreparedStatement preparedStatement = null;
+        Connection connection = null;
         try {
-            Connection connection = dataSource.getConnection();
+            connection = dataSource.getConnection();
 
 
             preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID, " +
@@ -49,15 +51,85 @@ public class DatabaseAuditHelper {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            if(connection!=null)
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
+    }
+
+
+    private Integer generatePrimaryKey(Connection con) throws SQLException {
+        Integer i = null;
+        PreparedStatement ps = null;
+        try {
+
+
+
+            ps = con.prepareStatement("SELECT WMAAuditEntry_Sequence.nextval FROM DUAL");
+            ResultSet resultSet = ps.executeQuery();
+
+            if (resultSet.next()) {
+                i = resultSet.getInt(1);
+
+
+            }
+        }finally {
+            if(ps!=null)
+                ps.close();
+        }
+
+        return i;
+
+    }
+
+
+
+
+
+    public void updateIdCreateProcessInstanceAudit(DataSource ds,String cacheId,String eloId){
+    PreparedStatement preparedStatement = null;
+        Connection c = null;
+        try{
+            c = ds.getConnection();
+            preparedStatement = c.prepareStatement("UPDATE WM_AUDIT_ENTRY " +
+                    "SET CURRENT_PROCESS_INSTANCE_ID = ? ," +
+                    "    INITIAL_PROCESS_INSTANCE_ID = ? " +
+                    "WHERE CURRENT_PROCESS_INSTANCE_ID  = ? ");
+            preparedStatement.setString(1,eloId);
+            preparedStatement.setString(2,cacheId);
+            preparedStatement.setString(3,cacheId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+
+         if(preparedStatement!=null)
+             try {
+                 preparedStatement.close();
+             } catch (SQLException e1) {
+                 e1.printStackTrace();
+             }
+            if(c!=null)
+                try {
+                    c.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            e.printStackTrace();
+        }
+
+
     }
 
 
     public void insertAssignProcessInstanceAttributeAudit(DataSource dataSource, WMAAssignProcessInstanceAttributeData wmaAssignProcessInstanceAttributeData)
     {
         PreparedStatement preparedStatement = null;
+        Connection connection = null;
         try {
-            Connection connection = dataSource.getConnection();
+             connection = dataSource.getConnection();
 
 
             preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID, " +
@@ -80,6 +152,12 @@ public class DatabaseAuditHelper {
             if(preparedStatement!=null)
                 try {
                     preparedStatement.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            if(connection!=null)
+                try {
+                    connection.close();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
