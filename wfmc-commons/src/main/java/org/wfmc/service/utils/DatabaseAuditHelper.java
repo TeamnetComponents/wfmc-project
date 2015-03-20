@@ -1,6 +1,7 @@
 package org.wfmc.service.utils;
 
 import org.wfmc.audit.*;
+import org.wfmc.wapi.WMWorkItemState;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -62,17 +63,14 @@ public class DatabaseAuditHelper {
 
 
     private Integer generatePrimaryKey(Connection con) throws SQLException {
-        Integer i = null;
+        Integer cheie = null;
         PreparedStatement ps = null;
         try {
-
-
-
             ps = con.prepareStatement("SELECT WMAAuditEntry_Sequence.nextval FROM DUAL");
             ResultSet resultSet = ps.executeQuery();
 
             if (resultSet.next()) {
-                i = resultSet.getInt(1);
+                cheie = resultSet.getInt(1);
 
 
             }
@@ -81,7 +79,7 @@ public class DatabaseAuditHelper {
                 ps.close();
         }
 
-        return i;
+        return cheie;
 
     }
 
@@ -246,26 +244,32 @@ public class DatabaseAuditHelper {
         }
     }
 
-    public void insertReassignWorkItemAudit(DataSource dataSource, WMAAssignWorkItemData wmaAssignWorkItemData) {
+    public Integer insertReassignWorkItemAudit(DataSource dataSource, WMAAssignWorkItemData wmaAssignWorkItemData) {
+        Integer cheieInregistrare = null;
         PreparedStatement preparedStatement = null;
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
+        Connection con = null;
 
-            preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY (ID,PROCESS_DEFINITION_ID, " +
-                    "ACTIVITY_DEFINITION_ID, INITIAL_PROCESS_INSTANCE_ID, CURRENT_PROCESS_INSTANCE_ID, " +
+        try {
+
+            StringBuilder sb = new StringBuilder();
+
+            con = dataSource.getConnection();
+             cheieInregistrare = generatePrimaryKey(con);
+            sb.append("INSERT INTO WM_AUDIT_ENTRY (ID,PROCESS_DEFINITION_ID, ACTIVITY_DEFINITION_ID, INITIAL_PROCESS_INSTANCE_ID, CURRENT_PROCESS_INSTANCE_ID, " +
                     "ACTIVITY_INSTANCE_ID, WORK_ITEM_ID, PROCESS_STATE, EVENT_CODE, DOMAIN_ID, NODE_ID, " +
                     "USER_ID, ROLE_ID, time, INFORMATION_ID, TARGET_DOMAIN_ID, TARGET_NODE_ID, TARGET_USER_ID, " +
-                    "TARGET_ROLE_ID, WORK_ITEM_STATE, PREVIOUS_WORK_ITEM_STATE) " +
-                    "VALUES (WMAAuditEntry_Sequence.nextval,?,?,?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?,?,?,?,?)");
+                    "TARGET_ROLE_ID, WORK_ITEM_STATE, PREVIOUS_WORK_ITEM_STATE) VALUES (" );
 
+            sb.append(cheieInregistrare);
+            sb.append( ",?,?,?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?,?,?,?,?)");
+            preparedStatement = con.prepareStatement(sb.toString());
             basicDataPreparedStatement(preparedStatement, wmaAssignWorkItemData);
             preparedStatement.setString(14, wmaAssignWorkItemData.getTargetDomainId());
             preparedStatement.setString(15, wmaAssignWorkItemData.getTargetNodeId());
             preparedStatement.setString(16, wmaAssignWorkItemData.getTargetUserId());
             preparedStatement.setString(17, wmaAssignWorkItemData.getTargetRoleId());
-            preparedStatement.setString(18, wmaAssignWorkItemData.getWorkItemState());
-            preparedStatement.setString(19, wmaAssignWorkItemData.getPreviousWorkItemState());
+            preparedStatement.setInt(18, WMWorkItemState.valueOf(wmaAssignWorkItemData.getWorkItemState()).getValue());
+            preparedStatement.setInt(19, WMWorkItemState.valueOf(wmaAssignWorkItemData.getPreviousWorkItemState()).getValue());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -278,52 +282,61 @@ public class DatabaseAuditHelper {
                     e.printStackTrace();
                 }
             }
-            if (connection != null) {
+            if (con != null) {
                 try {
-                    connection.close();
+                    con.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         }
+        return cheieInregistrare;
     }
 
-    public void insertCompleteWorkItemAudit(DataSource dataSource, WMAChangeWorkItemStateData wmaChangeWorkItemStateData) {
+
+
+
+    public Integer insertCompleteWorkItemAudit(DataSource dataSource, WMAChangeWorkItemStateData wmaChangeWorkItemStateData){
+
         PreparedStatement preparedStatement = null;
-        Connection connection = null;
+        Connection con = null;
+        Integer cheieInregistrare = null;
+
         try {
-            connection = dataSource.getConnection();
+            con = dataSource.getConnection();
+            cheieInregistrare =generatePrimaryKey(con);
+            StringBuilder sb = new StringBuilder();
+            sb.append("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID,ACTIVITY_DEFINITION_ID,  INITIAL_PROCESS_INSTANCE_ID,  CURRENT_PROCESS_INSTANCE_ID,  ACTIVITY_INSTANCE_ID, WORK_ITEM_ID,  PROCESS_STATE,  EVENT_CODE,  DOMAIN_ID,  NODE_ID,  USER_ID, ROLE_ID,  time,  INFORMATION_ID,WORK_ITEM_STATE,PREVIOUS_WORK_ITEM_STATE)  VALUES ( ");
+            sb.append(cheieInregistrare);
+            sb.append(" ,?,?,?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?)");
 
-            preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY (ID,PROCESS_DEFINITION_ID, " +
-                    "ACTIVITY_DEFINITION_ID, INITIAL_PROCESS_INSTANCE_ID, CURRENT_PROCESS_INSTANCE_ID, " +
-                    "ACTIVITY_INSTANCE_ID, WORK_ITEM_ID, PROCESS_STATE, EVENT_CODE, DOMAIN_ID, NODE_ID, " +
-                    "USER_ID, ROLE_ID, time, INFORMATION_ID, WORK_ITEM_STATE, PREVIOUS_WORK_ITEM_STATE) " +
-                    "VALUES (WMAAuditEntry_Sequence.nextval,?,?,?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?)");
+                preparedStatement  = con.prepareStatement(sb.toString());
 
-            basicDataPreparedStatement(preparedStatement, wmaChangeWorkItemStateData);
+            basicDataPreparedStatement(preparedStatement,wmaChangeWorkItemStateData);
+            preparedStatement.setInt(14, WMWorkItemState.valueOf(wmaChangeWorkItemStateData.getWorkItemState()).getValue());
+            preparedStatement.setInt(15,WMWorkItemState.valueOf(wmaChangeWorkItemStateData.getPreviousWorkItemState()).getValue());
 
-            preparedStatement.setString(14, wmaChangeWorkItemStateData.getWorkItemState());
-            preparedStatement.setString(15, wmaChangeWorkItemStateData.getPreviousWorkItemState());
-
-            preparedStatement.executeUpdate();
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (preparedStatement != null) {
+        }
+        finally {
+            if(preparedStatement!=null){
                 try {
                     preparedStatement.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
-            if (connection != null) {
+            if(con!=null)
                 try {
-                    connection.close();
+                    con.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }
         }
+        return cheieInregistrare;
+
     }
 
     static public void basicDataPreparedStatement(PreparedStatement preparedStatement,WMAAuditEntry w ) throws SQLException {

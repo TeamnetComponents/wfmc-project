@@ -2,11 +2,10 @@ package org.wfmc.service;
 
 import org.fest.assertions.Assertions;
 import org.junit.Test;
-import org.wfmc.audit.WMAAssignProcessInstanceAttributeData;
-import org.wfmc.audit.WMACreateProcessInstanceData;
-import org.wfmc.audit.WMAEventCode;
+import org.wfmc.audit.*;
 import org.wfmc.service.utils.DatabaseAuditHelper;
 import org.wfmc.wapi.WMProcessInstanceState;
+import org.wfmc.wapi.WMWorkItemState;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -59,6 +58,149 @@ public class WfmcServiceFactoryTest {
         WfmcServiceAuditImpl wfmcService = (WfmcServiceAuditImpl)wfmcServiceFactory.getInstance();
         Assertions.assertThat(wfmcService.getDataSource().getConnection()).isNotNull();
     }
+
+
+    @Test
+    public void testInsertReassignWorkItemAudit() throws SQLException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+        Connection con = null;
+        PreparedStatement preparedStatement = null;
+        try {
+
+            ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
+            WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
+            WfmcServiceAuditImpl wfmcService = (WfmcServiceAuditImpl) wfmcServiceFactory.getInstance();
+            DataSource dS = wfmcService.getDataSource();
+            con = dS.getConnection();
+            DatabaseAuditHelper dah = new DatabaseAuditHelper();
+
+            WMAAssignWorkItemData w = new WMAAssignWorkItemData();
+
+          //setam valori
+            String
+                    nodeId = "TnodeId",
+                    roleId = "TroleId",
+                    domainId = "TdomainId",
+                    userId = "TuserId";
+            w.setProcessDefinitionId("Reasign");
+            w.setInitialProcessInstanceId("TestInsId");
+            w.setActivityDefinitionId("Testaid");
+            w.setCurrentProcessInstanceId("TestPIid");
+            w.setActivityInstanceId("actInsId");
+            w.setWorkItemId("TestwiId");
+            w.setEventCode(WMAEventCode.WAITING_ON_EVENT);
+            w.setNodeId("nodeId");
+            w.setUserId("userId");
+            w.setRoleId("roleId'");
+            w.setDomainId("domainId");
+            w.setProcessState(WMProcessInstanceState.CLOSED_COMPLETED_TAG);
+            w.setInformationId("TestinfId");
+            w.setWorkItemState("closed.completed");
+            w.setPreviousWorkItemState("open.running");
+            w.setTargetDomainId(domainId);
+            w.setTargetNodeId(nodeId);
+            w.setTargetRoleId(roleId);
+            w.setTargetUserId(userId);
+            w.setWorkItemState(WMWorkItemState.CLOSED_ABORTED_TAG);
+            w.setPreviousWorkItemState(WMWorkItemState.OPEN_NOTRUNNING_TAG);
+            Integer i = dah.insertReassignWorkItemAudit(dS,w);
+
+            //System.out.println(i);
+            //verificam
+            preparedStatement = con.prepareStatement("SELECT TARGET_DOMAIN_ID,TARGET_NODE_ID,TARGET_USER_ID,TARGET_ROLE_ID,WORK_ITEM_STATE,PREVIOUS_WORK_ITEM_STATE FROM WM_AUDIT_ENTRY WHERE ID =  ?");
+            preparedStatement.setInt(1,i);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            assertEquals(true,resultSet.next());
+
+            assertEquals(domainId, resultSet.getString(1));
+            assertEquals(nodeId,resultSet.getString(2));
+            assertEquals(userId,resultSet.getString(3));
+            assertEquals(roleId,resultSet.getString(4));
+            assertEquals(WMWorkItemState.CLOSED_ABORTED_INT,resultSet.getInt(5));
+            assertEquals(WMWorkItemState.OPEN_NOTRUNNING_INT,resultSet.getInt(6));
+
+
+            //stergem
+
+            preparedStatement = con.prepareStatement("DELETE FROM WM_AUDIT_ENTRY WHERe ID = ?");
+            preparedStatement.setInt(1,i);
+            preparedStatement.execute();
+
+
+        } finally {
+            if(preparedStatement!=null)
+                preparedStatement.close();
+            if(con!=null)
+                con.close();
+        }
+
+        }
+
+
+    @Test
+    public void testInsertCompleteWorkItemAudit() throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
+       Connection con = null;
+        PreparedStatement preparedStatement = null;
+        try {
+
+            ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
+            WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
+            WfmcServiceAuditImpl wfmcService = (WfmcServiceAuditImpl) wfmcServiceFactory.getInstance();
+            DataSource dS = wfmcService.getDataSource();
+            con = dS.getConnection();
+            DatabaseAuditHelper dah = new DatabaseAuditHelper();
+            WMAChangeWorkItemStateData wma = new WMAChangeWorkItemStateData();
+
+            wma.setProcessDefinitionId("Complete2");
+            wma.setInitialProcessInstanceId("TestInsId");
+            wma.setActivityDefinitionId("Testaid");
+            wma.setCurrentProcessInstanceId("TestPIid");
+            wma.setActivityInstanceId("actInsId");
+            wma.setWorkItemId("TestwiId");
+            wma.setEventCode(WMAEventCode.WAITING_ON_EVENT);
+            wma.setNodeId("TestnodeId");
+            wma.setUserId("TestuserId");
+            wma.setRoleId("TestroleId");
+            wma.setDomainId("Testdomid");
+            wma.setProcessState(WMProcessInstanceState.CLOSED_COMPLETED_TAG);
+            wma.setInformationId("TestinfId");
+            wma.setWorkItemState("closed.completed");
+            wma.setPreviousWorkItemState("open.running");
+
+            int i = dah.insertCompleteWorkItemAudit(dS, wma);
+
+
+            //verificam
+            preparedStatement = con.prepareStatement("SELECT  WORK_ITEM_STATE, PREVIOUS_WORK_ITEM_STATE FROM WM_AUDIT_ENTRY WHERE ID = ?");
+
+            preparedStatement.setInt(1,i);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            //verificam ca a returnat ceva
+            assertEquals(true, resultSet.next());
+
+            //verficam ca are bine starile (daca de exemplu nu e introdus, testul oricum crapa)
+
+            assertEquals(5,resultSet.getInt(1));
+            assertEquals(2,resultSet.getInt(2));
+
+
+
+            //stergem
+            preparedStatement = con.prepareStatement("DELETE FROM WM_AUDIT_ENTRY WHERe ID = ?");
+            preparedStatement.setInt(1,i);
+            preparedStatement.execute();
+
+
+        } finally {
+            if(preparedStatement!=null)
+                preparedStatement.close();
+            if(con!=null)
+                con.close();
+        }
+    }
+
 
 
     @Test
