@@ -153,4 +153,21 @@ public class AuditWorkflowHandler {
         databaseAuditHelper.insertReassignWorkItemAudit(dataSource, wmaAssignWorkItemData);
     }
 
+    public void completeWorkItemAudit(String procInstId, String workItemId, DataSource dataSource, String username, WMProcessInstance processInstance) {
+        WMAChangeWorkItemStateData wmaChangeWorkItemStateData = new WMAAssignWorkItemData();
+        wmaChangeWorkItemStateData.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
+        wmaChangeWorkItemStateData.setPreviousWorkItemState(WMWorkItemState.CLOSED_COMPLETED_TAG);
+
+        wmaChangeWorkItemStateData.setWorkItemId(workItemId);
+        wmaChangeWorkItemStateData.setProcessDefinitionId(processInstance.getProcessDefinitionId());
+        wmaChangeWorkItemStateData.setCurrentProcessInstanceId(procInstId);
+        wmaChangeWorkItemStateData.setInitialProcessInstanceId(procInstId);
+        wmaChangeWorkItemStateData.setEventCode(WMAEventCode.COMPLETED_WORK_ITEM);
+        wmaChangeWorkItemStateData.setProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
+        wmaChangeWorkItemStateData.setUserId(username);
+
+        DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
+        databaseAuditHelper.insertCompleteWorkItemAudit(dataSource, wmaChangeWorkItemStateData);
+    }
+
 }

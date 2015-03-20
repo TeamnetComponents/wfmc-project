@@ -157,6 +157,23 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
         }
     }
 
+    @Override
+    public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
+        WMProcessInstance processInstance = null;
+        String status = "OK";
+
+        try {
+            processInstance = internalService.getProcessInstance(procInstId);
+            internalService.completeWorkItem(procInstId, workItemId);
+        } catch (Exception ex) {
+            status = ex. getMessage();
+        } finally {
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+            String username = getUserNameFormInternalServiceCache();
+            auditWorkflowHandler.completeWorkItemAudit(procInstId, workItemId, getDataSource(), username, processInstance);
+        }
+    }
+
     private String getUserNameFormInternalServiceCache() {
         return internalService.getSessionUsername();
     }
