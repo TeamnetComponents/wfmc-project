@@ -1,9 +1,6 @@
 package org.wfmc.service.utils;
 
-import org.wfmc.audit.WMAAssignProcessInstanceAttributeData;
-import org.wfmc.audit.WMAAuditEntry;
-import org.wfmc.audit.WMAChangeProcessInstanceStateData;
-import org.wfmc.audit.WMACreateProcessInstanceData;
+import org.wfmc.audit.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -128,7 +125,48 @@ public class DatabaseAuditHelper {
         }
     }
 
+    public void insertAssignWorkItemAttributeAudit(DataSource dataSource, WMAAssignWorkItemAttributeData wmaAssignWorkItemAttributeData) {
+        PreparedStatement preparedStatement = null;
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
 
+            preparedStatement = connection.prepareStatement("INSERT INTO WM_AUDIT_ENTRY  (ID,PROCESS_DEFINITION_ID, " +
+                    "ACTIVITY_DEFINITION_ID, INITIAL_PROCESS_INSTANCE_ID, CURRENT_PROCESS_INSTANCE_ID, " +
+                    "ACTIVITY_INSTANCE_ID, WORK_ITEM_ID, PROCESS_STATE, EVENT_CODE, DOMAIN_ID, NODE_ID, " +
+                    "USER_ID, ROLE_ID, time, INFORMATION_ID, ATTRIBUTE_NAME, ATTRIBUTE_TYPE, " +
+                    "PREVIOUS_ATTRIBUTE_LENGTH, PREVIOUS_ATTRIBUTE_VALUE, NEW_ATTRIBUTE_LENGTH, NEW_ATTRIBUTE_VALUE, ACTIVITY_STATE" +
+                    ") VALUES (WMAAuditEntry_Sequence.nextval,?,?,?,?,?,?,?,?,?,?,?,?,SYSDATE,?,?,?,?,?,?,?,?)");
+
+            basicDataPreparedStatement(preparedStatement, wmaAssignWorkItemAttributeData);
+            preparedStatement.setString(14, wmaAssignWorkItemAttributeData.getAttributeName());
+            preparedStatement.setInt(15, wmaAssignWorkItemAttributeData.getAttributeType());
+            preparedStatement.setInt(16, wmaAssignWorkItemAttributeData.getPreviousAttributeLength());
+            preparedStatement.setString(17, wmaAssignWorkItemAttributeData.getPreviousAttributeValue());
+            preparedStatement.setInt(18, wmaAssignWorkItemAttributeData.getNewAttributeLength());
+            preparedStatement.setString(19, wmaAssignWorkItemAttributeData.getNewAttributeValue());
+            preparedStatement.setString(20, wmaAssignWorkItemAttributeData.getActivityState());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     static public void basicDataPreparedStatement(PreparedStatement preparedStatement,WMAAuditEntry w ) throws SQLException {
 

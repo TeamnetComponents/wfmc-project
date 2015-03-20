@@ -5,6 +5,7 @@ import org.wfmc.service.utils.DatabaseAuditHelper;
 import org.wfmc.wapi.WMAttribute;
 import org.wfmc.wapi.WMProcessInstance;
 import org.wfmc.wapi.WMProcessInstanceState;
+import org.wfmc.wapi.WMWorkItemState;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -80,11 +81,12 @@ public class AuditWorkflowHandler {
         databaseAuditHelper.insertAssignProcessInstanceAttributeAudit(dataSource, wmaAssignProcessInstanceAttributeData);
     }
 
-    public void abortProcessInstanceAudit (String processInstanceId, DataSource dataSource, String username) {
+    public void abortProcessInstanceAudit (String processInstanceId, DataSource dataSource, String username, WMProcessInstance processInstance) {
         WMAChangeProcessInstanceStateData wmaChangeProcessInstanceStateData = new WMAChangeProcessInstanceStateData();
         wmaChangeProcessInstanceStateData.setPreviousProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
         wmaChangeProcessInstanceStateData.setNewProcessState(WMProcessInstanceState.CLOSED_ABORTED_TAG);
 
+        wmaChangeProcessInstanceStateData.setProcessDefinitionId(processInstance.getProcessDefinitionId());
         wmaChangeProcessInstanceStateData.setCurrentProcessInstanceId(null);
         wmaChangeProcessInstanceStateData.setInitialProcessInstanceId(processInstanceId);
         wmaChangeProcessInstanceStateData.setEventCode(WMAEventCode.ABORTED_PROCESS_INSTANCE);
@@ -95,4 +97,40 @@ public class AuditWorkflowHandler {
         databaseAuditHelper.insertAbortProcessInstanceAudit(dataSource, wmaChangeProcessInstanceStateData);
     }
 
+    public void assignWorkItemAttributeAudit (String procInstId, String workItemId, String attrName, Object attrValue, DataSource dataSource, String username, WMProcessInstance processInstance, Object previousProcessInstanceAttributeValue) {
+        WMAAssignWorkItemAttributeData wmaAssignWorkItemAttributeData = new WMAAssignWorkItemAttributeData();
+        wmaAssignWorkItemAttributeData.setActivityState(WMWorkItemState.OPEN_RUNNING.toString());
+        wmaAssignWorkItemAttributeData.setAttributeName(attrName);
+        wmaAssignWorkItemAttributeData.setAttributeType(WMAttribute.DEFAULT_TYPE);
+        if ((attrValue.getClass().isArray())) {
+            String values = Arrays.toString((String[]) attrValue);
+            wmaAssignWorkItemAttributeData.setNewAttributeLength(values.length());
+            wmaAssignWorkItemAttributeData.setNewAttributeValue(values);
+        } else {
+            wmaAssignWorkItemAttributeData.setNewAttributeLength(attrValue.toString().length());
+            wmaAssignWorkItemAttributeData.setNewAttributeValue(attrValue.toString());
+        }
+        if (previousProcessInstanceAttributeValue == null) {
+            wmaAssignWorkItemAttributeData.setPreviousAttributeValue(null);
+            wmaAssignWorkItemAttributeData.setPreviousAttributeLength(0);
+        } else if ((previousProcessInstanceAttributeValue.getClass().isArray())) {
+            String values = Arrays.toString((String[]) previousProcessInstanceAttributeValue);
+            wmaAssignWorkItemAttributeData.setPreviousAttributeLength(values.length());
+            wmaAssignWorkItemAttributeData.setPreviousAttributeValue(values);
+        } else {
+            wmaAssignWorkItemAttributeData.setPreviousAttributeLength(previousProcessInstanceAttributeValue.toString().length());
+            wmaAssignWorkItemAttributeData.setPreviousAttributeValue(previousProcessInstanceAttributeValue.toString());
+        }
+
+        wmaAssignWorkItemAttributeData.setWorkItemId(workItemId);
+        wmaAssignWorkItemAttributeData.setProcessDefinitionId(processInstance.getProcessDefinitionId());
+        wmaAssignWorkItemAttributeData.setCurrentProcessInstanceId(procInstId);
+        wmaAssignWorkItemAttributeData.setInitialProcessInstanceId(procInstId);
+        wmaAssignWorkItemAttributeData.setEventCode(WMAEventCode.ASSIGNED_ACTIVITY_INSTANCE_ATTRIBUTES);
+        wmaAssignWorkItemAttributeData.setProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
+        wmaAssignWorkItemAttributeData.setUserId(username);
+
+        DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
+        databaseAuditHelper.insertAssignWorkItemAttributeAudit(dataSource, wmaAssignWorkItemAttributeData);
+    }
 }

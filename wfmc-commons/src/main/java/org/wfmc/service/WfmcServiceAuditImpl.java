@@ -103,15 +103,17 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
 
     @Override
     public void abortProcessInstance(String procInstId) throws WMWorkflowException {
+        WMProcessInstance processInstance = null;
         String status = "OK";
         try {
+            processInstance = internalService.getProcessInstance(procInstId);
             internalService.abortProcessInstance(procInstId);
         } catch (Exception ex) {
             status = ex.getMessage();
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
             String username = getUserNameFormInternalServiceCache();
-            auditWorkflowHandler.abortProcessInstanceAudit(procInstId, getDataSource(), username);
+            auditWorkflowHandler.abortProcessInstanceAudit(procInstId, getDataSource(), username, processInstance);
         }
     }
 
@@ -119,4 +121,26 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
             return internalService.getSessionUsername();
     }
 
+    @Override
+    public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
+        WMProcessInstance processInstance = null;
+        String status = "OK";
+        Object previousProcessInstanceAttributeValue = null;
+        try {
+            try {
+                WMAttribute processInstanceAttribute = internalService.getWorkItemAttributeValue(procInstId, workItemId, attrName);
+                previousProcessInstanceAttributeValue = processInstanceAttribute.getValue();
+            } catch (Exception ex) {
+                previousProcessInstanceAttributeValue = null;
+            }
+            processInstance = internalService.getProcessInstance(procInstId);
+            internalService.assignWorkItemAttribute(procInstId, workItemId, attrName, attrValue);
+        } catch (Exception ex) {
+            status = ex.getMessage();
+        } finally {
+            AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
+            String username = getUserNameFormInternalServiceCache();
+            auditWorkflowHandler.assignWorkItemAttributeAudit(procInstId, workItemId, attrName, attrValue, getDataSource(), username, processInstance, previousProcessInstanceAttributeValue);
+        }
+    }
 }
