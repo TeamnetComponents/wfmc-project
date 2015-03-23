@@ -350,8 +350,28 @@ public class WfmcServiceEloImpl extends WfmcServiceImpl_Abstract {
     @Override
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
         WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
+        WMProcessInstance wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
         if ((workItem.getId() != null) && (WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString().equals(attrName))){
             super.assignWorkItemAttribute(procInstId, workItemId, attrName, attrValue);
+        } else if (wmProcessInstance == null) {
+            try {
+                // 1. search for workflow
+                WFDiagram wfDiagram = null;
+                wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+                // 2. get sord
+                Sord wfSord = eloUtilsService.getSord(getIxConnection(), wfDiagram.getObjId(), SordC.mbAll, LockC.YES);
+                // 3. update sord attrs
+                if (!eloUtilsService.sordContainsAttribute(wfSord, attrName)){
+                    throw new WMInvalidAttributeException(attrName);
+                }
+                Map<String, Object> attrMap = new HashMap<>();
+                attrMap.put(attrName, attrValue);
+                eloUtilsService.updateSordAttributes(wfSord, attrMap);
+                // 4. save sord
+                eloUtilsService.saveSord(getIxConnection(), wfSord, SordC.mbAll, LockC.YES);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
