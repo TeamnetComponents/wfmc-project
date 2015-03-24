@@ -35,13 +35,13 @@ public class WfmcAuditAspect {
         log.info("Started auditing : " + auditable.value());
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         Method auditedMethod = methodSignature.getMethod();
-        log.info("Class: {}\nMethod name: {}\nReturn type: {}", pjp.getSourceLocation().getWithinType().getName(),
+        log.info("Class: {}; Method name: {}; Return type: {}", pjp.getSourceLocation().getWithinType().getName(),
                 auditedMethod.getName(), methodSignature.getReturnType().getName());
         Class<?>[] parameterTypes = auditedMethod.getParameterTypes();
         Object[] args = pjp.getArgs();
         for (int i = 0; i < parameterTypes.length; i++) {
             Object argumentValue = Class.forName(parameterTypes[i].getName()).cast(args[i]);
-            log.info("arg" + i + " = " + argumentValue);
+            log.info("Argument " + i + " = " + argumentValue);
         }
         Object returnValue = pjp.proceed(args);
         log.info("Finished auditing : " + auditable.value());
