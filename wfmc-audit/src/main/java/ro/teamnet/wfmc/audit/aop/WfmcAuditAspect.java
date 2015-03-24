@@ -9,7 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import ro.teamnet.wfmc.audit.annotation.Auditable;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+//import java.lang.reflect.Parameter;
 
 /**
  * Audit aspect.
@@ -35,12 +35,12 @@ public class WfmcAuditAspect {
         Method auditedMethod = methodSignature.getMethod();
         System.out.printf("Class: %s\nMethod name: %s\nReturn type: %s\nArguments:\n",
                 pjp.getSourceLocation().getWithinType().getName(), auditedMethod.getName(), methodSignature.getReturnType().getName());
-        Parameter[] parameters = auditedMethod.getParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            Parameter parameter = parameters[i];
-            Object argumentValue = Class.forName(parameter.getType().getName()).cast(pjp.getArgs()[i]);
-            System.out.println("\t" + parameter.getName() + " = " + argumentValue);
-        }
+        //Parameter[] parameters = auditedMethod.getParameters();
+//        for (int i = 0; i < parameters.length; i++) {
+//            Parameter parameter = parameters[i];
+//            Object argumentValue = Class.forName(parameter.getType().getName()).cast(pjp.getArgs()[i]);
+//            System.out.println("\t" + parameter.getName() + " = " + argumentValue);
+//        }
         Object returnValue = pjp.proceed(pjp.getArgs());
         System.out.println("############################################\nFinished auditing : " + auditable.value());
         return returnValue;

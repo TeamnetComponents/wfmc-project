@@ -71,10 +71,10 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
             WfmcServiceCache wfmcServiceCache = wfmcServiceCacheFactory.getInstance();
             if(wfmcServiceForService != null){
                 wfmcServiceCache.setWfmcService(wfmcServiceForService);
-                ((WfmcServiceImpl_Abstract) wfmcServiceForService).setWfmcServiceCache(wfmcServiceCache);
+                ((WfmcServiceAbstract) wfmcServiceForService).setWfmcServiceCache(wfmcServiceCache);
             } else {
                 wfmcServiceCache.setWfmcService(wfmcService);
-                ((WfmcServiceImpl_Abstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
+                ((WfmcServiceAbstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
             }
         }
         if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAuditImpl)){
