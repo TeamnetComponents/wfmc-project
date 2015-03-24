@@ -40,6 +40,7 @@
         <swagger-springmvc.version>0.8.8</swagger-springmvc.version>
         <usertype-core.version>3.2.0.GA</usertype-core.version>
         <flexjson.version>3.2</flexjson.version>
+        <oracle.driver.version>11.2.0.2.0</oracle.driver.version>
     </properties>
 
 
@@ -339,6 +340,11 @@
             <groupId>net.sf.flexjson</groupId>
             <artifactId>flexjson</artifactId>
             <version>${flexjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>${oracle.driver.version}</version>
         </dependency>
     </dependencies>
 
