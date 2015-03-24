@@ -21,6 +21,3 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
             hibernate.hbm2ddl.auto: validate
-
-    thymeleaf:
-        cache: false
