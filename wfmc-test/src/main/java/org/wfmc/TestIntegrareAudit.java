@@ -26,7 +26,7 @@ public class TestIntegrareAudit {
         String newAttrValue = "new value";
         String nextNodeTrimite = "7";
         String nextNodeRespinge = "8";
-        String processInstanceName = "Instanta flux aprobare operatiuni 3";
+        String processInstanceName = "TestAudit";
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns_audit");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
         WfmcService wfmcService = wfmcServiceFactory.getInstance();

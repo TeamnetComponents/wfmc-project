@@ -1,13 +1,11 @@
 package org.wfmc.service;
 
 import org.wfmc.impl.utils.DatabaseUtils;
-import org.wfmc.wapi.WMAttribute;
-import org.wfmc.wapi.WMConnectInfo;
-import org.wfmc.wapi.WMProcessInstance;
-import org.wfmc.wapi.WMWorkflowException;
+import org.wfmc.wapi.*;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -172,6 +170,30 @@ public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
             String username = getUserNameFormInternalServiceCache();
             auditWorkflowHandler.completeWorkItemAudit(procInstId, workItemId, getDataSource(), username, processInstance);
         }
+    }
+
+    @Override
+    public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        return this.internalService.listWorkItems(filter, countFlag);
+    }
+
+    @Override
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMUnsupportedOperationException {
+        try {
+            return this.internalService.getNextSteps(processInstanceId, workItemId);
+        } catch (WMWorkflowException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {
+        return this.internalService.getProcessInstance(procInstId);
+    }
+
+    @Override
+    public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException {
+        return this.internalService.listProcessInstances(filter, countFlag);
     }
 
     private String getUserNameFormInternalServiceCache() {

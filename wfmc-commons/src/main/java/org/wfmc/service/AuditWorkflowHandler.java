@@ -97,7 +97,7 @@ public class AuditWorkflowHandler {
 
     public void assignWorkItemAttributeAudit (String procInstId, String workItemId, String attrName, Object attrValue, DataSource dataSource, String username, WMProcessInstance processInstance, Object previousProcessInstanceAttributeValue) {
         WMAAssignWorkItemAttributeData wmaAssignWorkItemAttributeData = new WMAAssignWorkItemAttributeData();
-        wmaAssignWorkItemAttributeData.setActivityState(WMWorkItemState.OPEN_RUNNING.toString());
+        wmaAssignWorkItemAttributeData.setActivityState(WMWorkItemState.OPEN_SUSPENDED_TAG);
         wmaAssignWorkItemAttributeData.setAttributeName(attrName);
         wmaAssignWorkItemAttributeData.setAttributeType(WMAttribute.DEFAULT_TYPE);
         if ((attrValue.getClass().isArray())) {
@@ -125,7 +125,7 @@ public class AuditWorkflowHandler {
         wmaAssignWorkItemAttributeData.setCurrentProcessInstanceId(procInstId);
         wmaAssignWorkItemAttributeData.setInitialProcessInstanceId(procInstId);
         wmaAssignWorkItemAttributeData.setEventCode(WMAEventCode.ASSIGNED_ACTIVITY_INSTANCE_ATTRIBUTES);
-        wmaAssignWorkItemAttributeData.setProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
+        wmaAssignWorkItemAttributeData.setProcessState(WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED_TAG);
         wmaAssignWorkItemAttributeData.setUserId(username);
 
         DatabaseAuditHelper databaseAuditHelper = new DatabaseAuditHelper();
