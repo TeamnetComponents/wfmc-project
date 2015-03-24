@@ -16,7 +16,7 @@ public class SampleServiceImpl implements SampleService {
     SampleEntityRepository sampleEntityRepository;
 
     @Override
-    @Auditable("sample test")
+    @Auditable("sample service")
     public SampleEntity saveSampleEntity(SampleEntity sampleEntity) {
         return sampleEntityRepository.save(sampleEntity);
     }
