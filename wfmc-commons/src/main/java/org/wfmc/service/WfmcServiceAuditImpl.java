@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  * Created by Lucian.Dragomir on 3/16/2015.
  */
-public class WfmcServiceAuditImpl extends WfmcServiceImpl_Abstract {
+public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
     private WfmcService internalService;
     private DataSource  dataSource;
 

@@ -11,6 +11,7 @@
         <module>wfmc-api</module>
         <module>wfmc-commons</module>
         <module>wfmc-impl-elo</module>
+        <module>wfmc-audit</module>
         <module>wfmc-test</module>
         <!--<module>wfmc-commons-impl</module>-->
         <!--<module>wfmc-server-core</module>-->
