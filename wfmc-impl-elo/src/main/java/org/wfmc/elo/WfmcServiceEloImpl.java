@@ -20,11 +20,10 @@ import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.wapi.*;
 import org.wfmc.xpdl.model.transition.Transition;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
+import ro.teamnet.wfmc.audit.annotation.Auditable;
 
 import java.beans.PropertyVetoException;
 import java.util.*;
-
-import ro.teamnet.wfmc.audit.annotation.Auditable;
 
 /**
  * Created by Lucian.Dragomir on 2/28/2015.
@@ -323,11 +322,36 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     public WMWorkItemIterator listWorkItems(WMFilter filter, boolean countFlag) throws WMWorkflowException {
         if (filter instanceof WMFilterWorkItem){
             try {
-                FindTasksInfo findTasksInfo = wfMCToEloObjectConverter.convertWMFilterWorkItemToFindTasksInfo((WMFilterWorkItem) filter);
-                FindResult findResult = ixConnection.ix().findFirstTasks(findTasksInfo, MAX_RESULT);
-                UserTask[] userTasks = findResult.getTasks();
-                WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks);
-                return new WMWorkItemIteratorImpl(wmWorkItems);
+                String processInstanceId= ((WMFilterWorkItem) filter).getProcessInstanceId();
+                if(processInstanceId==null) {
+                    FindTasksInfo findTasksInfo = wfMCToEloObjectConverter.convertWMFilterWorkItemToFindTasksInfo((WMFilterWorkItem) filter);
+                    FindResult findResult = ixConnection.ix().findFirstTasks(findTasksInfo, MAX_RESULT);
+                    UserTask[] userTasks = findResult.getTasks();
+                    WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks);
+                    return new WMWorkItemIteratorImpl(wmWorkItems);
+                }else{
+
+                    WFDiagram wfDiagram = ixConnection.ix().checkoutWorkFlow(processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+                    WFNodeAssoc[] assocs = wfDiagram.getMatrix().getAssocs();
+                    System.out.println("Asocieri : " + Arrays.toString(assocs));
+
+                    int currentNode = assocs[0].getNodeFrom(); //incep de la primul nod din matrice
+                     /*
+                      //Posibilitatea iterare peste matricea de asocierea  (nu am apucat sa testez)
+                      boolean continua = true;
+                        while(continua){
+                            continua = false;
+                        for(int i = 0 ; i<assocs.length;i++) {
+                            if (assocs[i].getNodeFrom() ==  currentNode && assocs[i].isDone()) {
+                                    currentNode = assocs[i].getNodeFrom();
+                            continua = true;
+                            break;
+                        }
+                        }}
+                    */
+                    return  null;
+                }
+
             } catch (RemoteException e) {
                 throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
             }
