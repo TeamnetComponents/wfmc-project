@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 @Aspect
 public class WfmcAuditAspect {
 
-    Logger log = LoggerFactory.getLogger(WfmcAuditAspect.class);
+    private Logger log = LoggerFactory.getLogger(WfmcAuditAspect.class);
 
     @Before("execution(* *(..)) && @annotation(auditable))")
     public void beforeAuditable(Auditable auditable) {

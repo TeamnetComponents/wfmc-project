@@ -13,7 +13,7 @@ import javax.inject.Inject;
 @Service
 public class SampleServiceImpl implements SampleService {
     @Inject
-    SampleEntityRepository sampleEntityRepository;
+    private SampleEntityRepository sampleEntityRepository;
 
     @Override
     @Auditable("sample service")
