@@ -205,4 +205,30 @@ public class EloUtilsService {
         }
         return existSord;
     }
+
+
+
+    public List<WFNode> getCurrentNodesFromWFDiagram(WFDiagram wfDiagram){
+        List<WFNodeAssoc> nodeAssocs = Arrays.asList(wfDiagram.getMatrix().getAssocs());
+        List<Integer> nodesFromNotDone = new ArrayList();
+        List<Integer> nodesToDone = new ArrayList();
+        for(WFNodeAssoc assoc : nodeAssocs) {
+            if (assoc.isDone()) {
+                nodesToDone.add(assoc.getNodeTo());
+            } else {
+                nodesFromNotDone.add(assoc.getNodeFrom());
+            }
+        }
+        nodesFromNotDone.retainAll(nodesToDone);
+        List<WFNode> allNodes =  Arrays.asList(wfDiagram.getNodes());
+        List<WFNode> currentNodesList =  new ArrayList<>();
+        for (Integer currentNodeId : nodesFromNotDone){
+            for (WFNode wfNode : allNodes) {
+                if (currentNodeId.compareTo(wfNode.getId()) == 0){
+                    currentNodesList.add(wfNode);
+                }
+            }
+        }
+        return currentNodesList;
+    }
 }
