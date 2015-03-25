@@ -330,28 +330,11 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
                     WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks);
                     return new WMWorkItemIteratorImpl(wmWorkItems);
                 }else{
-
                     WFDiagram wfDiagram = ixConnection.ix().checkoutWorkFlow(processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
-                    WFNodeAssoc[] assocs = wfDiagram.getMatrix().getAssocs();
-                    System.out.println("Asocieri : " + Arrays.toString(assocs));
-
-                    int currentNode = assocs[0].getNodeFrom(); //incep de la primul nod din matrice
-                     /*
-                      //Posibilitatea iterare peste matricea de asocierea  (nu am apucat sa testez)
-                      boolean continua = true;
-                        while(continua){
-                            continua = false;
-                        for(int i = 0 ; i<assocs.length;i++) {
-                            if (assocs[i].getNodeFrom() ==  currentNode && assocs[i].isDone()) {
-                                    currentNode = assocs[i].getNodeFrom();
-                            continua = true;
-                            break;
-                        }
-                        }}
-                    */
-                    return  null;
+                    List<WFNode> currentNodesList =  eloUtilsService.getCurrentNodesFromWFDiagram(wfDiagram);
+                    List<WMWorkItem> wmWorkItems = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(currentNodesList);
+                    return new WMWorkItemIteratorImpl(wmWorkItems.toArray());
                 }
-
             } catch (RemoteException e) {
                 throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
             }
@@ -359,6 +342,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.ELO_ERROR_FILTER_NOT_SUPPORTED));
         }
     }
+
 
     @Override
     public WMProcessInstanceIterator listProcessInstances(WMFilter filter, boolean countFlag) throws WMWorkflowException {

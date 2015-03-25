@@ -775,4 +775,13 @@ public class WfmcServiceEloImplTest {
         Assertions.assertThat(workItemAttributeValue2.getValue()).isEqualTo(new String[] {"Value 2"});
         Assertions.assertThat(workItemAttributeValue2.getName()).isEqualTo("Attribute 2");
     }
+
+
+    @Test
+    public void testListWorkItemsWMFilterWithProcessDefinitionId() throws WMWorkflowException {
+        WMFilter wmFilter =  WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId("1871");
+        wfmcServiceEloImpl.connect(wmConnectInfo);
+        WMWorkItemIterator wmWorkItemIterator = wfmcServiceEloImpl.listWorkItems(wmFilter, false);
+        Assertions.assertThat(wmWorkItemIterator.hasNext()).isTrue();
+    }
 }
