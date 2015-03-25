@@ -48,51 +48,51 @@
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112598">
         <createTable tableName="WM_ATTRIBUTE_AUDIT">
-            <column name="ID" type="NUMBER(10, 0)">
+            <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="ATTRIBUTE_NAME" type="VARCHAR2(15)"/>
-            <column name="DISCRIMINATOR" type="VARCHAR(2)"/>
-            <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="NUMBER(10, 0)"/>
-            <column name="WM_WORK_ITEM_ID" type="NUMBER(10, 0)"/>
+            <column name="ATTRIBUTE_NAME" type="varchar(15)"/>
+            <column name="DISCRIMINATOR" type="varchar(2)"/>
+            <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="bigint"/>
+            <column name="WM_WORK_ITEM_ID" type="bigint"/>
         </createTable>
     </changeSet>
 
     <changeSet author="Mihai.Niculae (generated)" id="1427270112599" failOnError="true">
         <createTable tableName="WM_EVENT_AUDIT">
-            <column name="ID" type="NUMBER(10, 0)">
+            <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="DISCRIMINATOR" type="VARCHAR(2)"/>
-            <column name="EVENT_CODE" type="NUMBER(2, 0)"/>
-            <column name="USERNAME" type="VARCHAR2(20)"/>
-            <column name="CURRENT_DATE" type="TIMESTAMP"/>
-            <column name="WM_WORK_ITEM_AUDIT_ID" type="NUMBER(10, 0)"/>
-            <column name="PREVIOUS_STATE" type="VARCHAR2(50)"/>
-            <column name="WORK_ITEM_STATE" type="VARCHAR2(50)"/>
-            <column name="ATTRIBUTE_AUDIT_ID" type="NUMBER(10, 0)"/>
-            <column name="ATTR_VALUE" type="VARCHAR2(50)"/>
-            <column name="WM_PROCESS_INSTANCE_ID" type="NUMBER(10, 0)"/>
+            <column name="DISCRIMINATOR" type="varchar(2)"/>
+            <column name="EVENT_CODE" type="integer"/>
+            <column name="USERNAME" type="varchar(20)"/>
+            <column name="CURRENT_DATE" type="timestamp"/>
+            <column name="WM_WORK_ITEM_AUDIT_ID" type="bigint"/>
+            <column name="PREVIOUS_STATE" type="varchar(50)"/>
+            <column name="WORK_ITEM_STATE" type="varchar(50)"/>
+            <column name="ATTRIBUTE_AUDIT_ID" type="bigint"/>
+            <column name="ATTR_VALUE" type="varchar(50)"/>
+            <column name="WM_PROCESS_INSTANCE_ID" type="bigint"/>
         </createTable>
     </changeSet>
 
     <changeSet author="Mihai.Niculae (generated)" id="1427270112600">
         <createTable tableName="WM_PROCESS_INSTANCE_AUDIT">
-            <column name="ID" type="NUMBER(10, 0)">
+            <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="PROCESS_INSTANCE_ID" type="VARCHAR2(10)"/>
-            <column name="PROCESS_DEFINITION_ID" type="VARCHAR2(10)"/>
-            <column name="PROCESS_DEF_BUSINESS_NAME" type="VARCHAR2(20)"/>
+            <column name="PROCESS_INSTANCE_ID" type="varchar(10)"/>
+            <column name="PROCESS_DEFINITION_ID" type="varchar(10)"/>
+            <column name="PROCESS_DEF_BUSINESS_NAME" type="varchar(20)"/>
         </createTable>
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="142727011259601">
         <createTable tableName="WM_WORK_ITEM_AUDIT">
-            <column name="ID" type="NUMBER(10, 0)">
+            <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="WORK_ITEM_ID" type="VARCHAR2(10)"/>
-            <column name="PROCESS_INSTANCE_ID" type="NUMBER(10, 0)"/>
+            <column name="WORK_ITEM_ID" type="varchar(10)"/>
+            <column name="PROCESS_INSTANCE_ID" type="bigint"/>
         </createTable>
     </changeSet>
 
