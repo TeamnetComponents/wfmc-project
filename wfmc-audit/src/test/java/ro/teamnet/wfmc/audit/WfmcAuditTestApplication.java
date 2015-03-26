@@ -16,7 +16,7 @@ import javax.inject.Inject;
 @Configuration
 @ComponentScan("ro.teamnet.wfmc.audit")
 @EnableAutoConfiguration
-public class WfmcAuditApplication {
+public class WfmcAuditTestApplication {
 
     @Inject
     private Environment env;
@@ -25,7 +25,7 @@ public class WfmcAuditApplication {
      * Main method, used to run the application.
      */
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(WfmcAuditApplication.class);
+        SpringApplication app = new SpringApplication(WfmcAuditTestApplication.class);
         app.setShowBanner(false);
 
         SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
