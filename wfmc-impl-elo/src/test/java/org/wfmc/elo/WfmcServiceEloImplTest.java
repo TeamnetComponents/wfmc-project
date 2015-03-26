@@ -777,7 +777,7 @@ public class WfmcServiceEloImplTest {
     }
 
 
-    @Test
+    @Ignore
     public void testListWorkItemsWMFilterWithProcessDefinitionId() throws WMWorkflowException {
         WMFilter wmFilter =  WMFilterBuilder.createWMFilterWorkItem().addProcessInstanceId("1871");
         wfmcServiceEloImpl.connect(wmConnectInfo);
