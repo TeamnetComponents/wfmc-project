@@ -6,3 +6,5 @@ wfmcAudit:
         serverName:
         username:
         password:
+
+spring.velocity.checkTemplateLocation: false

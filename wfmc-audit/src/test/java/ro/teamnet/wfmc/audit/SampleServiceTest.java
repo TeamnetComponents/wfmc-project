@@ -8,12 +8,12 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 import ro.teamnet.wfmc.audit.domain.SampleEntity;
 import ro.teamnet.wfmc.audit.repository.SampleEntityRepository;
 import ro.teamnet.wfmc.audit.service.SampleService;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
