@@ -57,8 +57,6 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             if (!eloUtilsService.checkIfGroupExist(getIxConnection(), usersSplit[0])) {
                 eloUtilsService.createUserGroup(getIxConnection(), usersSplit[0], null);
             }
-            String jsessionid = ixConnection.getJSESSIONID();
-            getWfmcServiceCache().addUserName(jsessionid, usersSplit[0]);
         } catch (RemoteException remoteException) {
             throw new WMWorkflowException(remoteException);
         }
@@ -66,9 +64,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
 
     private void releaseIXConnection() {
         if (ixConnection != null) {
-            String jsessionid = ixConnection.getJSESSIONID();
             ixConnection.logout();
-            getWfmcServiceCache().removeUserName(jsessionid);
             ixConnection = null;
         }
         ixConnection = null;
@@ -92,7 +88,8 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
-        borrowIxConnection(connectInfo);
+        setWmConnectInfo(connectInfo);
+        borrowIxConnection(getWmConnectInfo());
     }
 
     @Override
@@ -521,16 +518,6 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
-    public String getSessionId() {
-        return ixConnection.getJSESSIONID();
-    }
-
-    @Override
-    public String getSessionUsername(){
-        return  getWfmcServiceCache().getUserName(getSessionId());
-    }
-
-    @Override
     public WMAttributeIterator listProcessInstanceAttributes(String procInstId, WMFilter filter, boolean countFlag) throws WMWorkflowException {
         WMProcessInstance processInstance = getWfmcServiceCache().getProcessInstance(procInstId);
         if (processInstance != null) {
@@ -633,4 +620,5 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
         }
     }
+
 }

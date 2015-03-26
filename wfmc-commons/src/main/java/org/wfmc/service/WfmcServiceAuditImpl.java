@@ -49,7 +49,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
         }
         finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.createProcessInstanceAudit(procDefId, procInstName, tempProcessInstanceId, getDataSource(),username);
         }
         //log after (including error catching )
@@ -69,7 +69,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
             return null;
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.startProcessInstanceAudit(procInstId, currentProcessInstanceId, getDataSource(), username, processInstance);
         }
 
@@ -94,7 +94,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
             status = ex.getMessage();
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.assignProcessInstanceAttributeAudit(procInstId, attrName, attrValue, getDataSource(), username, processInstance, previousProcessInstanceAttributeValue);
         }
     }
@@ -110,7 +110,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
             status = ex.getMessage();
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.abortProcessInstanceAudit(procInstId, getDataSource(), username, processInstance);
         }
     }
@@ -133,7 +133,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
             status = ex.getMessage();
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.assignWorkItemAttributeAudit(procInstId, workItemId, attrName, attrValue, getDataSource(), username, processInstance, previousProcessInstanceAttributeValue);
         }
     }
@@ -150,7 +150,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
             status = ex.getMessage();
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.reassignWorkItemAudit(sourceUser, targetUser, procInstId, workItemId, getDataSource(), username, processInstance);
         }
     }
@@ -167,7 +167,7 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
             status = ex. getMessage();
         } finally {
             AuditWorkflowHandler auditWorkflowHandler = new AuditWorkflowHandler();
-            String username = getUserNameFormInternalServiceCache();
+            String username = getUsername();
             auditWorkflowHandler.completeWorkItemAudit(procInstId, workItemId, getDataSource(), username, processInstance);
         }
     }
@@ -196,8 +196,8 @@ public class WfmcServiceAuditImpl extends WfmcServiceAbstract {
         return this.internalService.listProcessInstances(filter, countFlag);
     }
 
-    private String getUserNameFormInternalServiceCache() {
-        return internalService.getSessionUsername();
+    public String getUsername() {
+        String[] users = this.internalService.getWmConnectInfo().getUserIdentification().split("@");
+        return users[0];
     }
-
 }

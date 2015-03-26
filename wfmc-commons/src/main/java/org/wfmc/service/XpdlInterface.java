@@ -16,5 +16,5 @@ public interface XpdlInterface {
     public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException;
 
 
-
+    WMConnectInfo getWmConnectInfo();
 }

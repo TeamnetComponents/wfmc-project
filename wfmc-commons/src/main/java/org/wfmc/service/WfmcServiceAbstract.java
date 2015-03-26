@@ -6,11 +6,12 @@ import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
+import ro.teamnet.wfmc.audit.annotation.Auditable;
 
 import java.io.IOException;
-import java.util.*;
-
-import ro.teamnet.wfmc.audit.annotation.Auditable;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Created by Lucian.Dragomir on 2/10/2015.
@@ -20,6 +21,7 @@ public abstract class WfmcServiceAbstract implements WfmcService {
     protected Properties context;
     protected String serviceInstance;
     private WfmcServiceCache wfmcServiceCache;
+    public WMConnectInfo wmConnectInfo;
 
     public WfmcServiceCache getWfmcServiceCache() {
         return wfmcServiceCache;
@@ -47,11 +49,6 @@ public abstract class WfmcServiceAbstract implements WfmcService {
     @Override
     public String getName() {
         return (String) context.get(ServiceFactory.INSTANCE_NAME);
-    }
-
-    @Override
-    public String getSessionId() {
-        return null;
     }
 
     @Override
@@ -416,8 +413,11 @@ public abstract class WfmcServiceAbstract implements WfmcService {
         throw new WMUnsupportedOperationException("getWorkFlowProcess");
     }
 
-    @Override
-    public String getSessionUsername() {
-        throw new WMUnsupportedOperationException("getSessionUsername");
+    public WMConnectInfo getWmConnectInfo() {
+        return wmConnectInfo;
+    }
+
+    public void setWmConnectInfo(WMConnectInfo wmConnectInfo) {
+        this.wmConnectInfo = wmConnectInfo;
     }
 }

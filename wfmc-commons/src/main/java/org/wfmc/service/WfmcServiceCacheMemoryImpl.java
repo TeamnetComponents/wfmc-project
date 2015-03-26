@@ -28,17 +28,14 @@ public class WfmcServiceCacheMemoryImpl implements WfmcServiceCache {
         private Map<String, WMProcessInstance> wmProcessInstanceCache;
         private Map<String, Map<String, WMAttribute>> wmProcessInstanceAttributeCache;
         private Map<WMWorkItem, List<WMAttribute>> wmWorkItemAttributeCache;
-        private Map<String, String> userCache;
 
         public DataCache(long timeToExpire, long timeToLive, long timeToEvict) {
             this.wmProcessInstanceCache = new ExpirableMemoryCache<String, WMProcessInstance>(timeToExpire, timeToLive, timeToEvict);
             this.wmProcessInstanceAttributeCache = new ExpirableMemoryCache<String, Map<String, WMAttribute>>(timeToExpire, timeToLive, timeToEvict);
             this.wmWorkItemAttributeCache = new ExpirableMemoryCache<WMWorkItem, List<WMAttribute>>(timeToExpire, timeToLive, timeToEvict);
-            this.userCache = new ExpirableMemoryCache<String, String>(timeToExpire, timeToLive, timeToEvict);
         }
     }
 
-    private String sessionId;
     private Properties context;
     WfmcService wfmcService;
 
@@ -145,31 +142,6 @@ public class WfmcServiceCacheMemoryImpl implements WfmcServiceCache {
         this.getCache().wmWorkItemAttributeCache.remove(workItem);
     }
 
-
-    @Override
-    public String getUserName(String sessionId) {
-        return getCache().userCache.get(sessionId);
-    }
-
-    @Override
-    public void addUserName(String sessionId, String userName) {
-
-        if (!getCache().userCache.containsKey(sessionId)) {
-            Map<String, String> userCache = getCache().userCache;
-            userCache.put(sessionId, userName);
-            System.out.println("");
-        }
-
-    }
-
-    @Override
-    public void removeUserName(String sessionId) {
-        if (getCache().userCache.containsKey(sessionId)) {
-            getCache().userCache.remove(sessionId);
-        }
-    }
-
-
     @Override
     public void __initialize(Properties context) throws IOException {
         this.context = context;
@@ -200,11 +172,6 @@ public class WfmcServiceCacheMemoryImpl implements WfmcServiceCache {
         return (String) context.get(ServiceFactory.INSTANCE_NAME);
     }
 
-    @Override
-    public String getSessionId() {
-        return this.sessionId;
-    }
-
     private long getTimeToExpire() {
         return Long.parseLong(getContext().getProperty(TIME_TO_EXPIRE, "0"));
     }
@@ -223,10 +190,5 @@ public class WfmcServiceCacheMemoryImpl implements WfmcServiceCache {
 
     private String getProcessInstanceCacheKey(String processInstanceId) {
         return wfmcService.getServiceInstance() + "-" + processInstanceId;
-    }
-
-    @Override
-    public String getSessionUsername() {
-        return null;
     }
 }
