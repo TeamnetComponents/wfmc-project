@@ -17,9 +17,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = WfmcAuditApplication.class)
+@SpringApplicationConfiguration(classes = {WfmcAuditTestApplication.class})
 @IntegrationTest
-@ActiveProfiles("default")
+@ActiveProfiles("dev")
 @Transactional
 public class SampleServiceTest {
 
