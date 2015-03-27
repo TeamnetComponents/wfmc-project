@@ -12,8 +12,8 @@ import java.util.List;
 public class WMProcessInstanceAudit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_PROCESS_INSTANCE_SEQUENCE")
+    @SequenceGenerator(name = "WM_PROCESS_INSTANCE", sequenceName = "WM_PROCESS_INSTANCE_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_PROCESS_INSTANCE")
     @Column(name = "ID")
     private Long id;
 
