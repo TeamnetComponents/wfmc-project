@@ -1,51 +1,70 @@
 package ro.teamnet.wfmc.audit.service;
 
-import org.wfmc.audit.WMACreateProcessInstanceData;
 import org.wfmc.audit.WMAEventCode;
-import org.wfmc.wapi.WMProcessInstanceState;
+import org.wfmc.wapi.WMWorkItemState;
+import ro.teamnet.wfmc.audit.domain.*;
+
+import java.util.Date;
 
 /**
  * Created by Ioan.Ivan on 3/26/2015.
  */
 public class WfmcAuditServiceImpl implements WfmcAuditService{
 
-    public WMACreateProcessInstanceData convertCreateProcessToWMACreateProcessInstanceData(String processDefinitionId, String processInstanceName, String tempProcessInstanceId, String username) {
+    public WMEventAuditWorkItem convertReassignWorkItem (String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId) {
 
-        processDefinitionId = "processDefinition";
-        processInstanceName = "processInstanceName";
-        tempProcessInstanceId = "tempProcessInstance";
-        username = "user";
+        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
+        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
+        wmProcessInstanceAudit.setProcessDefinitionId(processDefinitionId);
 
-        WMACreateProcessInstanceData wmaCreateProcessInstanceData = new WMACreateProcessInstanceData();
-        wmaCreateProcessInstanceData.setProcessDefinitionBusinessName(processInstanceName);
+        WMWorkItemAudit wmWorkItemAudit = new WMWorkItemAudit();
+        wmWorkItemAudit.setWorkItemId(workItemId);
+        wmWorkItemAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
 
-        wmaCreateProcessInstanceData.setProcessDefinitionId(processDefinitionId);
-        wmaCreateProcessInstanceData.setInitialProcessInstanceId(tempProcessInstanceId);
-        wmaCreateProcessInstanceData.setCurrentProcessInstanceId(tempProcessInstanceId);
-        wmaCreateProcessInstanceData.setEventCode(WMAEventCode.CREATED_PROCESS_INSTANCE);
-        wmaCreateProcessInstanceData.setProcessState(WMProcessInstanceState.OPEN_NOTRUNNING_NOTSTARTED_TAG);
-        wmaCreateProcessInstanceData.setUserId(username);
-        return wmaCreateProcessInstanceData;
+        WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
+        wmEventAuditWorkItem.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
+        wmEventAuditWorkItem.setEventCode(WMAEventCode.REASSIGNED_WORK_ITEM.value());
+        wmEventAuditWorkItem.setCurrentDate(new Date());
+        wmEventAuditWorkItem.setUsername(username);
+        wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
+
+        return wmEventAuditWorkItem;
     }
 
-    public WMACreateProcessInstanceData convertStartProcessToWMACreateProcessInstanceData(String tempProcessInstanceId, String activeProcessInstanceId, String processInstanceName, String processDefinitionId) {
+    public WMEventAuditWorkItem convertCompleteWorkItem (String processInstanceId, String workItemId, String username, String processDefinitionId) {
 
-        tempProcessInstanceId = "tempProcessInstance";
-        activeProcessInstanceId = "activeProcessInstance";
+        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
+        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
+        wmProcessInstanceAudit.setProcessDefinitionId(processDefinitionId);
 
-        //Nu avem de unde sa le luam
-        processDefinitionId = "processDefinitionId";
-        processInstanceName = "processInstanceName";
+        WMWorkItemAudit wmWorkItemAudit = new WMWorkItemAudit();
+        wmWorkItemAudit.setWorkItemId(workItemId);
+        wmWorkItemAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
 
-        WMACreateProcessInstanceData wmaCreateProcessInstanceData = new WMACreateProcessInstanceData();
-        wmaCreateProcessInstanceData.setProcessDefinitionBusinessName(processInstanceName);
+        WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
+        wmEventAuditWorkItem.setUsername(username);
+        wmEventAuditWorkItem.setEventCode(WMAEventCode.COMPLETED_WORK_ITEM.value());
+        wmEventAuditWorkItem.setCurrentDate(new Date());
+        wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
 
-        wmaCreateProcessInstanceData.setProcessDefinitionId(processDefinitionId);
-        wmaCreateProcessInstanceData.setInitialProcessInstanceId(tempProcessInstanceId);
-        wmaCreateProcessInstanceData.setCurrentProcessInstanceId(activeProcessInstanceId);
-        wmaCreateProcessInstanceData.setEventCode(WMAEventCode.STARTED_PROCESS_INSTANCE);
-        wmaCreateProcessInstanceData.setProcessState(WMProcessInstanceState.OPEN_RUNNING_TAG);
+        return wmEventAuditWorkItem;
+    }
 
-        return wmaCreateProcessInstanceData;
+    public WMEventAuditAttribute convertAssignWorkItemAttribute (String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username) {
+
+        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
+        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
+
+        WMAttributeAudit wmAttributeAudit = new WMAttributeAudit();
+        wmAttributeAudit.setAttributeName(attributeName);
+
+        WMEventAuditAttribute wmEventAuditAttribute = new WMEventAuditAttribute();
+        wmEventAuditAttribute.setCurrentDate(new Date());
+        wmEventAuditAttribute.setEventCode(WMAEventCode.ASSIGNED_ACTIVITY_INSTANCE_ATTRIBUTES.value());
+        wmEventAuditAttribute.setUsername(username);
+        wmEventAuditAttribute.setAttributeValue(attributeValue.toString());
+        wmEventAuditAttribute.setWmAttributeAudit(wmAttributeAudit);
+
+        return wmEventAuditAttribute;
     }
 }

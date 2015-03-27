@@ -12,8 +12,8 @@ import java.util.List;
 public class WMWorkItemAudit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_WORK_ITEM_AUDIT_SEQUENCE")
+    @SequenceGenerator(name = "WM_WORK_ITEM", sequenceName = "WM_WORK_ITEM_AUDIT_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_WORK_ITEM")
     @Column(name = "ID")
     private Long id;
 
