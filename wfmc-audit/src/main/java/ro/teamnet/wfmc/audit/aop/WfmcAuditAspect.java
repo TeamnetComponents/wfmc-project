@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import ro.teamnet.wfmc.audit.annotation.Auditable;
 
 import java.lang.reflect.Method;
@@ -20,7 +19,8 @@ public class WfmcAuditAspect {
     private Logger log = LoggerFactory.getLogger(WfmcAuditAspect.class);
 
     @Pointcut("execution(@ro.teamnet.wfmc.audit.annotation.Auditable * *(..))")
-    public void auditableMethod() {}
+    public void auditableMethod() {
+    }
 
     @Before("auditableMethod() && @annotation(auditable)")
     public void beforeAuditable(JoinPoint joinPoint, Auditable auditable) {

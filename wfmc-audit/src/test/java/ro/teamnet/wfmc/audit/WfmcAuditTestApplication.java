@@ -1,7 +1,10 @@
 package ro.teamnet.wfmc.audit;
 
+import liquibase.integration.spring.SpringLiquibase;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -20,6 +23,15 @@ public class WfmcAuditTestApplication {
 
     @Inject
     private Environment env;
+
+    @Inject
+    @Qualifier("wfmcAuditLiquibase")
+    SpringLiquibase wfmcAuditLiquibase;
+
+    @Bean
+    public SpringLiquibase liquibase() {
+        return wfmcAuditLiquibase;
+    }
 
     /**
      * Main method, used to run the application.
