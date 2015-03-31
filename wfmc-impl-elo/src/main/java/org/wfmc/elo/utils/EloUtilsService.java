@@ -158,7 +158,7 @@ public class EloUtilsService {
         int workflowId = ixConnection.ix().startWorkFlow(templateId, name, sordId);
         WFDiagram wfDiagram = ixConnection.ix().checkoutWorkFlow(String.valueOf(workflowId), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
         workflowGUID = wfDiagram.getGuid();
-        workflowGUID = workflowGUID.replace("(", "").replace(")", "");
+       // workflowGUID = workflowGUID.replace("(", "").replace(")", "");
         return workflowGUID;
     }
 
