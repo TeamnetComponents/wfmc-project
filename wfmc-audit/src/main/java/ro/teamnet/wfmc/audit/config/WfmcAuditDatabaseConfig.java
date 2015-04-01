@@ -29,7 +29,6 @@ import javax.sql.DataSource;
         entityManagerFactoryRef = "wfmcAuditEntityManagerFactory",
         transactionManagerRef = "wfmcAuditTransactionManager")
 @EnableTransactionManagement
-@EntityScan("ro.teamnet.wfmc.audit.domain")
 public class WfmcAuditDatabaseConfig {
 
     private final Logger log = LoggerFactory.getLogger(WfmcAuditDatabaseConfig.class);
