@@ -33,21 +33,27 @@ public class WfmcAuditAspect {
     }
 
     @Around("auditableMethod() && @annotation(auditable))")
-    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, WfmcAuditable auditable) throws Throwable {
+    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, WfmcAuditable auditable) throws ClassNotFoundException {
         log.info("Started auditing around : " + auditable.value());
         Object auditableType = proceedingJoinPoint.getThis();
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method auditedMethod = methodSignature.getMethod();
         log.info("Class: {}; Method name: {}; Return type: {}", proceedingJoinPoint.getSourceLocation().getWithinType().getName(),
                 auditedMethod.getName(), methodSignature.getReturnType().getName());
-        log.info("This: {}", Class.forName(proceedingJoinPoint.getSignature().getDeclaringTypeName()).cast(auditableType));
+        Object thisObject = Class.forName(proceedingJoinPoint.getSignature().getDeclaringTypeName()).cast(auditableType);
+        log.info("This: {}", thisObject);
         Class<?>[] parameterTypes = auditedMethod.getParameterTypes();
         Object[] args = proceedingJoinPoint.getArgs();
         for (int i = 0; i < parameterTypes.length; i++) {
             Object argumentValue = Class.forName(parameterTypes[i].getName()).cast(args[i]);
             log.info("Argument " + i + " = " + argumentValue);
         }
-        Object returnValue = proceedingJoinPoint.proceed(args);
+        Object returnValue = null;
+        try {
+            returnValue = proceedingJoinPoint.proceed(args);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
         log.info("Finished auditing around: " + auditable.value());
         return returnValue;
     }

@@ -31,11 +31,13 @@ public class AuditSampleServiceTest {
 
     @Test
     public void test() {
+        int expectedCount = 0;
         AuditSample savedEntity = sampleService.saveSampleEntity(new AuditSample());
+        expectedCount++;
         Assert.assertNotNull(savedEntity.getId());
         sampleService.saveSampleEntity(new AuditSample());
-        sampleService.saveSampleEntity(new AuditSample());
+        expectedCount++;
         List<AuditSample> all = repository.findAll();
-        Assert.assertEquals(3, all.size());
+        Assert.assertEquals(expectedCount, all.size());
     }
 }

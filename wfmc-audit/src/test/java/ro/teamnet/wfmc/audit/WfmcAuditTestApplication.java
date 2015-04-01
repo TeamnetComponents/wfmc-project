@@ -22,11 +22,8 @@ import javax.inject.Inject;
 public class WfmcAuditTestApplication {
 
     @Inject
-    private Environment env;
-
-    @Inject
     @Qualifier("wfmcAuditLiquibase")
-    SpringLiquibase wfmcAuditLiquibase;
+    private SpringLiquibase wfmcAuditLiquibase;
 
     @Bean
     public SpringLiquibase liquibase() {

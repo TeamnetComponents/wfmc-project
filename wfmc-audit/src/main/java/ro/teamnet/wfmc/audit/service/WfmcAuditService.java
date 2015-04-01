@@ -8,9 +8,9 @@ import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
  */
 public interface WfmcAuditService {
 
-    public WMEventAuditWorkItem convertReassignWorkItem (String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId);
+    WMEventAuditWorkItem convertReassignWorkItem (String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId);
 
-    public WMEventAuditWorkItem convertCompleteWorkItem (String processInstanceId, String workItemId, String username, String processDefinitionId);
+    WMEventAuditWorkItem convertCompleteWorkItem (String processInstanceId, String workItemId, String username, String processDefinitionId);
 
-    public WMEventAuditAttribute convertAssignWorkItemAttribute (String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username);
+    WMEventAuditAttribute convertAssignWorkItemAttribute (String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username);
 }
