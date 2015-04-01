@@ -20,7 +20,7 @@ import java.util.List;
 @SpringApplicationConfiguration(classes = {WfmcAuditTestApplication.class})
 @IntegrationTest
 @ActiveProfiles("dev")
-@Transactional
+@Transactional("wfmcAuditTransactionManager")
 public class SampleServiceTest {
 
 
