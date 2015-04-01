@@ -6,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for auditable methods.
+ * Annotation for WfMC auditable methods.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Auditable {
+public @interface WfmcAuditable {
     String value() default "default";
 }

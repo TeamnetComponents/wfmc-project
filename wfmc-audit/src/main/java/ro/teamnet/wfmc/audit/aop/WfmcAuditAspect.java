@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.teamnet.wfmc.audit.annotation.Auditable;
+import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
 
 import java.lang.reflect.Method;
 
@@ -18,22 +18,22 @@ public class WfmcAuditAspect {
 
     private Logger log = LoggerFactory.getLogger(WfmcAuditAspect.class);
 
-    @Pointcut("execution(@ro.teamnet.wfmc.audit.annotation.Auditable * *(..))")
+    @Pointcut("execution(@ro.teamnet.wfmc.audit.annotation.WfmcAuditable * *(..))")
     public void auditableMethod() {
     }
 
     @Before("auditableMethod() && @annotation(auditable)")
-    public void beforeAuditable(JoinPoint joinPoint, Auditable auditable) {
+    public void beforeAuditable(JoinPoint joinPoint, WfmcAuditable auditable) {
         log.info("Before audit : " + auditable.value());
     }
 
     @After("auditableMethod() && @annotation(auditable))")
-    public void afterAuditable(JoinPoint joinPoint, Auditable auditable) {
+    public void afterAuditable(JoinPoint joinPoint, WfmcAuditable auditable) {
         log.info("After audit : " + auditable.value());
     }
 
     @Around("auditableMethod() && @annotation(auditable))")
-    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, Auditable auditable) throws Throwable {
+    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, WfmcAuditable auditable) throws Throwable {
         log.info("Started auditing around : " + auditable.value());
         Object auditableType = proceedingJoinPoint.getThis();
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();

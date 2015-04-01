@@ -20,7 +20,7 @@ import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.wapi.*;
 import org.wfmc.xpdl.model.transition.Transition;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
-import ro.teamnet.wfmc.audit.annotation.Auditable;
+import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
 
 import java.beans.PropertyVetoException;
 import java.util.*;
@@ -129,7 +129,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
-    @Auditable(value="assignProcessInstanceAttribute")
+    @WfmcAuditable(value="assignProcessInstanceAttribute")
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
         //detect process templateId of this instance
         WMProcessInstance wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
@@ -159,7 +159,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
-    @Auditable(value="startProcess")
+    @WfmcAuditable(value="startProcess")
     public String startProcess(String procInstId) throws WMWorkflowException {
         String processInstanceId = null;
         Sord sord = null;
@@ -273,7 +273,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
-    @Auditable(value="abortProcessInstance")
+    @WfmcAuditable(value="abortProcessInstance")
     public void abortProcessInstance(String procInstId) throws WMWorkflowException {
         try {
             getIxConnection().ix().deleteWorkFlow(procInstId, WFTypeC.ACTIVE, LockC.NO);
@@ -291,7 +291,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
      * @throws WMWorkflowException
      */
     @Override
-    @Auditable(value="abortProcessInstance")
+    @WfmcAuditable(value="abortProcessInstance")
     public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
         try {
             WFDiagram wfDiagram = eloUtilsService.getWorkFlow(getIxConnection(), procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
@@ -359,7 +359,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
-    @Auditable(value="assignWorkItemAttribute")
+    @WfmcAuditable(value="assignWorkItemAttribute")
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
         WMWorkItem workItem = new WMWorkItemImpl(procInstId, workItemId);
         WMProcessInstance wmProcessInstance = getWfmcServiceCache().getProcessInstance(procInstId);
@@ -388,7 +388,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
-    @Auditable(value="completeWorkItem")
+    @WfmcAuditable(value="completeWorkItem")
     public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
         WMAttributeIterator workItemAttribute = getWfmcServiceCache().getWorkItemAttribute(procInstId, workItemId);
 
