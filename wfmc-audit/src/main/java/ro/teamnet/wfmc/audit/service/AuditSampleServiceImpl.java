@@ -2,8 +2,8 @@ package ro.teamnet.wfmc.audit.service;
 
 import org.springframework.stereotype.Service;
 import ro.teamnet.wfmc.audit.annotation.Auditable;
-import ro.teamnet.wfmc.audit.domain.SampleEntity;
-import ro.teamnet.wfmc.audit.repository.SampleEntityRepository;
+import ro.teamnet.wfmc.audit.domain.AuditSample;
+import ro.teamnet.wfmc.audit.repository.AuditSampleRepository;
 
 import javax.inject.Inject;
 
@@ -11,13 +11,13 @@ import javax.inject.Inject;
  * Sample service implementation.
  */
 @Service
-public class SampleServiceImpl implements SampleService {
+public class AuditSampleServiceImpl implements AuditSampleService {
     @Inject
-    private SampleEntityRepository sampleEntityRepository;
+    private AuditSampleRepository sampleEntityRepository;
 
     @Override
     @Auditable("sample service")
-    public SampleEntity saveSampleEntity(SampleEntity sampleEntity) {
+    public AuditSample saveSampleEntity(AuditSample sampleEntity) {
         return sampleEntityRepository.save(sampleEntity);
     }
 }

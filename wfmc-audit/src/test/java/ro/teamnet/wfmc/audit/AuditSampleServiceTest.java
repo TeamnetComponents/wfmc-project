@@ -9,9 +9,9 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import ro.teamnet.wfmc.audit.domain.SampleEntity;
-import ro.teamnet.wfmc.audit.repository.SampleEntityRepository;
-import ro.teamnet.wfmc.audit.service.SampleService;
+import ro.teamnet.wfmc.audit.domain.AuditSample;
+import ro.teamnet.wfmc.audit.repository.AuditSampleRepository;
+import ro.teamnet.wfmc.audit.service.AuditSampleService;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -21,21 +21,21 @@ import java.util.List;
 @IntegrationTest
 @ActiveProfiles("dev")
 @Transactional("wfmcAuditTransactionManager")
-public class SampleServiceTest {
+public class AuditSampleServiceTest {
 
 
     @Inject
-    private SampleService sampleService;
+    private AuditSampleService sampleService;
     @Inject
-    private SampleEntityRepository repository;
+    private AuditSampleRepository repository;
 
     @Test
     public void test() {
-        SampleEntity savedEntity = sampleService.saveSampleEntity(new SampleEntity());
+        AuditSample savedEntity = sampleService.saveSampleEntity(new AuditSample());
         Assert.assertNotNull(savedEntity.getId());
-        sampleService.saveSampleEntity(new SampleEntity());
-        sampleService.saveSampleEntity(new SampleEntity());
-        List<SampleEntity> all = repository.findAll();
+        sampleService.saveSampleEntity(new AuditSample());
+        sampleService.saveSampleEntity(new AuditSample());
+        List<AuditSample> all = repository.findAll();
         Assert.assertEquals(3, all.size());
     }
 }
