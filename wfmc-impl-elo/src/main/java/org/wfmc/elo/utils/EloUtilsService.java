@@ -98,11 +98,11 @@ public class EloUtilsService {
         sord.setObjKeys(objKeys);
     }
 
-    public boolean sordContainsAttribute(Sord sord, String attributeName){
+    public boolean sordContainsAttribute(Sord sord, String attributeName) {
         ObjKey[] objKeys = sord.getObjKeys();
         for (int i = 0; i < objKeys.length; i++) {
-            if (objKeys[i].getName().equals(attributeName)){
-                return  true;
+            if (objKeys[i].getName().equals(attributeName)) {
+                return true;
             }
         }
         return false;
@@ -113,7 +113,7 @@ public class EloUtilsService {
     }
 
 
-    public WFDiagram getWorkFlowTemplate(IXConnection ixConnection, String processDefinitionId,String versionId, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
+    public WFDiagram getWorkFlowTemplate(IXConnection ixConnection, String processDefinitionId, String versionId, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
         WFDiagram wfDiagram = null;
         try {
 
@@ -128,13 +128,11 @@ public class EloUtilsService {
             } else {
                 return null;
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw e;
         }
         return wfDiagram;
     }
-
-
 
 
     public WFDiagram getWorkFlow(IXConnection ixConnection, String flowId, WFTypeZ wfTypeZ, WFDiagramZ wfDiagramZ, LockZ lockZ) throws de.elo.utils.net.RemoteException {
@@ -149,14 +147,19 @@ public class EloUtilsService {
             } else {
                 return null;
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw e;
         }
         return wfDiagram;
     }
 
     public String startWorkFlow(IXConnection ixConnection, String templateId, String name, String sordId) throws de.elo.utils.net.RemoteException {
-        return String.valueOf(ixConnection.ix().startWorkFlow(templateId, name, sordId));
+        String workflowGUID = null;
+        int workflowId = ixConnection.ix().startWorkFlow(templateId, name, sordId);
+        WFDiagram wfDiagram = ixConnection.ix().checkoutWorkFlow(String.valueOf(workflowId), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+        workflowGUID = wfDiagram.getGuid();
+       // workflowGUID = workflowGUID.replace("(", "").replace(")", "");
+        return workflowGUID;
     }
 
     public WFNode getNode(IXConnection ixConnection, String workflowId, Integer nodeId) throws de.elo.utils.net.RemoteException {
@@ -195,7 +198,7 @@ public class EloUtilsService {
         }
     }
 
-    public boolean existSord (IXConnection ixConnection, String pathNameOrId) {
+    public boolean existSord(IXConnection ixConnection, String pathNameOrId) {
         boolean existSord = false;
         try {
             ixConnection.ix().checkoutSord(pathNameOrId, SordC.mbAll, LockC.NO);
@@ -207,12 +210,11 @@ public class EloUtilsService {
     }
 
 
-
-    public List<WFNode> getCurrentNodesFromWFDiagram(WFDiagram wfDiagram){
+    public List<WFNode> getCurrentNodesFromWFDiagram(WFDiagram wfDiagram) {
         List<WFNodeAssoc> nodeAssocs = Arrays.asList(wfDiagram.getMatrix().getAssocs());
         List<Integer> nodesFromNotDone = new ArrayList();
         List<Integer> nodesToDone = new ArrayList();
-        for(WFNodeAssoc assoc : nodeAssocs) {
+        for (WFNodeAssoc assoc : nodeAssocs) {
             if (assoc.isDone()) {
                 nodesToDone.add(assoc.getNodeTo());
             } else {
@@ -220,11 +222,11 @@ public class EloUtilsService {
             }
         }
         nodesFromNotDone.retainAll(nodesToDone);
-        List<WFNode> allNodes =  Arrays.asList(wfDiagram.getNodes());
-        List<WFNode> currentNodesList =  new ArrayList<>();
-        for (Integer currentNodeId : nodesFromNotDone){
+        List<WFNode> allNodes = Arrays.asList(wfDiagram.getNodes());
+        List<WFNode> currentNodesList = new ArrayList<>();
+        for (Integer currentNodeId : nodesFromNotDone) {
             for (WFNode wfNode : allNodes) {
-                if (currentNodeId.compareTo(wfNode.getId()) == 0){
+                if (currentNodeId.compareTo(wfNode.getId()) == 0) {
                     currentNodesList.add(wfNode);
                 }
             }

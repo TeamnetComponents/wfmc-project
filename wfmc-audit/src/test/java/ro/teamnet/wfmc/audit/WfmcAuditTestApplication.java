@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import ro.teamnet.wfmc.audit.config.Constants;
 
@@ -22,11 +21,8 @@ import javax.inject.Inject;
 public class WfmcAuditTestApplication {
 
     @Inject
-    private Environment env;
-
-    @Inject
     @Qualifier("wfmcAuditLiquibase")
-    SpringLiquibase wfmcAuditLiquibase;
+    private SpringLiquibase wfmcAuditLiquibase;
 
     @Bean
     public SpringLiquibase liquibase() {
