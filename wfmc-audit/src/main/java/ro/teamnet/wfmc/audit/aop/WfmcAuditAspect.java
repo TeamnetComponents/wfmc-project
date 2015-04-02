@@ -52,7 +52,7 @@ public class WfmcAuditAspect {
         try {
             returnValue = proceedingJoinPoint.proceed(args);
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            log.warn("Could not proceed: ", throwable);
         }
         log.info("Finished auditing around: " + auditable.value());
         return returnValue;

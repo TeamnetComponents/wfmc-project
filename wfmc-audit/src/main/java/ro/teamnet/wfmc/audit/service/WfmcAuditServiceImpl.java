@@ -9,9 +9,9 @@ import java.util.Date;
 /**
  * Created by Ioan.Ivan on 3/26/2015.
  */
-public class WfmcAuditServiceImpl implements WfmcAuditService{
+public class WfmcAuditServiceImpl implements WfmcAuditService {
 
-    public WMEventAuditWorkItem convertReassignWorkItem (String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId) {
+    public WMEventAuditWorkItem convertReassignWorkItem(String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId) {
 
         WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
         wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
@@ -31,7 +31,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService{
         return wmEventAuditWorkItem;
     }
 
-    public WMEventAuditWorkItem convertCompleteWorkItem (String processInstanceId, String workItemId, String username, String processDefinitionId) {
+    public WMEventAuditWorkItem convertCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId) {
 
         WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
         wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
@@ -50,7 +50,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService{
         return wmEventAuditWorkItem;
     }
 
-    public WMEventAuditAttribute convertAssignWorkItemAttribute (String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username) {
+    public WMEventAuditAttribute convertAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username) {
 
         WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
         wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
