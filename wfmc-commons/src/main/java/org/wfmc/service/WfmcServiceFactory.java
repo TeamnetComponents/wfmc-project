@@ -34,7 +34,7 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
         WfmcService wfmcServiceForService = null;
         try {
             wfmcServiceForService = super.getServiceInstance();
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             //do nothing
         }
 
@@ -69,7 +69,7 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
                 }
             }
             WfmcServiceCache wfmcServiceCache = wfmcServiceCacheFactory.getInstance();
-            if(wfmcServiceForService != null){
+            if (wfmcServiceForService != null) {
                 wfmcServiceCache.setWfmcService(wfmcServiceForService);
                 ((WfmcServiceAbstract) wfmcServiceForService).setWfmcServiceCache(wfmcServiceCache);
             } else {
@@ -77,8 +77,64 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
                 ((WfmcServiceAbstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
             }
         }
-        if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAuditImpl)){
-            ((WfmcServiceAuditImpl)wfmcService).setInternalService(wfmcServiceForService);
+        if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAuditImpl)) {
+            ((WfmcServiceAuditImpl) wfmcService).setInternalService(wfmcServiceForService);
+        }
+        return wfmcService;
+    }
+
+    public WfmcService getInstance(Properties wfmcServiceCacheContext) throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
+        WfmcService wfmcService = null;
+        wfmcService = super.getInstance();
+
+        WfmcService wfmcServiceForService = null;
+        try {
+            wfmcServiceForService = super.getServiceInstance();
+        } catch (IllegalArgumentException e) {
+            //do nothing
+        }
+
+        //prepare service cache
+
+        //get parent paths to optimize configuration file detection
+        String instanceSource = wfmcService.getContext().getProperty(ServiceFactory.INSTANCE_SOURCE);
+        String instanceSourceType = wfmcService.getContext().getProperty(ServiceFactory.INSTANCE_SOURCE_TYPE);
+        if (instanceSourceType == null) {
+            instanceSourceType = ServiceFactory.ContextType.ANY.name();
+        }
+        ServiceFactory.ContextType contextType = ServiceFactory.ContextType.valueOf(instanceSourceType);
+        FileUtils fileUtils = FileUtils.proposeFileUtils(instanceSource);
+
+
+        String[] alternatePaths = null;
+        if (StringUtils.isNotEmpty(instanceSource)) {
+            String instancePath = fileUtils.getParentFolderPathName(instanceSource);
+            if (!instancePath.equals(fileUtils.getRootPath())) {
+                alternatePaths = new String[]{instancePath};
+            } else {
+                alternatePaths = new String[0];
+            }
+        }
+
+        //get service cache factory
+        if (wfmcServiceCacheFactory == null) {
+            synchronized (this) {
+                if (wfmcServiceCacheFactory == null) {
+                    wfmcServiceCacheFactory = new WfmcServiceCacheFactory(wfmcServiceCacheContext);
+                }
+            }
+        }
+        WfmcServiceCache wfmcServiceCache = wfmcServiceCacheFactory.getInstance();
+        if (wfmcServiceForService != null) {
+            wfmcServiceCache.setWfmcService(wfmcServiceForService);
+            ((WfmcServiceAbstract) wfmcServiceForService).setWfmcServiceCache(wfmcServiceCache);
+        } else {
+            wfmcServiceCache.setWfmcService(wfmcService);
+            ((WfmcServiceAbstract) wfmcService).setWfmcServiceCache(wfmcServiceCache);
+        }
+
+        if ((wfmcServiceForService != null) && (wfmcService instanceof WfmcServiceAuditImpl)) {
+            ((WfmcServiceAuditImpl) wfmcService).setInternalService(wfmcServiceForService);
         }
         return wfmcService;
     }
