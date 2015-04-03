@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.wfmc.service.WfmcService;
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMWorkflowException;
+import ro.teamnet.audit.annotation.Auditable;
+import ro.teamnet.audit.constants.AuditStrategy;
 
 import javax.inject.Inject;
 
@@ -32,6 +34,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     }
 
     @Override
+    @Auditable(strategy = AuditStrategy.WFMC, type = "createProcessInstance")
     public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
         return wfmcService.createProcessInstance(procDefId, procInstName);
     }

@@ -2,6 +2,7 @@ package ro.teamnet.wfmc.service;
 
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMWorkflowException;
+import ro.teamnet.audit.annotation.AuditedParameter;
 
 /**
  * A facade providing the audited methods of the WfmcService.
@@ -32,7 +33,9 @@ public interface WfmcAuditedService {
      * @return The process instance id.
      * @throws org.wfmc.wapi.WMWorkflowException Workflow client exception.
      */
-    String createProcessInstance(String procDefId, String procInstName)
+    public String createProcessInstance(
+            @AuditedParameter(description = "procDefId") String procDefId,
+            @AuditedParameter(description = "procInstName") String procInstName)
             throws WMWorkflowException;
 
     /**
