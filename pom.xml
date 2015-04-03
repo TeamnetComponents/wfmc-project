@@ -13,6 +13,8 @@
         <module>wfmc-impl-elo</module>
         <module>wfmc-audit</module>
         <module>wfmc-test</module>
+        <module>wfmc-spring-services</module>
+        <module>wfmc-spring-services-elo</module>
         <!--<module>wfmc-commons-impl</module>-->
         <!--<module>wfmc-server-core</module>-->
         <!--<module>wfmc-server-services</module>-->

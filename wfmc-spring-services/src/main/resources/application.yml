@@ -1,0 +1,12 @@
+wfmc:
+    instance.name: wapi-elo-renns
+    instance.class: org.wfmc.elo.WfmcServiceEloImpl
+
+    cache:
+        instance.name: wapi-cache-in-memory
+        instance.class: org.wfmc.service.WfmcServiceCacheMemoryImpl
+        time.to.expire: 100000
+        time.to.live: 200000
+        time.to.evict: 300000
+
+    workflow.sord.location.template.path: /workflows/${UAT}
