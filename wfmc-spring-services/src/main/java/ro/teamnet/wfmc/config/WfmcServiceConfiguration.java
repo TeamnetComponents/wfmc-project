@@ -4,6 +4,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
 import org.wfmc.wapi.WMConnectInfo;
@@ -15,25 +16,31 @@ import javax.inject.Inject;
  */
 @Configuration
 public class WfmcServiceConfiguration {
+    @Inject
+    Environment environment;
 
     @Inject
     private WfmcServiceFactoryContext wfmcServiceFactoryContext;
+
+    @Inject
+    private WfmcServiceCacheFactoryContext wfmcServiceCacheFactoryContext;
 
     @Bean
     public WfmcService wfmcService() {
         try {
             WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(wfmcServiceFactoryContext.getProperties());
-            WfmcService wfmcService = wfmcServiceFactory.getInstance();
-            return wfmcService;
+            return wfmcServiceFactory.getInstance(wfmcServiceCacheFactoryContext.getProperties());
         } catch (Exception e) {
             throw new BeanCreationException("Could not create WfmcService", e);
         }
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "wmConnectInfo")
-    public WMConnectInfo wmConnectInfo(String userIdentification,
-                                       String password, String engineName, String scope) {
+    public WMConnectInfo wmConnectInfo() {
+        String userIdentification = environment.getProperty("wmConnectInfo.userIdentification");
+        String password = environment.getProperty("wmConnectInfo.password");
+        String engineName = environment.getProperty("wmConnectInfo.engineName");
+        String scope = environment.getProperty("wmConnectInfo.scope");
         return new WMConnectInfo(userIdentification, password, engineName, scope);
     }
 }

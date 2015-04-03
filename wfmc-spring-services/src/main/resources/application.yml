@@ -1,12 +1,26 @@
-wfmc:
-    instance.name: wapi-elo-renns
-    instance.class: org.wfmc.elo.WfmcServiceEloImpl
+spring.velocity.checkTemplateLocation: false
 
-    cache:
-        instance.name: wapi-cache-in-memory
-        instance.class: org.wfmc.service.WfmcServiceCacheMemoryImpl
-        time.to.expire: 100000
-        time.to.live: 200000
-        time.to.evict: 300000
+wfmcAudit:
+    datasource:
+        dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+        url: jdbc:h2:mem:wfmcaudit;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        databaseName:
+        serverName:
+        username:
+        password:
 
-    workflow.sord.location.template.path: /workflows/${UAT}
+wmConnectInfo:
+    userIdentification: Administrator
+    password: elo@RENNS2015
+    engineName: Wfmc Test
+    scope: http://10.6.38.90:8080/ix-elo/ix
+
+wfmcService:
+    instanceName: wapi-elo-renns
+    instanceClass: org.wfmc.elo.WfmcServiceEloImpl
+    cacheService:
+        instanceName: wapi-cache-in-memory
+        instanceClass: org.wfmc.service.WfmcServiceCacheMemoryImpl
+        timeToExpire: 100000
+        timeToLive: 200000
+        timeToEvict: 300000
