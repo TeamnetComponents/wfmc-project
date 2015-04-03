@@ -6,7 +6,6 @@ import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
-import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
 
 import java.io.IOException;
 import java.util.List;
@@ -68,7 +67,6 @@ public abstract class WfmcServiceAbstract implements WfmcService {
 
 
     @Override
-    @WfmcAuditable(value="createProcessInstance")
     public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
         WMProcessInstance wmProcessInstance = new WMProcessInstanceImpl(procInstName, String.valueOf(UUID.randomUUID()), procDefId);
         wfmcServiceCache.addProcessInstance(wmProcessInstance);
@@ -409,7 +407,7 @@ public abstract class WfmcServiceAbstract implements WfmcService {
         throw new WMUnsupportedOperationException("getNextSteps");
     }
 
-    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) throws WMWorkflowException{
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) throws WMWorkflowException {
         throw new WMUnsupportedOperationException("getWorkFlowProcess");
     }
 
