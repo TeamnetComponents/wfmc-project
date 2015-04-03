@@ -1,7 +1,6 @@
 package ro.teamnet.wfmc.config;
 
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

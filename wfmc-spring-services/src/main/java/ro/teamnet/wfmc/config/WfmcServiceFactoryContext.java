@@ -24,6 +24,7 @@ public class WfmcServiceFactoryContext {
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
+
     private WfmcServiceCacheFactoryContext cacheService;
 
     public void setCacheService(WfmcServiceCacheFactoryContext cacheService) {
