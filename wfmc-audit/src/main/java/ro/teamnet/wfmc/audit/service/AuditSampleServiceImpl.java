@@ -1,7 +1,8 @@
 package ro.teamnet.wfmc.audit.service;
 
 import org.springframework.stereotype.Service;
-import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
+import ro.teamnet.audit.annotation.Auditable;
+import ro.teamnet.audit.constants.AuditStrategy;
 import ro.teamnet.wfmc.audit.domain.AuditSample;
 import ro.teamnet.wfmc.audit.repository.AuditSampleRepository;
 
@@ -21,13 +22,13 @@ public class AuditSampleServiceImpl implements AuditSampleService {
     }
 
 
-    public String convertIdToString(Long age, String name){
+    public String convertIdToString(Long age, String name) {
         return "Converting....and it's Done! " + String.valueOf(age) + name;
     }
 
     @Override
-    @WfmcAuditable("myMethod")
-    public String myMethod(Long age, String name){
+    @Auditable(strategy = AuditStrategy.WFMC, type = "myMethod")
+    public String myMethod(Long age, String name) {
         return "MySampleId is : " + String.valueOf(age) + " and Something = " + name;
     }
 }

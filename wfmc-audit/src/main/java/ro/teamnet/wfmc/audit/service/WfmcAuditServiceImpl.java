@@ -1,5 +1,6 @@
 package ro.teamnet.wfmc.audit.service;
 
+import org.springframework.stereotype.Service;
 import org.wfmc.audit.WMAEventCode;
 import org.wfmc.wapi.WMWorkItemState;
 import ro.teamnet.wfmc.audit.domain.*;
@@ -13,6 +14,7 @@ import java.util.Date;
 /**
  * Created by Ioan.Ivan on 3/26/2015.
  */
+@Service
 public class WfmcAuditServiceImpl implements WfmcAuditService {
 
 
@@ -85,8 +87,6 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
         return wmEventAuditAttribute;
     }
-
-
 
 
 }
