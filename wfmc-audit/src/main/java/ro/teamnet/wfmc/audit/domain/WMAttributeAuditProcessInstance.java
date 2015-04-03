@@ -1,9 +1,6 @@
 package ro.teamnet.wfmc.audit.domain;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created by Ioan.Ivan on 3/25/2015.
@@ -13,7 +10,9 @@ import javax.persistence.ManyToOne;
 @DiscriminatorValue(value = "PI")
 public class WMAttributeAuditProcessInstance extends WMAttributeAudit{
 
+
     @ManyToOne
+    @Transient
     @JoinColumn(name = "WM_PROCESS_INSTANCE_AUDIT_ID")
     private WMProcessInstanceAudit wmProcessInstanceAudit;
 

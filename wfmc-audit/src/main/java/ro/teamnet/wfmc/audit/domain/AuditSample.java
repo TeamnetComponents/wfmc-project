@@ -8,10 +8,38 @@ import javax.persistence.*;
 @Entity
 @Table(name = "SAMPLE_TABLE")
 public class AuditSample {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "age")
+    private Long age;
+
+    @Column(name = "name")
+    private String name;
+
+    public AuditSample(Long age, String name) {
+        this.age = age;
+        this.name = name;
+    }
+
+    public Long getAge() {
+        return age;
+    }
+
+    public void setAge(Long age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -23,8 +51,10 @@ public class AuditSample {
 
     @Override
     public String toString() {
-        return "SampleEntity{" +
+        return "AuditSample{" +
                 "id=" + id +
+                ", age=" + age +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

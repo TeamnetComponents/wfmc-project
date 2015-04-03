@@ -26,12 +26,15 @@ public class WMProcessInstanceAudit {
     @Column(name = "PROCESS_DEF_BUSINESS_NAME")
     private String processDefinitionBusinessName;
 
+    @Transient
     @OneToMany(mappedBy = "wmProcessInstanceAudit")
     private List<WMWorkItemAudit> wmWorkItemAuditList;
 
+    @Transient
     @OneToMany(mappedBy = "wmProcessInstanceAudit")
     private List<WMAttributeAuditProcessInstance> wmAttributeAuditProcessInstanceList;
 
+    @Transient
     @OneToMany(mappedBy = "wmProcessInstanceAudit")
     private List<WMEventAuditProcessInstance> wmEventAuditProcessInstanceList;
 

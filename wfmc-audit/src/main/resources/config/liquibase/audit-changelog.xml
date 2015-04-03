@@ -46,6 +46,16 @@
 
 
     </changeSet>
+
+    <changeSet author="sample.user" id="20150325#1">
+        <addColumn tableName="SAMPLE_TABLE">
+            <column name="age" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="SAMPLE_TABLE">
+            <column name="name" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet author="Mihai.Niculae (generated)" id="1427270112598">
         <createTable tableName="WM_ATTRIBUTE_AUDIT">
             <column name="ID" type="bigint">

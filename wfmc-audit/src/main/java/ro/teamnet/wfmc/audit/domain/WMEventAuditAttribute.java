@@ -14,6 +14,7 @@ public class WMEventAuditAttribute extends WMEventAudit{
     private String attributeValue;
 
     @ManyToOne
+    @Transient
     @JoinColumn(name = "WM_WORK_ITEM_AUDIT_ID")
     private WMAttributeAudit wmAttributeAudit;
 

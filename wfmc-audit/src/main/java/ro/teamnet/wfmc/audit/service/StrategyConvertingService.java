@@ -5,7 +5,4 @@ package ro.teamnet.wfmc.audit.service;
  */
 public interface StrategyConvertingService {
 
-
-
-
 }

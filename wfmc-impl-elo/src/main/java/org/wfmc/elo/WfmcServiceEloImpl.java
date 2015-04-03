@@ -20,6 +20,7 @@ import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.wapi.*;
 import org.wfmc.xpdl.model.transition.Transition;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
+import ro.teamnet.wfmc.audit.annotation.AnnotationforParams;
 import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
 
 import java.beans.PropertyVetoException;
@@ -389,7 +390,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
 
     @Override
     @WfmcAuditable(value="completeWorkItem")
-    public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
+    public void completeWorkItem(@AnnotationforParams(valueParam = "procInstId") String procInstId, @AnnotationforParams(valueParam = "workItemId") String workItemId) throws WMWorkflowException {
         WMAttributeIterator workItemAttribute = getWfmcServiceCache().getWorkItemAttribute(procInstId, workItemId);
 
         int[] nextNodesId = new int[workItemAttribute.getCount()];
@@ -400,6 +401,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
                 nextNodesId[i++] = Integer.parseInt((String)wmAttribute.getValue());
             }
         }
+
 
         Integer processInstanceIdAsInt = Integer.parseInt(procInstId);
         Integer currentWorkItemIdAsInt = Integer.parseInt(workItemId);

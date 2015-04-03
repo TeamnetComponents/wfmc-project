@@ -16,8 +16,19 @@ public class AuditSampleServiceImpl implements AuditSampleService {
     private AuditSampleRepository sampleEntityRepository;
 
     @Override
-    @WfmcAuditable("sample service")
     public AuditSample saveSampleEntity(AuditSample sampleEntity) {
         return sampleEntityRepository.save(sampleEntity);
     }
+
+
+    public String convertIdToString(Long age, String name){
+        return "Converting....and it's Done! " + String.valueOf(age) + name;
+    }
+
+    @Override
+    @WfmcAuditable("myMethod")
+    public String myMethod(Long age, String name){
+        return "MySampleId is : " + String.valueOf(age) + " and Something = " + name;
+    }
 }
+

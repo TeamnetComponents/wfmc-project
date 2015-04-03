@@ -24,6 +24,7 @@ public class WMAttributeAudit implements Serializable {
     @Column(name = "ATTRIBUTE_NAME")
     private String attributeName;
 
+    @Transient
     @OneToMany(mappedBy = "wmAttributeAudit")
     private List<WMEventAuditAttribute> wmEventAuditAttributes;
 
