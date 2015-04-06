@@ -8,10 +8,10 @@ import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
 import ro.teamnet.audit.annotation.Auditable;
-import ro.teamnet.audit.constants.AuditStrategy;
 
 import javax.inject.Inject;
 
+import static ro.teamnet.audit.constants.AuditStrategy.WFMC;
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
 
 /**
@@ -38,43 +38,43 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = CREATE_PROCESS_INSTANCE)
+    @Auditable(strategy = WFMC, type = CREATE_PROCESS_INSTANCE)
     public String createProcessInstance(String procDefId, String procInstName) throws WMWorkflowException {
         return wfmcService.createProcessInstance(procDefId, procInstName);
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = ASSIGN_PROCESS_INSTANCE_ATTRIBUTE)
+    @Auditable(strategy = WFMC, type = ASSIGN_PROCESS_INSTANCE_ATTRIBUTE)
     public void assignProcessInstanceAttribute(String procInstId, String attrName, Object attrValue) throws WMWorkflowException {
         wfmcService.assignProcessInstanceAttribute(procInstId, attrName, attrValue);
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = START_PROCESS)
+    @Auditable(strategy = WFMC, type = START_PROCESS)
     public String startProcess(String procInstId) throws WMWorkflowException {
         return wfmcService.startProcess(procInstId);
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = ABORT_PROCESS_INSTANCE)
+    @Auditable(strategy = WFMC, type = ABORT_PROCESS_INSTANCE)
     public void abortProcessInstance(String procInstId) throws WMWorkflowException {
         wfmcService.abortProcessInstance(procInstId);
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = REASSIGN_WORK_ITEM)
+    @Auditable(strategy = WFMC, type = REASSIGN_WORK_ITEM)
     public void reassignWorkItem(String sourceUser, String targetUser, String procInstId, String workItemId) throws WMWorkflowException {
         wfmcService.reassignWorkItem(sourceUser, targetUser, procInstId, workItemId);
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = ASSIGN_WORK_ITEM_ATTRIBUTE)
+    @Auditable(strategy = WFMC, type = ASSIGN_WORK_ITEM_ATTRIBUTE)
     public void assignWorkItemAttribute(String procInstId, String workItemId, String attrName, Object attrValue) throws WMWorkflowException {
         wfmcService.assignWorkItemAttribute(procInstId, workItemId, attrName, attrValue);
     }
 
     @Override
-    @Auditable(strategy = AuditStrategy.WFMC, type = COMPLETE_WORK_ITEM)
+    @Auditable(strategy = WFMC, type = COMPLETE_WORK_ITEM)
     public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
         wfmcService.completeWorkItem(procInstId, workItemId);
     }
@@ -93,7 +93,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     public boolean isProcessDefinitionProfileSupported() {
         return wfmcService.isProcessDefinitionProfileSupported();
     }
-    
+
     @Override
     public boolean isProcessAdminProfileSupported() {
         return wfmcService.isProcessAdminProfileSupported();
@@ -151,7 +151,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     @Override
     public WMAttributeIterator listEntityAttributeValues(WMEntity scopingEntity, String entityHandle, String attributeName) throws WMWorkflowException {
-        return wfmcService.listEntityAttributeValues(scopingEntity, entityHandle,attributeName);
+        return wfmcService.listEntityAttributeValues(scopingEntity, entityHandle, attributeName);
     }
 
     @Override
