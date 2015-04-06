@@ -366,7 +366,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     @Override
     public WMAttribute[] requestAppStatus(int toolAgentHandle, String procInstId, String workItemId, int[] status) throws WMWorkflowException {
-        return new WMAttribute[0];
+        return wfmcService.requestAppStatus(toolAgentHandle, procInstId, workItemId, status);
     }
 
     @Override
