@@ -4,12 +4,15 @@ package ro.teamnet.wfmc.audit.constants;
  * Audited parameter types for auditable WfMC methods.
  */
 public class WfmcAuditedParameter {
-    public final static String PROCESS_DEFINITION_ID = "procDefId";
-    public final static String PROCESS_INSTANCE_NAME = "procInstName";
-    public final static String PROCESS_INSTANCE_ID = "procInstId";
-    public final static String WORK_ITEM_ID = "workItemId";
-    public final static String ATTRIBUTE_NAME = "attrName";
-    public final static String ATTRIBUTE_VALUE = "attrValue";
-    public final static String SOURCE_USER = "sourceUser";
-    public final static String TARGET_USER = "targetUser";
+    private WfmcAuditedParameter() {
+    }
+
+    public static final String PROCESS_DEFINITION_ID = "procDefId";
+    public static final String PROCESS_INSTANCE_NAME = "procInstName";
+    public static final String PROCESS_INSTANCE_ID = "procInstId";
+    public static final String WORK_ITEM_ID = "workItemId";
+    public static final String ATTRIBUTE_NAME = "attrName";
+    public static final String ATTRIBUTE_VALUE = "attrValue";
+    public static final String SOURCE_USER = "sourceUser";
+    public static final String TARGET_USER = "targetUser";
 }

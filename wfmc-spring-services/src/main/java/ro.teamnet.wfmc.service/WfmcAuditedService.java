@@ -11,7 +11,7 @@ import static ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter.*;
  */
 public interface WfmcAuditedService extends WAPI2 {
 
-    public String createProcessInstance(
+    String createProcessInstance(
             @AuditedParameter(description = PROCESS_DEFINITION_ID) String procDefId,
             @AuditedParameter(description = PROCESS_INSTANCE_NAME) String procInstName) throws WMWorkflowException;
 
