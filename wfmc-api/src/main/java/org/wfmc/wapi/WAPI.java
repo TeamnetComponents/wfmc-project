@@ -357,7 +357,7 @@ public interface WAPI {
      * @param workItemId The work item id.
      * @throws WMWorkflowException Workflow client exception.
      */
-    void completeWorkItem(String procInstId,String workItemId)
+    void completeWorkItem(String procInstId, String workItemId)
         throws WMWorkflowException;
 
     /**
