@@ -20,6 +20,7 @@ import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.wapi.*;
 import org.wfmc.xpdl.model.transition.Transition;
 import org.wfmc.xpdl.model.workflow.WorkflowProcess;
+import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
 
 import java.beans.PropertyVetoException;
 import java.util.*;
@@ -384,6 +385,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     @Override
+    @WfmcAuditable(value="completeWorkItem")
     public void completeWorkItem(String procInstId, String workItemId) throws WMWorkflowException {
         WMAttributeIterator workItemAttribute = getWfmcServiceCache().getWorkItemAttribute(procInstId, workItemId);
 

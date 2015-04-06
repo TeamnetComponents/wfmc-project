@@ -9,8 +9,6 @@ import ro.teamnet.wfmc.audit.domain.AuditSample;
 public interface AuditSampleService {
     AuditSample saveSampleEntity(AuditSample sampleEntity);
 
-    String convertIdToString(Long age, String name);
-
     String myMethod(@AuditedParameter(description = "age") Long age,
                     @AuditedParameter(description = "name") String name);
 }

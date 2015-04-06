@@ -15,7 +15,6 @@ import ro.teamnet.wfmc.audit.domain.WMEventAudit;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
 import ro.teamnet.wfmc.audit.repository.AuditSampleRepository;
 import ro.teamnet.wfmc.audit.repository.EventAuditRepository;
-import ro.teamnet.wfmc.audit.repository.EventAuditWorkItemRepository;
 import ro.teamnet.wfmc.audit.service.AuditSampleService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 
@@ -39,15 +38,15 @@ public class AuditSampleServiceTest {
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private EventAuditWorkItemRepository eventAuditWorkItemRepository;
-    @Inject
     private EventAuditRepository eventAuditRepository;
 
     @Test
     @Ignore
     public void completeWorkItemTest () {
 
-
+        /**
+         * somewhere will call this method : completeWorkItem
+         */
 
         WMEventAuditWorkItem wmEventAuditWorkItem = wfmcAuditService.convertAndSaveCompleteWorkItem("sdaa", "sad", "sda", "sda");
 
@@ -76,6 +75,7 @@ public class AuditSampleServiceTest {
     }
 
     @Test
+    @Ignore
     public void myTestIdAndSmth() {
 
         String result = sampleService.myMethod(25L, "USERNAME");

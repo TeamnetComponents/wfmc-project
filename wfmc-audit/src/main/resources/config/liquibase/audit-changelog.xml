@@ -44,8 +44,32 @@
             </column>
         </createTable>
 
-
     </changeSet>
+
+
+
+    <!-- Create WM_ERROR_AUDIT table -->
+
+    <!--<changeSet id="20150403#1" author="sample.user" failOnError="true">-->
+
+        <!--<createTable tableName="WM_ERROR_AUDIT">-->
+            <!--<column name="id" type="bigint" autoIncrement="true">-->
+                <!--<constraints primaryKey="true" nullable="false"/>-->
+            <!--</column>-->
+            <!--<column name="description" type="varchar(255)">-->
+                <!--<constraints nullable="false"/>-->
+            <!--</column>-->
+            <!--<column name="message" type="varchar(255)">-->
+                <!--<constraints nullable="false"/>-->
+            <!--</column>-->
+            <!--<column name="stackTrace" type="CLOB">-->
+                <!--<constraints  nullable="false"/>-->
+            <!--</column>-->
+        <!--</createTable>-->
+
+    <!--</changeSet>-->
+
+
 
     <changeSet author="sample.user" id="20150325#1">
         <addColumn tableName="SAMPLE_TABLE">

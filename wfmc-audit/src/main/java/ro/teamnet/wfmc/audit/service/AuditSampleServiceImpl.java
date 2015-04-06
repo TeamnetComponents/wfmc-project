@@ -22,9 +22,6 @@ public class AuditSampleServiceImpl implements AuditSampleService {
     }
 
 
-    public String convertIdToString(Long age, String name) {
-        return "Converting....and it's Done! " + String.valueOf(age) + name;
-    }
 
     @Override
     @Auditable(strategy = AuditStrategy.WFMC, type = "myMethod")
