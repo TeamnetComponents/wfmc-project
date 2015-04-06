@@ -1,7 +1,7 @@
 package ro.teamnet.wfmc.audit;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -15,11 +15,9 @@ import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
 import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.inject.Inject;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,27 +36,26 @@ public class AuditSampleServiceTest {
     private Logger log = LoggerFactory.getLogger(AuditSampleServiceTest.class);
 
     @Test
-    @Ignore
     public void testErrorAuditEntity() {
         WMErrorAudit errorAudit = new WMErrorAudit();
         errorAudit.setMessage("Message");
         errorAudit.setAuditedOperation("Audited operation");
         errorAudit.setDescription("Description");
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-        errorAudit.setOccurrenceTrace(timestamp);
+        Date now = new Date();
+        errorAudit.setOccurrenceTime(now);
 
         WMProcessInstanceAudit process = processInstanceAuditRepository.findOne(1l);
         errorAudit.setWmProcessInstanceAudit(process);
 
         WMErrorAudit ea = errorAuditRepository.save(errorAudit);
+        Assert.assertNotNull(ea.getId());
 
         WMErrorAudit checkData = errorAuditRepository.findOne(ea.getId());
         Assert.assertEquals("Message error!", checkData.getMessage(), "Message");
         Assert.assertEquals("Description error!", checkData.getDescription(), "Description");
         Assert.assertEquals("Audited operation error!", checkData.getAuditedOperation(), "Audited operation");
-        Assert.assertEquals("Timestamp error!", checkData.getOccurrenceTrace(), timestamp);
+        Assert.assertEquals("Timestamp error!", checkData.getOccurrenceTime(), now);
         Assert.assertEquals("ProcessInstanceAudit error!", checkData.getWmProcessInstanceAudit(), process);
-        Assert.assertNotNull(ea.getId());
     }
 
     @Test
@@ -77,8 +74,7 @@ public class AuditSampleServiceTest {
             errorAudit.setMessage(e.getMessage());
             errorAudit.setStackTrace(ExceptionUtils.getStackTrace(e));
             errorAudit.setAuditedOperation("TODO");
-            Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-            errorAudit.setOccurrenceTrace(timestamp);
+            errorAudit.setOccurrenceTime(new Date());
             WMProcessInstanceAudit process = processInstanceAuditRepository.findOne(100l);
             errorAudit.setWmProcessInstanceAudit(process);
             WMErrorAudit ea = errorAuditRepository.save(errorAudit);
@@ -88,7 +84,7 @@ public class AuditSampleServiceTest {
             log.info("Clob message: {}", checkData.getStackTrace());
             log.info("Description: {}", checkData.getDescription());
             log.info("Message: {}", checkData.getMessage());
-            log.info("Timestamp: {}", checkData.getOccurrenceTrace());
+            log.info("Timestamp: {}", checkData.getOccurrenceTime());
             log.info("Audited operation: {}", checkData.getAuditedOperation());
             log.info("Process instance audit: {}", checkData.getWmProcessInstanceAudit());
         }

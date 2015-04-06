@@ -9,7 +9,7 @@ public class WMErrorAudit {
 
     @Id
     @SequenceGenerator(name = "WM_ERROR_WORK_ITEM", sequenceName = "WM_ERROR_AUDIT_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_ERROR_WORK_ITEM")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_ERROR_WORK_ITEM")
     @Column(name = "ID")
     private Long id;
 
@@ -26,8 +26,8 @@ public class WMErrorAudit {
     @Lob
     private String stackTrace;
 
-    @Column(name = "OCCURRENCE_TRACE")
-    private Date occurrenceTrace;
+    @Column(name = "OCCURRENCE_TIME")
+    private Date occurrenceTime;
 
     @ManyToOne
     @JoinColumn(name = "WM_PROCESS_INSTANCE_ERROR_ID")
@@ -73,12 +73,12 @@ public class WMErrorAudit {
         this.stackTrace = stackTrace;
     }
 
-    public Date getOccurrenceTrace() {
-        return occurrenceTrace;
+    public Date getOccurrenceTime() {
+        return occurrenceTime;
     }
 
-    public void setOccurrenceTrace(Date occurrenceTrace) {
-        this.occurrenceTrace = occurrenceTrace;
+    public void setOccurrenceTime(Date occurrenceTime) {
+        this.occurrenceTime = occurrenceTime;
     }
 
     public WMProcessInstanceAudit getWmProcessInstanceAudit() {
@@ -97,7 +97,7 @@ public class WMErrorAudit {
                 ", message='" + message + '\'' +
                 ", auditedOperation='" + auditedOperation + '\'' +
                 ", stackTrace=" + stackTrace +
-                ", occurrenceTrace=" + occurrenceTrace +
+                ", occurrenceTime=" + occurrenceTime +
                 ", wmProcessInstanceAudit=" + wmProcessInstanceAudit +
                 '}';
     }
