@@ -11,8 +11,6 @@
     <property name="activated" value="1" dbms="oracle"/>
 
     <!-- SEQUENCES -->
-
-
     <changeSet author="Mihai.Niculae (generated)" id="1427270112594">
         <createSequence    incrementBy="1"  sequenceName="WM_ATTRIBUTE_AUDIT_SEQUENCE" startValue="1"/>
     </changeSet>
@@ -25,8 +23,6 @@
     <changeSet author="Mihai.Niculae (generated)" id="1427270112597">
         <createSequence    incrementBy="1"   sequenceName="WM_WORK_ITEM_AUDIT_SEQUENCE" startValue="1"/>
     </changeSet>
-
-
     <changeSet id="00000000000000" author="audit" dbms="postgresql">
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
     </changeSet>
@@ -45,31 +41,6 @@
         </createTable>
 
     </changeSet>
-
-
-
-    <!-- Create WM_ERROR_AUDIT table -->
-
-    <!--<changeSet id="20150403#1" author="sample.user" failOnError="true">-->
-
-        <!--<createTable tableName="WM_ERROR_AUDIT">-->
-            <!--<column name="id" type="bigint" autoIncrement="true">-->
-                <!--<constraints primaryKey="true" nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="description" type="varchar(255)">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="message" type="varchar(255)">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="stackTrace" type="CLOB">-->
-                <!--<constraints  nullable="false"/>-->
-            <!--</column>-->
-        <!--</createTable>-->
-
-    <!--</changeSet>-->
-
-
 
     <changeSet author="sample.user" id="20150325#1">
         <addColumn tableName="SAMPLE_TABLE">
@@ -120,6 +91,7 @@
             <column name="PROCESS_DEF_BUSINESS_NAME" type="varchar(20)"/>
         </createTable>
     </changeSet>
+
     <changeSet author="Mihai.Niculae (generated)" id="142727011259601">
         <createTable tableName="WM_WORK_ITEM_AUDIT">
             <column name="ID" type="bigint">
@@ -133,8 +105,6 @@
     <changeSet author="Mihai.Niculae (generated)" id="1427270112602">
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_AUDIT_ID" baseTableName="WM_EVENT_AUDIT" constraintName="FK_EVENT_ATTRIBUTE" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_ATTRIBUTE_AUDIT"/>
     </changeSet>
-
-
     <changeSet author="Mihai.Niculae (generated)" id="1427270112603">
         <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_ID" baseTableName="WM_EVENT_AUDIT" constraintName="FK_EVENT_PROCESS_ITEM" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
     </changeSet>
@@ -148,6 +118,49 @@
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112606">
         <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_ID" baseTableName="WM_ATTRIBUTE_AUDIT" constraintName="FK_ATTR_WORK_ITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_WORK_ITEM_AUDIT"/>
+    </changeSet>
+
+    <!-- Create WM_ERROR_AUDIT SEQUENCE -->
+    <changeSet author="Cristian.Dumitru" id="20150406#1">
+        <createSequence incrementBy="1" sequenceName="WM_ERROR_AUDIT_SEQUENCE" startValue="1"/>
+    </changeSet>
+    <!-- Create WM_ERROR_AUDIT table -->
+    <changeSet author="Cristian.Dumitru" id="20150406#2" failOnError="true">
+        <createTable tableName="WM_ERROR_AUDIT">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="audited_operation" type="varchar(255)">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="stack_trace" type="CLOB">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="occurrence_time" type="timestamp">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="wm_process_instance_error_id" type="bigint">
+                <constraints  nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <!-- Add fk from WM_ERROR_AUDIT to WM_PROCESS_INSTANCE_AUDIT -->
+    <changeSet author="Cristian.Dumitru" id="20150406#3">
+        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_ERROR_ID"
+                                 baseTableName="WM_ERROR_AUDIT"
+                                 constraintName="FK_ERROR_ATTRIBUTE"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
     </changeSet>
 
 </databaseChangeLog>

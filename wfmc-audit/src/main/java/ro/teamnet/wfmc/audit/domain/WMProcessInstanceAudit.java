@@ -28,6 +28,10 @@ public class WMProcessInstanceAudit {
 
     @Transient
     @OneToMany(mappedBy = "wmProcessInstanceAudit")
+    private List<WMErrorAudit> wmErrorAuditList;
+
+    @Transient
+    @OneToMany(mappedBy = "wmProcessInstanceAudit")
     private List<WMWorkItemAudit> wmWorkItemAuditList;
 
     @Transient
@@ -92,5 +96,13 @@ public class WMProcessInstanceAudit {
 
     public void setWmAttributeAuditProcessInstanceList(List<WMAttributeAuditProcessInstance> wmAttributeAuditProcessInstanceList) {
         this.wmAttributeAuditProcessInstanceList = wmAttributeAuditProcessInstanceList;
+    }
+
+    public List<WMErrorAudit> getWmErrorAuditList() {
+        return wmErrorAuditList;
+    }
+
+    public void setWmErrorAuditList(List<WMErrorAudit> wmErrorAuditList) {
+        this.wmErrorAuditList = wmErrorAuditList;
     }
 }

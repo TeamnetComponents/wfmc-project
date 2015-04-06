@@ -1,25 +1,25 @@
 package ro.teamnet.wfmc.audit;
 
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import ro.teamnet.wfmc.audit.domain.AuditSample;
-import ro.teamnet.wfmc.audit.domain.WMEventAudit;
-import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
-import ro.teamnet.wfmc.audit.repository.AuditSampleRepository;
-import ro.teamnet.wfmc.audit.repository.EventAuditRepository;
-import ro.teamnet.wfmc.audit.service.AuditSampleService;
-import ro.teamnet.wfmc.audit.service.WfmcAuditService;
+import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
+import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
+import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -29,55 +29,68 @@ import java.util.List;
 @Transactional("wfmcAuditTransactionManager")
 public class AuditSampleServiceTest {
 
+    @Inject
+    private ErrorAuditRepository errorAuditRepository;
 
+    @Inject
+    private ProcessInstanceAuditRepository processInstanceAuditRepository;
 
-    @Inject
-    private AuditSampleService sampleService;
-    @Inject
-    private AuditSampleRepository repository;
-    @Inject
-    private WfmcAuditService wfmcAuditService;
-    @Inject
-    private EventAuditRepository eventAuditRepository;
+    private Logger log = LoggerFactory.getLogger(AuditSampleServiceTest.class);
 
     @Test
     @Ignore
-    public void completeWorkItemTest () {
+    public void testErrorAuditEntity() {
+        WMErrorAudit errorAudit = new WMErrorAudit();
+        errorAudit.setMessage("Message");
+        errorAudit.setAuditedOperation("Audited operation");
+        errorAudit.setDescription("Description");
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+        errorAudit.setOccurrenceTrace(timestamp);
 
-        /**
-         * somewhere will call this method : completeWorkItem
-         */
+        WMProcessInstanceAudit process = processInstanceAuditRepository.findOne(1l);
+        errorAudit.setWmProcessInstanceAudit(process);
 
-        WMEventAuditWorkItem wmEventAuditWorkItem = wfmcAuditService.convertAndSaveCompleteWorkItem("sdaa", "sad", "sda", "sda");
+        WMErrorAudit ea = errorAuditRepository.save(errorAudit);
 
-        Assert.assertNotNull(wmEventAuditWorkItem.getId());
-
-        WMEventAudit wmEventAudit = new WMEventAudit();
-        wmEventAudit.setUsername("user");
-        eventAuditRepository.save(wmEventAudit);
+        WMErrorAudit checkData = errorAuditRepository.findOne(ea.getId());
+        Assert.assertEquals("Message error!", checkData.getMessage(), "Message");
+        Assert.assertEquals("Description error!", checkData.getDescription(), "Description");
+        Assert.assertEquals("Audited operation error!", checkData.getAuditedOperation(), "Audited operation");
+        Assert.assertEquals("Timestamp error!", checkData.getOccurrenceTrace(), timestamp);
+        Assert.assertEquals("ProcessInstanceAudit error!", checkData.getWmProcessInstanceAudit(), process);
+        Assert.assertNotNull(ea.getId());
     }
 
     @Test
-    @Ignore
-    public void test() {
-        int expectedCount = 0;
-        AuditSample savedEntity = sampleService.saveSampleEntity(new AuditSample(1l,""));
-        expectedCount++;
-        Assert.assertNotNull(savedEntity.getId());
+    public void testSaveExceptionIntoWMErrorAudit() {
 
+        try {
+            /**
+             * Force an exception, for testing!
+             */
+            Object object = null;
+            object.toString();
+        } catch (Throwable e) {
 
-        String myId = sampleService.convertIdToString(savedEntity.getId(),"myCeva");
-        System.out.println(myId);
+            WMErrorAudit errorAudit = new WMErrorAudit();
+            errorAudit.setDescription(e.toString());
+            errorAudit.setMessage(e.getMessage());
+            errorAudit.setStackTrace(ExceptionUtils.getStackTrace(e));
+            errorAudit.setAuditedOperation("TODO");
+            Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+            errorAudit.setOccurrenceTrace(timestamp);
+            WMProcessInstanceAudit process = processInstanceAuditRepository.findOne(100l);
+            errorAudit.setWmProcessInstanceAudit(process);
+            WMErrorAudit ea = errorAuditRepository.save(errorAudit);
+            Assert.assertNotNull(ea.getId());
 
-        expectedCount++;
-        List<AuditSample> all = repository.findAll();
-       Assert.assertEquals(expectedCount, all.size());
-    }
-
-    @Test
-    @Ignore
-    public void myTestIdAndSmth() {
-
-        String result = sampleService.myMethod(25L, "USERNAME");
+            WMErrorAudit checkData = errorAuditRepository.findOne(ea.getId());
+            log.info("Clob message: {}", checkData.getStackTrace());
+            log.info("Description: {}", checkData.getDescription());
+            log.info("Message: {}", checkData.getMessage());
+            log.info("Timestamp: {}", checkData.getOccurrenceTrace());
+            log.info("Audited operation: {}", checkData.getAuditedOperation());
+            log.info("Process instance audit: {}", checkData.getWmProcessInstanceAudit());
+        }
     }
 }
