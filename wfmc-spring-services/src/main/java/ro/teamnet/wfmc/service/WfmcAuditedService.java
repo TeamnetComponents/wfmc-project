@@ -7,9 +7,19 @@ import ro.teamnet.audit.annotation.AuditedParameter;
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter.*;
 
 /**
- * A facade providing the audited methods of the WfmcService.
+ * A facade for the auditable implementations of WfmcService.
+ * Implementations annotated as Spring components will be handled by the available audit aspects.
+ * The {@link ro.teamnet.audit.annotation.Auditable} annotation must be provided in the implementing classes for each
+ * auditable method.
  */
 public interface WfmcAuditedService extends WAPI2 {
+    /**
+     * Retrieves the current user identification.
+     * If no user is connected to the WM, method returns {@code null}.
+     *
+     * @return current user identification, {@code null} if not connected.
+     */
+    String getUserIdentification();
 
     String createProcessInstance(
             @AuditedParameter(description = PROCESS_DEFINITION_ID) String procDefId,

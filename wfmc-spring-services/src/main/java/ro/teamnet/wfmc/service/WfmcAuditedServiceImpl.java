@@ -15,7 +15,7 @@ import static ro.teamnet.audit.constants.AuditStrategy.WFMC;
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
 
 /**
- * A facade for providing audited methods of the WfmcService.
+ * An audited wrapper for a WfmcService instance, implemented as a Spring component.
  */
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -25,6 +25,13 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     private WfmcService wfmcService;
 
     private WMConnectInfo wmConnectInfo;
+
+    public String getUserIdentification() {
+        if (wmConnectInfo == null) {
+            return null;
+        }
+        return wmConnectInfo.getUserIdentification();
+    }
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
