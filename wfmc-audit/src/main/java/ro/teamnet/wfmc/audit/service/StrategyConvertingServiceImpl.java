@@ -1,9 +1,12 @@
 package ro.teamnet.wfmc.audit.service;
 
+import org.joda.time.DateTime;
 import org.wfmc.audit.WMACreateProcessInstanceData;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -22,7 +25,7 @@ public class StrategyConvertingServiceImpl implements StrategyConvertingService 
 
         WMEventAuditProcessInstance wmEventAuditProcessInstance = new WMEventAuditProcessInstance();
         wmEventAuditProcessInstance.setWmProcessInstanceAudit(wmProcessInstanceAudit);
-        wmEventAuditProcessInstance.setCurrentDate(new Date());
+        wmEventAuditProcessInstance.setCurrentDate(new DateTime());
         wmEventAuditProcessInstance.setEventCode(wmaCreateProcessInstanceData.getEventCode().value());
         wmEventAuditProcessInstance.setUsername(wmaCreateProcessInstanceData.getUserId());
 

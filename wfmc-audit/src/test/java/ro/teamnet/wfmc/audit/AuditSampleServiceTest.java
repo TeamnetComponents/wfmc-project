@@ -31,9 +31,12 @@ public class AuditSampleServiceTest {
 
     @Inject
     private ErrorAuditRepository errorAuditRepository;
-
     @Inject
     private ProcessInstanceAuditRepository processInstanceAuditRepository;
+    @Inject
+    private AuditSampleRepository auditSampleRepository;
+    @Inject
+    private AuditSampleService auditSampleService;
 
     private Logger log = LoggerFactory.getLogger(AuditSampleServiceTest.class);
     @Inject
@@ -44,7 +47,8 @@ public class AuditSampleServiceTest {
     @Test
     public void test() {
         int expectedCount = 0;
-        AuditSample savedEntity = sampleService.saveSampleEntity(new AuditSample(0L, ""));
+        final AuditSample sampleEntity = new AuditSample(0L, "");
+        AuditSample savedEntity = sampleService.saveSampleEntity(sampleEntity);
         expectedCount++;
         Assert.assertNotNull(savedEntity.getId());
         sampleService.saveSampleEntity(new AuditSample(1L, "aaa"));
@@ -106,5 +110,11 @@ public class AuditSampleServiceTest {
             log.info("Audited operation: {}", checkData.getAuditedOperation());
             log.info("Process instance audit: {}", checkData.getWmProcessInstanceAudit());
         }
+    }
+
+    @Test
+    public void testSampleForProcessInstance() {
+
+        auditSampleService.myMethod(1l, "myMethod");
     }
 }

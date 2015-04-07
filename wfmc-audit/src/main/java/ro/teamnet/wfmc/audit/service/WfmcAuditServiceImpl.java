@@ -1,20 +1,21 @@
 package ro.teamnet.wfmc.audit.service;
 
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import ro.teamnet.wfmc.audit.build.AuditEntityBuilder;
 import ro.teamnet.wfmc.audit.domain.*;
 import ro.teamnet.wfmc.audit.repository.*;
 
 import javax.inject.Inject;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by Ioan.Ivan on 3/26/2015.
  */
 @Service
 public class WfmcAuditServiceImpl implements WfmcAuditService {
-
-
 
     @Inject
     private WorkItemAuditRepository workItemAuditRepository;
@@ -25,8 +26,6 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     @Inject
     private AttributeAuditWorkItemRepository attributeAuditWorkItemRepository;
     @Inject
-    private EventAuditRepository eventAuditRepository;
-    @Inject
     private ProcessInstanceAuditRepository processInstanceAuditRepository;
     @Inject
     private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
@@ -34,12 +33,11 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
 
-    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState){
+    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, Integer eventCode, String username){
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, procDefId));
+        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit3(processInstanceId, procDefId, procInstName));
 
-        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState));
-
+        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode, username));
     }
 
 

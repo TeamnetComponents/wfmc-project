@@ -10,4 +10,6 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 
 @Repository
 public interface ProcessInstanceAuditRepository extends JpaRepository<WMProcessInstanceAudit, Long> {
+
+    WMProcessInstanceAudit findByProcessDefinitionBusinessName(String processDefinitionBusinessName);
 }

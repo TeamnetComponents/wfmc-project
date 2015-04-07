@@ -7,4 +7,7 @@ import ro.teamnet.wfmc.audit.domain.WMEventAudit;
  * Created by Florin.Cojocaru on 3/27/2015.
  */
 public interface EventAuditRepository extends JpaRepository<WMEventAudit, Long> {
+
+    public WMEventAudit findByUsername(String username);
 }
+

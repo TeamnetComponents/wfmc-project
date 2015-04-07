@@ -1,7 +1,8 @@
 package ro.teamnet.wfmc.audit.domain;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by Ioan.Ivan on 3/27/2015.
@@ -26,8 +27,10 @@ public class WMEventAudit {
     @Column(name = "USERNAME")
     private String username;
 
-    @Column(name = "CURRENT_DATE")
-    private Date currentDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "CURRENT_DATE", nullable = false)
+    @Transient
+    private DateTime currentDate;
 
     public Long getId() {
         return id;
@@ -53,11 +56,11 @@ public class WMEventAudit {
         this.username = username;
     }
 
-    public Date getCurrentDate() {
+    public DateTime getCurrentDate() {
         return currentDate;
     }
 
-    public void setCurrentDate(Date currentDate) {
+    public void setCurrentDate(DateTime currentDate) {
         this.currentDate = currentDate;
     }
 }

@@ -1,12 +1,15 @@
 package ro.teamnet.audit.util;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.teamnet.audit.annotation.AuditedParameter;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -44,6 +47,26 @@ public class AuditParameterInfo {
         }
         return myArguments;
     }
+
+    private String getUserIdentification(ProceedingJoinPoint joinPoint) {
+        String userIdentification = "";
+        Object auditedInstance = joinPoint.getThis();
+        Method getUserIdentification = null;
+        try {
+            getUserIdentification = auditedInstance.getClass().getMethod("getUserIdentification");
+        } catch (NoSuchMethodException e) {
+            log.warn("Audited object does not provide an accessor for the user identification: {}", e);
+        }
+        if (getUserIdentification != null) {
+            try {
+                userIdentification = (String) getUserIdentification.invoke(auditedInstance);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                log.warn("Accessing user identification failed: {}", e);;
+            }
+        }
+        return userIdentification;
+    }
+
 }
 
 

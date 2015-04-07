@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import ro.teamnet.audit.annotation.Auditable;
 import ro.teamnet.audit.aop.AbstractAuditingAspect;
 import ro.teamnet.audit.constants.AuditStrategy;
+import ro.teamnet.audit.util.AuditError;
 import ro.teamnet.audit.util.AuditInfo;
+import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 
 import java.util.Objects;
@@ -44,6 +46,11 @@ public class WfmcAuditingAspect extends AbstractAuditingAspect {
             log.warn("Could not proceed: ", throwable);
             //TODO: save error to db and return the created instance
             // Call a service method that sets the error on the wmProcessInstanceAudit instance & saves the updated wmProcessInstanceAudit
+            AuditError auditError = new AuditError();
+            WMErrorAudit wmErrorAudit = auditError
+                    .saveErrorIntoEntityWmErrorAudit(throwable, wmProcessInstanceAudit, joinPoint);
+            log.info("Finished saving details about the error");
+            return wmErrorAudit;
         } finally {
             log.info("Finished auditing : " + auditableType + ", using strategy : " + auditStrategy);
             return returnValue;

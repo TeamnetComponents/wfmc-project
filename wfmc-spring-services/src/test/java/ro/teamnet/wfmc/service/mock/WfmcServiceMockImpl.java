@@ -12,8 +12,8 @@ import java.util.Properties;
  */
 public class WfmcServiceMockImpl extends WfmcServiceAbstract {
     public static final String MOCK_INSTANCE = "mock instance";
-    public static final String PROCESS_INSTANCE_ID = "processInstanceId";
-    public static final String NEW_PROCESS_INSTANCE_ID = "newProcessInstanceId";
+    public static final String PROCESS_INSTANCE_ID = "procInstId";
+    public static final String NEW_PROCESS_INSTANCE_ID = "newPId";
     private Properties context;
 
     @Override
