@@ -24,7 +24,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     @Inject
     private WfmcService wfmcService;
 
-    private WMConnectInfo wmConnectInfo;
+    private WMConnectInfo wmConnectInfo = null;
 
     public String getUserIdentification() {
         if (wmConnectInfo == null) {
@@ -41,6 +41,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     @Override
     public void disconnect() throws WMWorkflowException {
+        wmConnectInfo = null;
         wfmcService.disconnect();
     }
 
