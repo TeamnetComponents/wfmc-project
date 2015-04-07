@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import ro.teamnet.wfmc.audit.aop.SampleAuditAspect;
-import ro.teamnet.wfmc.audit.aop.WfmcAuditingAspect;
 
 /**
  * Configuration file for auditing aspects.
@@ -23,9 +22,9 @@ public class WfmcAuditAspectConfig {
         return new SampleAuditAspect();
     }
 
-    @Bean
-    public WfmcAuditingAspect wfmcAuditingAspect(){
-        log.info("Configuring WfMC auditing aspect");
-        return new WfmcAuditingAspect();
-    }
+//    @Bean
+//    public WfmcAuditingAspect wfmcAuditingAspect(){
+//        log.info("Configuring WfMC auditing aspect");
+//        return new WfmcAuditingAspect();
+//    }
 }

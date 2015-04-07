@@ -66,8 +66,8 @@ public class AuditSampleServiceTest {
         Assert.assertNotNull(savedEntity.getId());
 
 
-        String myId = sampleService.convertIdToString(savedEntity.getId(),"myCeva");
-        System.out.println(myId);
+//        String myId = sampleService.convertIdToString(savedEntity.getId(),"myCeva");
+//        System.out.println(myId);
 
         expectedCount++;
         List<AuditSample> all = repository.findAll();
@@ -77,7 +77,6 @@ public class AuditSampleServiceTest {
     @Test
     @Ignore
     public void myTestIdAndSmth() {
-
         String result = sampleService.myMethod(25L, "USERNAME");
     }
 }

@@ -15,8 +15,7 @@ import javax.inject.Inject;
 public class WfmcAuditServiceImpl implements WfmcAuditService {
 
 
-    @Inject
-    private ProcessInstanceAuditRepository processInstanceAuditRepository;
+
     @Inject
     private WorkItemAuditRepository workItemAuditRepository;
     @Inject
@@ -25,8 +24,24 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     private EventAuditAttributeRepository eventAuditAttributeRepository;
     @Inject
     private AttributeAuditWorkItemRepository attributeAuditWorkItemRepository;
+    @Inject
+    private EventAuditRepository eventAuditRepository;
+    @Inject
+    private ProcessInstanceAuditRepository processInstanceAuditRepository;
+    @Inject
+    private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
+
 
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
+
+    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState){
+
+        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, procDefId));
+
+        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState));
+
+    }
+
 
     public WMEventAuditWorkItem convertAndSaveCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId) {
 

@@ -7,8 +7,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.teamnet.wfmc.audit.annotation.AnnotationforParams;
-import ro.teamnet.wfmc.audit.annotation.WfmcAuditable;
+import ro.teamnet.audit.annotation.Auditable;
+import ro.teamnet.audit.annotation.AuditedParameter;
 import ro.teamnet.wfmc.audit.domain.AuditSample;
 import ro.teamnet.wfmc.audit.service.AuditSampleService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * Audit aspect.
- */
+* Audit aspect.
+*/
 @Aspect
 public class WfmcAuditAspect {
 
@@ -34,7 +34,7 @@ public class WfmcAuditAspect {
 
     private Logger log = LoggerFactory.getLogger(WfmcAuditAspect.class);
 
-    @Pointcut("execution(@ro.teamnet.wfmc.audit.annotation.WfmcAuditable * *(..))")
+    @Pointcut("execution(@ro.teamnet.audit.annotation.Auditable * *(..))")
     public void auditableMethod() {
     }
 
@@ -49,8 +49,8 @@ public class WfmcAuditAspect {
 //    }
 
     @Around("auditableMethod() && @annotation(auditable))")
-    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, WfmcAuditable auditable) throws ClassNotFoundException {
-        log.info("Started auditing around : " + auditable.value());
+    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, Auditable auditable) throws ClassNotFoundException {
+        log.info("Started auditing around : " + auditable.strategy());
         //Object auditableType = proceedingJoinPoint.getThis();
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method auditedMethod = methodSignature.getMethod();
@@ -74,13 +74,13 @@ public class WfmcAuditAspect {
                         /**Class wfmcParameterType = wfmcParameterTypes[j++];*/
                         for (Annotation annotation : annotations) {
                             /**for (Annotation wfmcAnnotation : wfmcAnnotations) {*/
-                            if (annotation instanceof AnnotationforParams) {
+                            if (annotation instanceof AuditedParameter) {
                                 /**if (wfmcAnnotation instanceof AnnotationforParams) {*/
-                                AnnotationforParams annotationForParams = (AnnotationforParams) annotation;
+                                AuditedParameter annotationForParams = (AuditedParameter) annotation;
                                 /**AnnotationforParams wfmcAnnotationForParams = (AnnotationforParams) wfmcAnnotation;*/
                                 log.info("Parameter's type no. "+j+" is : "+ parameterType.getName());
                                 /**log.info("Parameter's type no. "+j+" is : "+ wfmcParameterType.getName());*/
-                                log.info("Parameter's name no. "+j+" is : "+ annotationForParams.value());
+                                log.info("Parameter's name no. "+j+" is : "+ annotationForParams.annotationType());
                                 /**log.info("Parameter's name no. "+j+" is : "+ wfmcAnnotationForParams.value());*/
                             }
                         }
@@ -121,7 +121,7 @@ public class WfmcAuditAspect {
         } catch (Throwable throwable) {
             log.warn("Could not proceed: ", throwable);
         }
-        log.info("Finished auditing around: " + auditable.value());
+        log.info("Finished auditing around: " + auditable.strategy());
         return returnValue;
     }
 }
