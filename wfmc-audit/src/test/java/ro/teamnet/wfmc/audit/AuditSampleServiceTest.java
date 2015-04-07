@@ -10,13 +10,17 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import ro.teamnet.wfmc.audit.domain.AuditSample;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.repository.AuditSampleRepository;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
 import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
+import ro.teamnet.wfmc.audit.service.AuditSampleService;
 
 import javax.inject.Inject;
 import java.util.Date;
+import java.util.List;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,6 +36,22 @@ public class AuditSampleServiceTest {
     private ProcessInstanceAuditRepository processInstanceAuditRepository;
 
     private Logger log = LoggerFactory.getLogger(AuditSampleServiceTest.class);
+    @Inject
+    private AuditSampleService sampleService;
+
+    @Inject
+    private AuditSampleRepository sampleRepository;
+    @Test
+    public void test() {
+        int expectedCount = 0;
+        AuditSample savedEntity = sampleService.saveSampleEntity(new AuditSample(0L, ""));
+        expectedCount++;
+        Assert.assertNotNull(savedEntity.getId());
+        sampleService.saveSampleEntity(new AuditSample(1L, "aaa"));
+        expectedCount++;
+        List<AuditSample> all = sampleRepository.findAll();
+        Assert.assertEquals(expectedCount, all.size());
+    }
 
     @Test
     public void testErrorAuditEntity() {

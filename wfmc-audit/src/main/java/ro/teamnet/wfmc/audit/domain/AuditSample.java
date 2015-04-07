@@ -1,5 +1,8 @@
 package ro.teamnet.wfmc.audit.domain;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
 
 /**
@@ -20,9 +23,14 @@ public class AuditSample {
     @Column(name = "name")
     private String name;
 
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "creation", nullable = false)
+    private DateTime creation;
+
     public AuditSample(Long age, String name) {
         this.age = age;
         this.name = name;
+        this.creation = new DateTime();
     }
 
     public Long getAge() {
@@ -49,12 +57,21 @@ public class AuditSample {
         this.id = id;
     }
 
+    public DateTime getCreation() {
+        return creation;
+    }
+
+    public void setCreation(DateTime creation) {
+        this.creation = creation;
+    }
+
     @Override
     public String toString() {
         return "AuditSample{" +
                 "id=" + id +
                 ", age=" + age +
                 ", name='" + name + '\'' +
+                ", creation='" + creation + '\'' +
                 '}';
     }
 }
