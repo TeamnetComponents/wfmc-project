@@ -4,7 +4,7 @@
 
     <groupId>org.wfmc</groupId>
     <artifactId>wfmc-impl-elo</artifactId>
-    <version>4.0</version>
+    <version>5.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>wfmc-impl-elo</name>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.wfmc</groupId>
             <artifactId>wfmc-commons</artifactId>
-            <version>4.0</version>
+            <version>5.0-SNAPSHOT</version>
         </dependency>
 
 
