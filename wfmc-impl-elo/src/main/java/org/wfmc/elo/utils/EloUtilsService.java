@@ -212,8 +212,8 @@ public class EloUtilsService {
 
     public List<WFNode> getCurrentNodesFromWFDiagram(WFDiagram wfDiagram) {
         List<WFNodeAssoc> nodeAssocs = Arrays.asList(wfDiagram.getMatrix().getAssocs());
-        List<Integer> nodesFromNotDone = new ArrayList();
-        List<Integer> nodesToDone = new ArrayList();
+        Set<Integer> nodesFromNotDone = new HashSet<>();
+        Set<Integer> nodesToDone = new HashSet();
         for (WFNodeAssoc assoc : nodeAssocs) {
             if (assoc.isDone()) {
                 nodesToDone.add(assoc.getNodeTo());
