@@ -16,7 +16,7 @@ import javax.inject.Inject;
 @Configuration
 public class WfmcServiceConfiguration {
     @Inject
-    Environment environment;
+    private Environment environment;
 
     @Inject
     private WfmcServiceFactoryContext wfmcServiceFactoryContext;
