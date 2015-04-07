@@ -473,6 +473,16 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             }
             wp.setTransition(tranzitii);
             wp.setName(wfDiagram.getName());
+            WFNode[] diagramNodes = wfDiagram.getNodes();
+            org.wfmc.xpdl.model.activity.Activity[] activityList = new org.wfmc.xpdl.model.activity.Activity[diagramNodes.length];
+            for (int i = 0; i < diagramNodes.length; i++) {
+                if (diagramNodes[i].getType() == WFNodeC.TYPE_PERSONNODE) {
+                    org.wfmc.xpdl.model.activity.Activity activity = new org.wfmc.xpdl.model.activity.Activity(Integer.toString(diagramNodes[i].getId()),
+                        diagramNodes[i].getName(), wp);
+                    activityList[i] = activity;
+                }
+            }
+            wp.setActivity(activityList);
         } catch (RemoteException | PropertyVetoException e) {
             throw new WMWorkflowException(errorMessagesResourceBundle.getString(WMErrorElo.PROCESS_INSTANCE_NOT_FOUND));
         }
