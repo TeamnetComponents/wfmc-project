@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class WMAttributeAuditWorkItem extends WMAttributeAudit{
 
     @ManyToOne
-    @JoinColumn(name = "WM_WORK_ITEM_ID")
+    @JoinColumn(name = "WM_WORK_ITEM_AUDIT_ID")
     private WMWorkItemAudit wmWorkItemAudit;
 
     public WMWorkItemAudit getWmWorkItemAudit() {

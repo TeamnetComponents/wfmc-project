@@ -14,8 +14,8 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import java.util.Objects;
 
 /**
- * Aspect for auditing WfMC processes.
- */
+* Aspect for auditing WfMC processes.
+*/
 @Aspect
 public class WfmcAuditingAspect extends AbstractAuditingAspect {
 

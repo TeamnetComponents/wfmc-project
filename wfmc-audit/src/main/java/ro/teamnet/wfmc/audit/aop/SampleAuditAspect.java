@@ -9,7 +9,13 @@ import org.slf4j.LoggerFactory;
 import ro.teamnet.audit.annotation.Auditable;
 import ro.teamnet.audit.annotation.AuditedParameter;
 import ro.teamnet.audit.aop.AbstractAuditingAspect;
+import ro.teamnet.audit.constants.AuditStrategy;
+import ro.teamnet.audit.util.AuditInfo;
+import ro.teamnet.audit.util.AuditParameterInfo;
 import ro.teamnet.wfmc.audit.domain.AuditSample;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
+import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.AuditSampleService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 
@@ -36,65 +42,33 @@ public class SampleAuditAspect extends AbstractAuditingAspect {
 
 
     @Around("auditableMethod() && @annotation(auditable))")
-    public Object wrapAroundAuditable(ProceedingJoinPoint proceedingJoinPoint, Auditable auditable) throws ClassNotFoundException {
-        log.info("Started auditing around : " + auditable.type() + " using strategy : " + auditable.strategy());
-        //Object auditableType = proceedingJoinPoint.getThis();
-        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-        Method auditedMethod = methodSignature.getMethod();
-        //if(proceedingJoinPoint.getSourceLocation().getWithinType().getName().getClass() == WfmcServiceEloImpl.class)
-        if (Objects.equals(auditedMethod.getName(), "myMethod")) {
-            if (methodSignature.getReturnType().getName().getClass() == java.lang.String.class) {
-                Class<?>[] parameterTypes1 = auditedMethod.getParameterTypes();
-                Object[] args = proceedingJoinPoint.getArgs();
-                ArrayList<Object> myArguments = new ArrayList<>();
-
-                Annotation[][] parameterAnnotations = auditedMethod.getParameterAnnotations();
-                Class[] parameterTypes = auditedMethod.getParameterTypes();
-                int j = 0;
-                for (Annotation[] annotations : parameterAnnotations) {
-                    Class parameterType = parameterTypes[j++];
-                    for (Annotation annotation : annotations) { //nu sunt elemente
-                        if (annotation instanceof AuditedParameter) {
-                            AuditedParameter paramAnnotation = (AuditedParameter) annotation;
-                            //System.out.println("Tipul parametrului nr. "+j+" este : "+ parameterType.getName());
-                            log.info("Parameter's type no. " + j + " is : " + parameterType.getName());
-                            //System.out.println("Numele parametrului nr. "+j+" este : "+ paramAnnotation.valueParam());
-                            log.info("Parameter's name no. " + j + " is : " + paramAnnotation.description());
-                        }
-                    }
-                }
-
-                for (int i = 0; i < parameterTypes1.length; i++) {
-                    Object argumentValue = Class.forName(parameterTypes1[i].getName()).cast(args[i]);
-                    myArguments.add(argumentValue);
-                }
-                //TODO : use AnnotationForParams to identify and map the argumetns
-                AuditSample auditSample = new AuditSample((Long) myArguments.get(0), (String) myArguments.get(1));
-                AuditSample audit1 = sampleService.saveSampleEntity(auditSample);
-                log.info("Has been saved following user : Id : " + audit1.getId() + ", Name : " + audit1.getName() + ", Age : " + audit1.getAge());
-            }
+    public Object auditMethod(ProceedingJoinPoint joinPoint, Auditable auditable) throws ClassNotFoundException {
+        Object returnValue = null;
+        String auditStrategy = auditable.strategy();
+        if (!Objects.equals(auditStrategy, AuditStrategy.WFMC)) {
+            return returnValue;
         }
+        String auditableType = auditable.type();
+        log.info("Started auditing : " + auditableType + ", using strategy : " + auditStrategy);
+
+        AuditInfo auditInfo = AuditInfo.getInstance(auditableType, joinPoint);
+        AuditParameterInfo auditParameterInfo = new AuditParameterInfo();
+        ArrayList<Object> myArguments =  auditParameterInfo.doSomething(auditInfo, joinPoint);
+        // TODO : return type of returned object
+
 
         /**
          * Myobject myobject = wfmcAuditService.convertAndSaveCompleteWorkItem(myParam1,myParam2,this.getUsername(),this.getProcessDefinitionId);
          */
-//        log.info("Class: {}; Method name: {}; Return type: {}", proceedingJoinPoint.getSourceLocation().getWithinType().getName(),
-//                auditedMethod.getName(), methodSignature.getReturnType().getName());
-//        Object thisObject = Class.forName(proceedingJoinPoint.getSignature().getDeclaringTypeName()).cast(auditableType);
-//        log.info("This: {}", thisObject);
-//        Class<?>[] parameterTypes1 = auditedMethod.getParameterTypes();
-        Object[] args = proceedingJoinPoint.getArgs();
-//        for (int i = 0; i < parameterTypes1.length; i++) {
-//            Object argumentValue = Class.forName(parameterTypes1[i].getName()).cast(args[i]);
-//            log.info("Argument " + i + " = " + argumentValue);
-//        }
-        Object returnValue = null;
+
         try {
-            returnValue = proceedingJoinPoint.proceed(args);
+            returnValue = joinPoint.proceed();
         } catch (Throwable throwable) {
             log.warn("Could not proceed: ", throwable);
+            // Call a service method that sets the error on the wmProcessInstanceAudit instance & saves the updated wmProcessInstanceAudit
+        } finally {
+            log.info("Finished auditing : " + auditableType + ", using strategy : " + auditStrategy);
+            return returnValue;
         }
-        log.info("Finished auditing around: " + auditable.type());
-        return returnValue;
     }
 }

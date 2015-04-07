@@ -161,6 +161,29 @@
                                  onUpdate="RESTRICT"
                                  referencedColumnNames="ID"
                                  referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
+    </changeSet> 
+	<!---->
+	<changeSet author="Mihai Niculae" id="1427270112607">
+        <renameColumn
+                      newColumnName="WM_ATTRIBUTE_AUDIT_ID"
+                      oldColumnName="ATTRIBUTE_AUDIT_ID"
+                      tableName="WM_EVENT_AUDIT"/>
     </changeSet>
+
+    <changeSet author="Mihai Niculae" id="1427270112608">
+        <renameColumn
+                newColumnName="WM_PROCESS_INSTANCE_AUDIT_ID"
+                oldColumnName="WM_PROCESS_INSTANCE_ID"
+                tableName="WM_EVENT_AUDIT"/>
+    </changeSet>
+
+    <changeSet author="Mihai Niculae" id="142727011261009">
+        <renameColumn
+                newColumnName="WM_WORK_ITEM_AUDIT_ID"
+                oldColumnName="WM_WORK_ITEM_ID"
+                tableName="WM_ATTRIBUTE_AUDIT"/>
+    </changeSet>
+	
+	
 
 </databaseChangeLog>

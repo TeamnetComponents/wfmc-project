@@ -1,6 +1,7 @@
 package ro.teamnet.wfmc.audit.service;
 
 import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
 
 /**
@@ -14,4 +15,5 @@ public interface WfmcAuditService {
 
     WMEventAuditAttribute convertAndSaveAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username);
 
+    WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState);
 }

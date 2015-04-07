@@ -15,7 +15,7 @@ public class WMEventAuditAttribute extends WMEventAudit{
 
     @ManyToOne
     @Transient
-    @JoinColumn(name = "WM_WORK_ITEM_AUDIT_ID")
+    @JoinColumn(name = "WM_ATTRIBUTE_AUDIT_ID")//aici am schimbat coloana, mi se pare corect asa
     private WMAttributeAudit wmAttributeAudit;
 
     public String getAttributeValue() {
