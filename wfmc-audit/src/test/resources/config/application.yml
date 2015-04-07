@@ -8,4 +8,6 @@ wfmcAudit:
         username:
         password:
 
+spring.profiles.active: test
+
 spring.velocity.checkTemplateLocation: false

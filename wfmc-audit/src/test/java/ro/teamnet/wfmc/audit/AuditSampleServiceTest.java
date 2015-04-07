@@ -23,7 +23,6 @@ import java.util.Date;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {WfmcAuditTestApplication.class})
 @IntegrationTest
-@ActiveProfiles("dev")
 @Transactional("wfmcAuditTransactionManager")
 public class AuditSampleServiceTest {
 
