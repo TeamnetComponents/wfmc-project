@@ -3,7 +3,7 @@ package ro.teamnet.wfmc.audit.constants;
 /**
  * Auditable WfMC method types.
  */
-public class WfmcAuditedMethod {
+public final class WfmcAuditedMethod {
     private WfmcAuditedMethod() {
     }
 

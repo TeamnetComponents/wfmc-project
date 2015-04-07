@@ -49,11 +49,21 @@ public class WfmcServiceCacheFactoryContext {
 
     public Properties getProperties() {
         Properties context = new Properties();
-        context.put(ServiceFactory.INSTANCE_NAME, instanceName);
-        context.put(ServiceFactory.INSTANCE_CLASS, instanceClass);
-        context.put(TIME_TO_EXPIRE, timeToExpire);
-        context.put(TIME_TO_LIVE, timeToLive);
-        context.put(TIME_TO_EVICT, timeToEvict);
+        if (instanceName != null) {
+            context.put(ServiceFactory.INSTANCE_NAME, instanceName);
+        }
+        if (instanceClass != null) {
+            context.put(ServiceFactory.INSTANCE_CLASS, instanceClass);
+        }
+        if (timeToExpire != null) {
+            context.put(TIME_TO_EXPIRE, timeToExpire);
+        }
+        if (timeToLive != null) {
+            context.put(TIME_TO_LIVE, timeToLive);
+        }
+        if (timeToEvict != null) {
+            context.put(TIME_TO_EVICT, timeToEvict);
+        }
         return context;
     }
 

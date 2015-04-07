@@ -18,9 +18,6 @@ wfmcService:
     instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl
     cacheService:
         instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceCacheMockImpl
-        timeToExpire: 100000
-        timeToLive: 200000
-        timeToEvict: 300000
 
 spring.profiles.active: test
 
