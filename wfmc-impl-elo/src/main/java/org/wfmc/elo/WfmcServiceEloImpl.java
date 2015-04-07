@@ -326,7 +326,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
                 } else {
                     WFDiagram wfDiagram = ixConnection.ix().checkoutWorkFlow(processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
                     List<WFNode> currentNodesList = eloUtilsService.getCurrentNodesFromWFDiagram(wfDiagram);
-                    List<WMWorkItem> wmWorkItems = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(currentNodesList);
+                    List<WMWorkItem> wmWorkItems = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(currentNodesList, processInstanceId);
                     return new WMWorkItemIteratorImpl(wmWorkItems.toArray());
                 }
             } catch (RemoteException e) {
@@ -396,11 +396,10 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             }
         }
 
-
-        Integer processInstanceIdAsInt = Integer.parseInt(procInstId);
-        Integer currentWorkItemIdAsInt = Integer.parseInt(workItemId);
-
         try {
+            WFDiagram  wfDiagram = getIxConnection().ix().checkoutWorkFlow(procInstId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);
+            Integer processInstanceIdAsInt = wfDiagram.getId();
+            Integer currentWorkItemIdAsInt = Integer.parseInt(workItemId);
             WFEditNode wfEditNode = getIxConnection().ix().beginEditWorkFlowNode(processInstanceIdAsInt, currentWorkItemIdAsInt, LockC.YES);
             List<WMWorkItem> nextSteps = getNextSteps(procInstId, workItemId);
 
@@ -442,7 +441,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             for (WFNode wfNode : nodes) {
                 if (Integer.parseInt(workItemId) == wfNode.getId()) {
                     wfNodes.add(wfNode);
-                    List<WMWorkItem> wmWorkItemList = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(wfNodes);
+                    List<WMWorkItem> wmWorkItemList = eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(wfNodes, procInstId);
                     for (WMWorkItem workItem : wmWorkItemList) {
                         wmWorkItem = workItem;
                     }
@@ -497,7 +496,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
         } catch (RemoteException e) {
             throw new WMUnsupportedOperationException(errorMessagesResourceBundle.getString(WMErrorElo.COULD_NOT_FIND_WORK_ITEM));
         }
-        return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes);
+        return eloToWfMCObjectConverter.convertWFNodesToWMWorkItems(nextNodes, processInstanceId);
     }
 
     public WfMCToEloObjectConverter getWfMCToEloObjectConverter() {

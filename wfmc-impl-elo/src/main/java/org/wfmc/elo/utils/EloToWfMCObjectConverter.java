@@ -66,7 +66,7 @@ public class EloToWfMCObjectConverter {
         return wmWorkItems;
     }
 
-    public List<WMWorkItem> convertWFNodesToWMWorkItems(List<WFNode> wfNodes) {
+    public List<WMWorkItem> convertWFNodesToWMWorkItems(List<WFNode> wfNodes, String processInstanceId) {
 
         List<WMWorkItem> wmWorkItems = new ArrayList<>();
 
@@ -77,10 +77,9 @@ public class EloToWfMCObjectConverter {
             WMParticipantImpl user = new WMParticipantImpl(wfNode.getUserName());
             wmWorkItem.setParticipant(user);
             wmWorkItem.setPerformer(wfNode.getUserName());
-
+            wmWorkItem.setProcessInstanceId(processInstanceId);
             wmWorkItems.add(wmWorkItem);
         }
-
         return wmWorkItems;
     }
 
