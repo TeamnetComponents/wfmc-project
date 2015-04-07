@@ -1,16 +1,16 @@
 package ro.teamnet.audit.util;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.joda.time.DateTime;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /**
  * An util class that returns the object saved into the WMErrorAudit entity
@@ -20,14 +20,15 @@ public class AuditError {
     @Inject
     private ErrorAuditRepository errorAuditRepository;
 
-    public AuditError(){}
+    public AuditError() {
+    }
 
     /**
      * Populate the WMErrorAudit fields and proceed with the save. It returns the object.
      *
-     * @param throwable object exception that is thrown
+     * @param throwable              object exception that is thrown
      * @param wmProcessInstanceAudit object returned by the audit service
-     * @param proceedingJoinPoint to get the name of the method that throws the exception
+     * @param proceedingJoinPoint    to get the name of the method that throws the exception
      * @return the object saved into the WMErrorAudit
      */
     public WMErrorAudit saveErrorIntoEntityWmErrorAudit(Throwable throwable,
@@ -42,7 +43,7 @@ public class AuditError {
         Method auditedMethod = methodSignature.getMethod();
         errorAudit.setAuditedOperation(auditedMethod.getName());
 
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+        Timestamp timestamp = new Timestamp(DateTime.now().getMillis());
         errorAudit.setOccurrenceTime(timestamp);
         errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
 

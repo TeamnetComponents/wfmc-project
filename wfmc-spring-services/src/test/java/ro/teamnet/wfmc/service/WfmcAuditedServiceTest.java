@@ -8,14 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMWorkflowException;
 import ro.teamnet.wfmc.audit.domain.WMEventAudit;
-import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
-import ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
+import ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl;
 
 import javax.inject.Inject;
 

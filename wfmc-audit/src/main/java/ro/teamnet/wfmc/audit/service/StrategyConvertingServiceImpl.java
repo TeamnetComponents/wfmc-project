@@ -5,9 +5,6 @@ import org.wfmc.audit.WMACreateProcessInstanceData;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by Florin.Cojocaru on 3/26/2015.
