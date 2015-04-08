@@ -19,6 +19,4 @@ wfmcService:
     cacheService:
         instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceCacheMockImpl
 
-spring.profiles.active: test
-
 spring.velocity.checkTemplateLocation: false

@@ -1,9 +1,10 @@
-package ro.teamnet.audit.util;
+package ro.teamnet.wfmc.audit.util;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
@@ -15,12 +16,13 @@ import java.sql.Timestamp;
 /**
  * An util class that returns the object saved into the WMErrorAudit entity
  */
-public class AuditError {
+@Component
+public class WfmcAuditError {
 
     @Inject
     private ErrorAuditRepository errorAuditRepository;
 
-    public AuditError() {
+    public WfmcAuditError() {
     }
 
     /**
@@ -38,13 +40,21 @@ public class AuditError {
         errorAudit.setDescription(throwable.toString());
         errorAudit.setMessage(throwable.getMessage());
         errorAudit.setStackTrace(ExceptionUtils.getStackTrace(throwable));
-
+        errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method auditedMethod = methodSignature.getMethod();
         errorAudit.setAuditedOperation(auditedMethod.getName());
 
-        Timestamp timestamp = new Timestamp(DateTime.now().getMillis());
-        errorAudit.setOccurrenceTime(timestamp);
+//        Timestamp timestamp = new Timestamp(DateTime.now().getMillis());
+//        errorAudit.setOccurrenceTime(timestamp);
+//        errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
+
+        WMErrorAudit savedError = errorAuditRepository.save(errorAudit);
+        return savedError;
+    }
+
+    public WMErrorAudit updateErrorEntityWmErrorAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
+        WMErrorAudit errorAudit = new WMErrorAudit();
         errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
 
         return errorAuditRepository.save(errorAudit);

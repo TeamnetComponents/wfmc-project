@@ -151,7 +151,7 @@
                 <constraints  nullable="false"/>
             </column>
             <column name="occurrence_time" type="timestamp">
-                <constraints  nullable="false"/>
+                <!--<constraints  nullable="false"/>-->
             </column>
             <column name="wm_process_instance_error_id" type="bigint">
                 <constraints  nullable="true"/>

@@ -27,6 +27,7 @@ public class WMErrorAudit {
     private String stackTrace;
 
     @Column(name = "OCCURRENCE_TIME")
+    @Transient
     private Date occurrenceTime;
 
     @ManyToOne

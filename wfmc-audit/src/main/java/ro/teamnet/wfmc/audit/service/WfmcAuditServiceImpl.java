@@ -30,16 +30,22 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     @Inject
     private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
 
-
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
 
-    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, Integer eventCode, String username){
+    
+    
+    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, int eventCode, String username){
 
         WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit3(processInstanceId, procDefId, procInstName));
 
         return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode, username));
     }
 
+    public WMProcessInstanceAudit updateProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit){
+        
+        return processInstanceAuditRepository.save(wmProcessInstanceAudit);
+    }
+    
 
     public WMEventAuditWorkItem convertAndSaveCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId) {
 

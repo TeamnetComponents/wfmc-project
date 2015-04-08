@@ -1,13 +1,9 @@
 package ro.teamnet.wfmc.audit.service;
 
-import org.joda.time.DateTime;
-import org.mockito.internal.verification.Times;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
-
-import java.sql.Timestamp;
-import java.util.Date;
+import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 
 /**
  * Created by Ioan.Ivan on 3/26/2015.
@@ -20,5 +16,8 @@ public interface WfmcAuditService {
 
     WMEventAuditAttribute convertAndSaveAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username);
 
-    WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, Integer eventCode, String username);
+    WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, int eventCode, String username);
+    
+    WMProcessInstanceAudit updateProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit);
+    
 }

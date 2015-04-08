@@ -23,8 +23,8 @@ import javax.inject.Inject;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {WfmcAuditTestApplication.class})
 @IntegrationTest
-@ActiveProfiles("test")
-public class WfmcAuditedServiceTest {
+@ActiveProfiles("test-error")
+public class WfmcAuditedServiceWithExceptionsTest {
 
     public static final String PROC_DEF_ID = "pd_id";
     public static final String USER_IDENTIFICATION = "testUser";
@@ -34,64 +34,63 @@ public class WfmcAuditedServiceTest {
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
     @Inject
-    private WfmcAuditedService wfmcService;
+    private WfmcAuditedService wfmcServiceWithExceptions;
 
 
-    private Logger log = LoggerFactory.getLogger(WfmcAuditedServiceTest.class);
+    private Logger log = LoggerFactory.getLogger(WfmcAuditedServiceWithExceptionsTest.class);
+
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testCreateProcessInstance() throws WMWorkflowException {
-        wfmcService.connect(new WMConnectInfo(USER_IDENTIFICATION, "", "", ""));
-        String processInstanceId = wfmcService.createProcessInstance(PROC_DEF_ID, "my procInstName");
-        Assert.assertEquals(WfmcServiceMockImpl.PROCESS_INSTANCE_ID, processInstanceId);
+        wfmcServiceWithExceptions.connect(new WMConnectInfo(USER_IDENTIFICATION, "", "", ""));
+        wfmcServiceWithExceptions.createProcessInstance(PROC_DEF_ID, "my procInstName");
         WMProcessInstanceAudit wmProcessInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessDefinitionBusinessName("my procInstName");
-        WMEventAudit wmEventAudit = wfmcAuditQueryService.findWMEventAuditByUsername(USER_IDENTIFICATION);
-        log.info("Process definition id: {}", wmProcessInstanceAudit.getProcessDefinitionId());
-        log.info("Process instance id: {}", wmProcessInstanceAudit.getProcessInstanceId());
-        log.info("Username: {}", wmEventAudit.getUsername());
-        log.info("Event code: {}", wmEventAudit.getEventCode());
-        
-        wfmcService.disconnect();
+        WMErrorAudit wmErrorAudit = wfmcAuditQueryService.findWMErrorAuditByWmProcessInstanceAudit(wmProcessInstanceAudit);
+        Assert.assertNotNull(wmErrorAudit);
+        log.info("Description: {}", wmErrorAudit.getDescription());
+        log.info("Message: {}", wmErrorAudit.getMessage());
+        log.info("Audited Op: {}", wmErrorAudit.getAuditedOperation());
+        log.info("Stack Trace: {}", wmErrorAudit.getStackTrace());
+
+        wfmcServiceWithExceptions.disconnect();
     }
 
-    
-    @Test    
+    @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAssignProcessInstanceAttribute() throws WMWorkflowException {
-        wfmcService.assignProcessInstanceAttribute(PROC_INST_ID, "attr1", "1");
+        wfmcServiceWithExceptions.assignProcessInstanceAttribute(PROC_INST_ID, "attr1", "1");
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testStartProcess() throws WMWorkflowException {
-        String newProcessInstanceId = wfmcService.startProcess(PROC_INST_ID);
-        Assert.assertEquals(WfmcServiceMockImpl.NEW_PROCESS_INSTANCE_ID, newProcessInstanceId);
+        String newProcessInstanceId = wfmcServiceWithExceptions.startProcess(PROC_INST_ID);
+        Assert.assertNull(newProcessInstanceId);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAbortProcessInstance() throws WMWorkflowException {
-        wfmcService.abortProcessInstance(PROC_INST_ID);
+        wfmcServiceWithExceptions.abortProcessInstance(PROC_INST_ID);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAssignWorkItemAttribute() throws WMWorkflowException {
-        wfmcService.assignWorkItemAttribute(PROC_INST_ID, WORK_ITEM_ID, "attr1", "1");
+        wfmcServiceWithExceptions.assignWorkItemAttribute(PROC_INST_ID, WORK_ITEM_ID, "attr1", "1");
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testReassignWorkItem() throws WMWorkflowException {
-        wfmcService.reassignWorkItem("sourceUser", "targetUser", PROC_INST_ID, WORK_ITEM_ID);
+        wfmcServiceWithExceptions.reassignWorkItem("sourceUser", "targetUser", PROC_INST_ID, WORK_ITEM_ID);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testCompleteWorkItem() throws WMWorkflowException {
-        wfmcService.completeWorkItem(PROC_INST_ID, WORK_ITEM_ID);
+        wfmcServiceWithExceptions.completeWorkItem(PROC_INST_ID, WORK_ITEM_ID);
     }
-
 
 }
