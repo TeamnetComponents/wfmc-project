@@ -21,33 +21,54 @@ public interface WfmcAuditedService extends WAPI2 {
      */
     String getUserIdentification();
 
+    /**
+     * @inheritDoc
+     */
     String createProcessInstance(
             @AuditedParameter(description = PROCESS_DEFINITION_ID) String procDefId,
             @AuditedParameter(description = PROCESS_INSTANCE_NAME) String procInstName) throws WMWorkflowException;
 
+    /**
+     * @inheritDoc
+     */
     void assignProcessInstanceAttribute(
             @AuditedParameter(description = PROCESS_INSTANCE_ID) String procInstId,
             @AuditedParameter(description = ATTRIBUTE_NAME) String attrName,
             @AuditedParameter(description = ATTRIBUTE_VALUE) Object attrValue) throws WMWorkflowException;
 
+    /**
+     * @inheritDoc
+     */
     String startProcess(@AuditedParameter(description = PROCESS_INSTANCE_ID) String procInstId)
             throws WMWorkflowException;
 
+    /**
+     * @inheritDoc
+     */
     void abortProcessInstance(@AuditedParameter(description = PROCESS_INSTANCE_ID) String procInstId)
             throws WMWorkflowException;
 
+    /**
+     * @inheritDoc
+     */
     void reassignWorkItem(
             @AuditedParameter(description = SOURCE_USER) String sourceUser,
             @AuditedParameter(description = TARGET_USER) String targetUser,
             @AuditedParameter(description = PROCESS_INSTANCE_ID) String procInstId,
             @AuditedParameter(description = WORK_ITEM_ID) String workItemId) throws WMWorkflowException;
 
+    /**
+     * @inheritDoc
+     */
     void assignWorkItemAttribute(
             @AuditedParameter(description = PROCESS_INSTANCE_ID) String procInstId,
             @AuditedParameter(description = WORK_ITEM_ID) String workItemId,
             @AuditedParameter(description = ATTRIBUTE_NAME) String attrName,
             @AuditedParameter(description = ATTRIBUTE_VALUE) Object attrValue) throws WMWorkflowException;
 
+    /**
+     * @inheritDoc
+     */
     void completeWorkItem(
             @AuditedParameter(description = PROCESS_INSTANCE_ID) String procInstId,
             @AuditedParameter(description = WORK_ITEM_ID) String workItemId) throws WMWorkflowException;
