@@ -1,7 +1,5 @@
 package ro.teamnet.audit.util;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.teamnet.audit.annotation.AuditedParameter;
@@ -24,15 +22,6 @@ public class AuditInfo {
     private List<Object> methodArguments;
     private Map<Object, List<Annotation>> argumentAnnotations;
     private Map<String, Object> argumentsByParameterDescription;
-
-    /**
-     * @deprecated Use constructor {@link AuditInfo#AuditInfo(String, java.lang.reflect.Method, Object, Object[])}
-     */
-    @Deprecated
-    public static AuditInfo getInstance(String auditableType, JoinPoint joinPoint) {
-        Method auditedMethod = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        return new AuditInfo(auditableType, auditedMethod, joinPoint.getThis(), joinPoint.getArgs());
-    }
 
     /**
      * Creates an instance containing audited information.
@@ -58,6 +47,7 @@ public class AuditInfo {
     private void setArguments(Method method, Object[] methodArguments) {
         this.methodArguments = new ArrayList<>();
         this.argumentAnnotations = new HashMap<>();
+        this.argumentsByParameterDescription = new HashMap<>();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         for (int i = 0; i < methodArguments.length; i++) {
             Object methodArgument = methodArguments[i];
@@ -77,7 +67,6 @@ public class AuditInfo {
      * @param annotations    the annotations for the given argument
      */
     private void setArgumentsByParameterDescription(Object methodArgument, Annotation[] annotations) {
-        this.argumentsByParameterDescription = new HashMap<>();
         for (int j = 0; j < annotations.length; j++) {
             if (annotations[j] instanceof AuditedParameter) {
                 AuditedParameter auditedParameter = (AuditedParameter) annotations[j];
@@ -132,7 +121,8 @@ public class AuditInfo {
     }
 
     /**
-     *  Getter for the map of method arguments by {@link AuditedParameter#description}.
+     * Getter for the map of method arguments by {@link AuditedParameter#description}.
+     *
      * @return the map of arguments
      */
     public Map<String, Object> getArgumentsByParameterDescription() {

@@ -48,6 +48,7 @@ public class WfmcAuditedServiceTest {
         WMProcessInstanceAudit wmProcessInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessDefinitionBusinessName("my procInstName");
         WMEventAudit wmEventAudit = wfmcAuditQueryService.findWMEventAuditByUsername(USER_IDENTIFICATION);
         log.info("Process definition id: {}", wmProcessInstanceAudit.getProcessDefinitionId());
+        log.info("Process instance name: {}", wmProcessInstanceAudit.getProcessDefinitionBusinessName());
         log.info("Process instance id: {}", wmProcessInstanceAudit.getProcessInstanceId());
         log.info("Username: {}", wmEventAudit.getUsername());
         log.info("Event code: {}", wmEventAudit.getEventCode());
