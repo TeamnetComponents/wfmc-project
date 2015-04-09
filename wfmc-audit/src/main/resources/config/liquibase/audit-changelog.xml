@@ -90,7 +90,9 @@
             <column name="DISCRIMINATOR" type="varchar(2)"/>
             <column name="EVENT_CODE" type="integer"/>
             <column name="USERNAME" type="varchar(20)"/>
-            <column name="CURRENT_DATE" type="timestamp"/>
+            <column name="EVENT_DATE" type="timestamp">
+                <constraints  nullable="false"/>
+            </column>
             <column name="WM_WORK_ITEM_AUDIT_ID" type="bigint"/>
             <column name="PREVIOUS_STATE" type="varchar(50)"/>
             <column name="WORK_ITEM_STATE" type="varchar(50)"/>
@@ -165,13 +167,13 @@
     <changeSet author="Cristian.Dumitru" id="20150406#3">
         <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_ERROR_ID"
                                  baseTableName="WM_ERROR_AUDIT"
-                                 constraintName="FK_ERROR_ATTRIBUTE"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"
+                                 constraintName="FK_ERROR_PI"
                                  deferrable="false"
                                  initiallyDeferred="false"
                                  onDelete="RESTRICT"
-                                 onUpdate="RESTRICT"
-                                 referencedColumnNames="ID"
-                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
+                                 onUpdate="RESTRICT"/>
     </changeSet>
 
 

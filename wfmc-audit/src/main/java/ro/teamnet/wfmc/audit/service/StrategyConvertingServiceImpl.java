@@ -22,7 +22,7 @@ public class StrategyConvertingServiceImpl implements StrategyConvertingService 
 
         WMEventAuditProcessInstance wmEventAuditProcessInstance = new WMEventAuditProcessInstance();
         wmEventAuditProcessInstance.setWmProcessInstanceAudit(wmProcessInstanceAudit);
-        wmEventAuditProcessInstance.setCurrentDate(new DateTime());
+        wmEventAuditProcessInstance.setEventDate(new DateTime());
         wmEventAuditProcessInstance.setEventCode(wmaCreateProcessInstanceData.getEventCode().value());
         wmEventAuditProcessInstance.setUsername(wmaCreateProcessInstanceData.getUserId());
 

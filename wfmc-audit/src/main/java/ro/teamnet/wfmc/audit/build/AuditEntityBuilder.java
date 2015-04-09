@@ -17,7 +17,7 @@ public class AuditEntityBuilder {
         wmEventAuditProcessInstance.setPreviousState(previousState);
         wmEventAuditProcessInstance.setEventCode(eventCode);
         wmEventAuditProcessInstance.setUsername(username);
-        wmEventAuditProcessInstance.setCurrentDate(new DateTime());
+        wmEventAuditProcessInstance.setEventDate(new DateTime());
 
         return wmEventAuditProcessInstance;
     }
@@ -45,7 +45,7 @@ public class AuditEntityBuilder {
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
         wmEventAuditWorkItem.setUsername(username);
         wmEventAuditWorkItem.setEventCode(WMAEventCode.COMPLETED_WORK_ITEM.value());
-        wmEventAuditWorkItem.setCurrentDate(new DateTime());
+        wmEventAuditWorkItem.setEventDate(new DateTime());
         wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
 
         return wmEventAuditWorkItem;
@@ -56,7 +56,7 @@ public class AuditEntityBuilder {
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
         wmEventAuditWorkItem.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
         wmEventAuditWorkItem.setEventCode(WMAEventCode.REASSIGNED_WORK_ITEM.value());
-        wmEventAuditWorkItem.setCurrentDate(new DateTime());
+        wmEventAuditWorkItem.setEventDate(new DateTime());
         wmEventAuditWorkItem.setUsername(username);
         wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
 
@@ -92,7 +92,7 @@ public class AuditEntityBuilder {
     public WMEventAuditAttribute createwmEventAuditAttribute(Object attributeValue, String username, WMAttributeAudit wmAttributeAudit) {
 
         WMEventAuditAttribute wmEventAuditAttribute = new WMEventAuditAttribute();
-        wmEventAuditAttribute.setCurrentDate(new DateTime());
+        wmEventAuditAttribute.setEventDate(new DateTime());
         wmEventAuditAttribute.setEventCode(WMAEventCode.ASSIGNED_ACTIVITY_INSTANCE_ATTRIBUTES.value());
         wmEventAuditAttribute.setUsername(username);
         wmEventAuditAttribute.setAttributeValue(attributeValue.toString());
@@ -106,7 +106,7 @@ public class AuditEntityBuilder {
 //        WMEventAudit wmEventAudit = new WMEventAudit();
 //        wmEventAudit.setEventCode(eventCode);
 //        wmEventAudit.setUsername(username);
-//        wmEventAudit.setCurrentDate(currentDate);
+//        wmEventAudit.setEventDate(currentDate);
 //
 //        return wmEventAudit;
 //    }

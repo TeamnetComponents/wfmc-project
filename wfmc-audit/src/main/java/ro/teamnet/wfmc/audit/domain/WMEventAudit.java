@@ -28,10 +28,9 @@ public class WMEventAudit {
     private String username;
 
 
-    @Column(name = "CURRENT_DATE")
+    @Column(name = "EVENT_DATE", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Transient
-    private DateTime currentDate;
+    private DateTime eventDate;
 
     public Long getId() {
         return id;
@@ -57,11 +56,11 @@ public class WMEventAudit {
         this.username = username;
     }
 
-    public DateTime getCurrentDate() {
-        return currentDate;
+    public DateTime getEventDate() {
+        return eventDate;
     }
 
-    public void setCurrentDate(DateTime currentDate) {
-        this.currentDate = currentDate;
+    public void setEventDate(DateTime eventDate) {
+        this.eventDate = eventDate;
     }
 }
