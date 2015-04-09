@@ -1,6 +1,7 @@
 package ro.teamnet.wfmc.audit.util;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
@@ -40,10 +41,7 @@ public class WMAuditErrorUtil {
         errorAudit.setStackTrace(ExceptionUtils.getStackTrace(throwable));
         errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
         errorAudit.setAuditedOperation(auditedMethodName);
-
-//        Timestamp timestamp = new Timestamp(DateTime.now().getMillis());
-//        errorAudit.setOccurrenceTime(timestamp);
-//        errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
+        errorAudit.setOccurrenceTime(new DateTime());
 
         WMErrorAudit savedError = errorAuditRepository.save(errorAudit);
         return savedError;

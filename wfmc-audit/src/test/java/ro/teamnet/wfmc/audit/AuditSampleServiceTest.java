@@ -1,6 +1,7 @@
 package ro.teamnet.wfmc.audit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +20,6 @@ import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
 import ro.teamnet.wfmc.audit.service.AuditSampleService;
 
 import javax.inject.Inject;
-import java.util.Date;
 import java.util.List;
 
 
@@ -64,7 +64,7 @@ public class AuditSampleServiceTest {
         errorAudit.setMessage("Message");
         errorAudit.setAuditedOperation("Audited operation");
         errorAudit.setDescription("Description");
-        Date now = new Date();
+        DateTime now = new DateTime();
         errorAudit.setOccurrenceTime(now);
 
         WMProcessInstanceAudit process = processInstanceAuditRepository.findOne(1l);
@@ -97,7 +97,7 @@ public class AuditSampleServiceTest {
             errorAudit.setMessage(e.getMessage());
             errorAudit.setStackTrace(ExceptionUtils.getStackTrace(e));
             errorAudit.setAuditedOperation("TODO");
-            errorAudit.setOccurrenceTime(new Date());
+            errorAudit.setOccurrenceTime(new DateTime());
             WMProcessInstanceAudit process = processInstanceAuditRepository.findOne(100l);
             errorAudit.setWmProcessInstanceAudit(process);
             WMErrorAudit ea = errorAuditRepository.save(errorAudit);

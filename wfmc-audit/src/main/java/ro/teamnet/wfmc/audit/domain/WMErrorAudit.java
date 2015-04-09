@@ -1,7 +1,9 @@
 package ro.teamnet.wfmc.audit.domain;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "WM_ERROR_AUDIT")
@@ -27,8 +29,8 @@ public class WMErrorAudit {
     private String stackTrace;
 
     @Column(name = "OCCURRENCE_TIME")
-    @Transient
-    private Date occurrenceTime;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime occurrenceTime;
 
     @ManyToOne
     @JoinColumn(name = "WM_PROCESS_INSTANCE_ERROR_ID")
@@ -74,11 +76,11 @@ public class WMErrorAudit {
         this.stackTrace = stackTrace;
     }
 
-    public Date getOccurrenceTime() {
+    public DateTime getOccurrenceTime() {
         return occurrenceTime;
     }
 
-    public void setOccurrenceTime(Date occurrenceTime) {
+    public void setOccurrenceTime(DateTime occurrenceTime) {
         this.occurrenceTime = occurrenceTime;
     }
 

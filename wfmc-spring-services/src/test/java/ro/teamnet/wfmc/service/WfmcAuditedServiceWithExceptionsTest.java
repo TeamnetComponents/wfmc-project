@@ -52,6 +52,7 @@ public class WfmcAuditedServiceWithExceptionsTest {
         log.info("Message: {}", wmErrorAudit.getMessage());
         log.info("Audited Op: {}", wmErrorAudit.getAuditedOperation());
         log.info("Stack Trace: {}", wmErrorAudit.getStackTrace());
+        log.info("Occurence time: {}", wmErrorAudit.getOccurrenceTime());
 
         wfmcServiceWithExceptions.disconnect();
     }
