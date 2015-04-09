@@ -13,12 +13,11 @@ import javax.persistence.*;
 @Table(name = "WM_EVENT_AUDIT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR")
-
 public class WMEventAudit {
 
     @Id
-    @SequenceGenerator(name = "WM_EVENT_ATTRIBUTE", sequenceName = "WM_EVENT_AUDIT_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_EVENT_ATTRIBUTE")
+    @SequenceGenerator(name = "WM_EVENT_AUDIT_GENERATOR", sequenceName = "WM_EVENT_AUDIT_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_EVENT_AUDIT_GENERATOR")
     @Column(name = "ID")
     private Long id;
 
@@ -28,8 +27,9 @@ public class WMEventAudit {
     @Column(name = "USERNAME")
     private String username;
 
+
+    @Column(name = "CURRENT_DATE")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Column(name = "CURRENT_DATE", nullable = false)
     @Transient
     private DateTime currentDate;
 

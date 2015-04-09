@@ -24,9 +24,11 @@ public class WMWorkItemAudit {
     @JoinColumn(name = "PROCESS_INSTANCE_ID")
     private WMProcessInstanceAudit wmProcessInstanceAudit;
 
+    @Transient
     @OneToMany(mappedBy = "wmWorkItemAudit")
     private List<WMAttributeAuditWorkItem> wmAttributeAuditWorkItemList;
 
+    @Transient
     @OneToMany(mappedBy = "wmWorkItemAudit")
     private List<WMEventAuditWorkItem> wmEventAuditWorkItemList;
 

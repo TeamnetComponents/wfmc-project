@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class WMErrorAudit {
 
     @Id
-    @SequenceGenerator(name = "WM_ERROR_WORK_ITEM", sequenceName = "WM_ERROR_AUDIT_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_ERROR_WORK_ITEM")
+    @SequenceGenerator(name = "WM_ERROR_AUDIT_GENERATOR", sequenceName = "WM_ERROR_AUDIT_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_ERROR_AUDIT_GENERATOR")
     @Column(name = "ID")
     private Long id;
 

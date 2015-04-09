@@ -13,7 +13,6 @@ public class WMEventAuditProcessInstance extends WMEventAudit {
     private String previousState;
 
     @ManyToOne
-    @Transient
     @JoinColumn(name = "WM_PROCESS_INSTANCE_AUDIT_ID")
     private WMProcessInstanceAudit wmProcessInstanceAudit;
 

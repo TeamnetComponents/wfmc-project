@@ -16,8 +16,8 @@ import java.util.List;
 public class WMAttributeAudit implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "WM_ATTRIBUTE_WORK_ITEM", sequenceName = "WM_ATTRIBUTE_AUDIT_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_ATTRIBUTE_WORK_ITEM")
+    @SequenceGenerator(name = "WM_ATTRIBUTE_AUDIT_GENERATOR", sequenceName = "WM_ATTRIBUTE_AUDIT_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_ATTRIBUTE_AUDIT_GENERATOR")
     @Column(name = "ID")
     private Long id;
 
