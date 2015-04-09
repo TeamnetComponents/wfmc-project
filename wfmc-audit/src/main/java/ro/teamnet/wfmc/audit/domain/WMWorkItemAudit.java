@@ -21,7 +21,7 @@ public class WMWorkItemAudit {
     private String workItemId;
 
     @ManyToOne
-    @JoinColumn(name = "PROCESS_INSTANCE_ID")
+    @JoinColumn(name = "WM_PROCESS_INSTANCE_AUDIT_ID")
     private WMProcessInstanceAudit wmProcessInstanceAudit;
 
     @Transient

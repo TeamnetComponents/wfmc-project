@@ -10,56 +10,49 @@
     <property name="activated" value="true" dbms="postgresql"/>
     <property name="activated" value="1" dbms="oracle"/>
 
-    <!-- SEQUENCES -->
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112594">
+    <changeSet id="00000000000000" author="audit" dbms="postgresql,oracle">
+        <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+
+    <!-- Audit table sequences -->
+    <changeSet author="Mihai.Niculae" id="20150325#1">
         <createSequence incrementBy="1" sequenceName="WM_ATTRIBUTE_AUDIT_SEQUENCE" startValue="1"/>
-    </changeSet>
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112595">
         <createSequence incrementBy="1" sequenceName="WM_EVENT_AUDIT_SEQUENCE" startValue="1"/>
-    </changeSet>
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112596">
         <createSequence incrementBy="1" sequenceName="WM_PROCESS_INSTANCE_SEQUENCE" startValue="1"/>
-    </changeSet>
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112597">
         <createSequence incrementBy="1" sequenceName="WM_WORK_ITEM_AUDIT_SEQUENCE" startValue="1"/>
     </changeSet>
-    <changeSet id="00000000000000" author="audit" dbms="postgresql">
-        <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
-    </changeSet>
 
-    <changeSet id="00000000000000" author="audit" dbms="oracle">
-        <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
-    </changeSet>
 
-    <!-- Create sample table -->
-    <changeSet id="20150324#1" author="sample.user" failOnError="true">
-
-        <createTable tableName="SAMPLE_TABLE">
-            <column name="id" type="bigint" autoIncrement="true">
+    <!-- Audit tables and relations -->
+    <changeSet author="Mihai.Niculae" id="20150325#2">
+        <createTable tableName="WM_PROCESS_INSTANCE_AUDIT">
+            <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="PROCESS_INSTANCE_ID" type="varchar(10)"/>
+            <column name="PROCESS_DEFINITION_ID" type="varchar(10)"/>
+            <column name="PROCESS_DEF_BUSINESS_NAME" type="varchar(20)"/>
         </createTable>
 
-    </changeSet>
-
-    <changeSet author="sample.user" id="20150325#1">
-        <addColumn tableName="SAMPLE_TABLE">
-            <column name="age" type="bigint"/>
-        </addColumn>
-        <addColumn tableName="SAMPLE_TABLE">
-            <column name="name" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet author="sample.user" id="20150407#1">
-        <addColumn tableName="SAMPLE_TABLE">
-            <column name="creation" type="timestamp">
-                <constraints nullable="false"/>
+        <createTable tableName="WM_WORK_ITEM_AUDIT">
+            <column name="ID" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
-        </addColumn>
-    </changeSet>
+            <column name="WORK_ITEM_ID" type="varchar(10)"/>
+            <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="bigint"/>
+        </createTable>
 
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112598">
+        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_AUDIT_ID"
+                                 baseTableName="WM_WORK_ITEM_AUDIT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"
+                                 constraintName="FK_WI_PI"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT" />
+
         <createTable tableName="WM_ATTRIBUTE_AUDIT">
             <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -67,11 +60,29 @@
             <column name="ATTRIBUTE_NAME" type="varchar(15)"/>
             <column name="DISCRIMINATOR" type="varchar(2)"/>
             <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="bigint"/>
-            <column name="WM_WORK_ITEM_ID" type="bigint"/>
+            <column name="WM_WORK_ITEM_AUDIT_ID" type="bigint"/>
         </createTable>
-    </changeSet>
 
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112599" failOnError="true">
+        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_AUDIT_ID"
+                                 baseTableName="WM_ATTRIBUTE_AUDIT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"
+                                 constraintName="FK_A_PI"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_AUDIT_ID"
+                                 baseTableName="WM_ATTRIBUTE_AUDIT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_WORK_ITEM_AUDIT"
+                                 constraintName="FK_A_WI"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+
         <createTable tableName="WM_EVENT_AUDIT">
             <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -83,65 +94,42 @@
             <column name="WM_WORK_ITEM_AUDIT_ID" type="bigint"/>
             <column name="PREVIOUS_STATE" type="varchar(50)"/>
             <column name="WORK_ITEM_STATE" type="varchar(50)"/>
-            <column name="ATTRIBUTE_AUDIT_ID" type="bigint"/>
+            <column name="WM_ATTRIBUTE_AUDIT_ID" type="bigint"/>
             <column name="ATTR_VALUE" type="varchar(50)"/>
-            <column name="WM_PROCESS_INSTANCE_ID" type="bigint"/>
+            <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="bigint"/>
         </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="WM_ATTRIBUTE_AUDIT_ID"
+                                 baseTableName="WM_EVENT_AUDIT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_ATTRIBUTE_AUDIT"
+                                 constraintName="FK_E_A"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_AUDIT_ID"
+                                 baseTableName="WM_EVENT_AUDIT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"
+                                 constraintName="FK_E_PI"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_AUDIT_ID"
+                                 baseTableName="WM_EVENT_AUDIT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="WM_WORK_ITEM_AUDIT"
+                                 constraintName="FK_E_WI"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
     </changeSet>
 
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112600">
-        <createTable tableName="WM_PROCESS_INSTANCE_AUDIT">
-            <column name="ID" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="PROCESS_INSTANCE_ID" type="varchar(10)"/>
-            <column name="PROCESS_DEFINITION_ID" type="varchar(10)"/>
-            <column name="PROCESS_DEF_BUSINESS_NAME" type="varchar(20)"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet author="Mihai.Niculae (generated)" id="142727011259601">
-        <createTable tableName="WM_WORK_ITEM_AUDIT">
-            <column name="ID" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="WORK_ITEM_ID" type="varchar(10)"/>
-            <column name="PROCESS_INSTANCE_ID" type="bigint"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112602">
-        <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_AUDIT_ID" baseTableName="WM_EVENT_AUDIT"
-                                 constraintName="FK_EVENT_ATTRIBUTE" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
-                                 referencedTableName="WM_ATTRIBUTE_AUDIT"/>
-    </changeSet>
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112603">
-        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_ID" baseTableName="WM_EVENT_AUDIT"
-                                 constraintName="FK_EVENT_PROCESS_ITEM" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
-                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
-    </changeSet>
-
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112604">
-        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_AUDIT_ID" baseTableName="WM_EVENT_AUDIT"
-                                 constraintName="FK_EVENT_WORK_ITEM" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
-                                 referencedTableName="WM_WORK_ITEM_AUDIT"/>
-    </changeSet>
-
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112605">
-        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_AUDIT_ID" baseTableName="WM_ATTRIBUTE_AUDIT"
-                                 constraintName="FK_ATTR_PROCESS_INSTANCE_ID" deferrable="false"
-                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
-                                 referencedColumnNames="ID" referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
-    </changeSet>
-    <changeSet author="Mihai.Niculae (generated)" id="1427270112606">
-        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_ID" baseTableName="WM_ATTRIBUTE_AUDIT"
-                                 constraintName="FK_ATTR_WORK_ITEM_ID" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
-                                 referencedTableName="WM_WORK_ITEM_AUDIT"/>
-    </changeSet>
 
     <!-- Create WM_ERROR_AUDIT SEQUENCE -->
     <changeSet author="Cristian.Dumitru" id="20150406#1">
@@ -185,27 +173,7 @@
                                  referencedColumnNames="ID"
                                  referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
     </changeSet>
-    <!---->
-    <changeSet author="Mihai Niculae" id="1427270112607">
-        <renameColumn
-                newColumnName="WM_ATTRIBUTE_AUDIT_ID"
-                oldColumnName="ATTRIBUTE_AUDIT_ID"
-                tableName="WM_EVENT_AUDIT"/>
-    </changeSet>
 
-    <changeSet author="Mihai Niculae" id="1427270112608">
-        <renameColumn
-                newColumnName="WM_PROCESS_INSTANCE_AUDIT_ID"
-                oldColumnName="WM_PROCESS_INSTANCE_ID"
-                tableName="WM_EVENT_AUDIT"/>
-    </changeSet>
-
-    <changeSet author="Mihai Niculae" id="142727011261009">
-        <renameColumn
-                newColumnName="WM_WORK_ITEM_AUDIT_ID"
-                oldColumnName="WM_WORK_ITEM_ID"
-                tableName="WM_ATTRIBUTE_AUDIT"/>
-    </changeSet>
 
 
 </databaseChangeLog>
