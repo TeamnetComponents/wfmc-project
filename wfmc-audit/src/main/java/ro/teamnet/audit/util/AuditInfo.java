@@ -23,7 +23,7 @@ public class AuditInfo {
     private Object auditedInstance;
     private List<Object> methodArguments;
     private Map<Object, List<Annotation>> argumentAnnotations;
-    private Map<AuditedParameter, Object> argumentsByParameterType;
+    private Map<String, Object> argumentsByParameterDescription;
 
     /**
      * @deprecated Use constructor {@link AuditInfo#AuditInfo(String, java.lang.reflect.Method, Object, Object[])}
@@ -65,23 +65,23 @@ public class AuditInfo {
             if (i < parameterAnnotations.length) {
                 this.argumentAnnotations.put(methodArgument, Arrays.asList(parameterAnnotations[i]));
             }
-            setArgumentsByParameterType(methodArgument, parameterAnnotations[i]);
+            setArgumentsByParameterDescription(methodArgument, parameterAnnotations[i]);
         }
     }
 
     /**
-     * Create a map using {@link AuditedParameter} as key and the corresponding method argument as value. Does not work if multiple
+     * Create a map using {@link AuditedParameter#description} as key and the corresponding method argument as value. Does not work if multiple
      * arguments are annotated using the same {@link AuditedParameter#description}.
      *
      * @param methodArgument the argument
      * @param annotations    the annotations for the given argument
      */
-    private void setArgumentsByParameterType(Object methodArgument, Annotation[] annotations) {
-        this.argumentsByParameterType = new HashMap<>();
+    private void setArgumentsByParameterDescription(Object methodArgument, Annotation[] annotations) {
+        this.argumentsByParameterDescription = new HashMap<>();
         for (int j = 0; j < annotations.length; j++) {
             if (annotations[j] instanceof AuditedParameter) {
                 AuditedParameter auditedParameter = (AuditedParameter) annotations[j];
-                this.argumentsByParameterType.put(auditedParameter, methodArgument);
+                this.argumentsByParameterDescription.put(auditedParameter.description(), methodArgument);
             }
         }
     }
@@ -132,11 +132,11 @@ public class AuditInfo {
     }
 
     /**
-     *  Getter for the map of method arguments by {@link AuditedParameter}.
+     *  Getter for the map of method arguments by {@link AuditedParameter#description}.
      * @return the map of arguments
      */
-    public Map<AuditedParameter, Object> getArgumentsByParameterType() {
-        return argumentsByParameterType;
+    public Map<String, Object> getArgumentsByParameterDescription() {
+        return argumentsByParameterDescription;
     }
 
     /**
