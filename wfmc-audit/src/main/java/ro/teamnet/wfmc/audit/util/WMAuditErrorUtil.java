@@ -1,9 +1,7 @@
 package ro.teamnet.wfmc.audit.util;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
@@ -11,18 +9,17 @@ import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
 
 /**
- * An util class that returns the object saved into the WMErrorAudit entity
+ * An utility class that returns the object saved into the WMErrorAudit entity
  */
 @Component
-public class WfmcAuditError {
+public class WMAuditErrorUtil {
 
     @Inject
     private ErrorAuditRepository errorAuditRepository;
 
-    public WfmcAuditError() {
+    public WMAuditErrorUtil() {
     }
 
     /**
@@ -30,20 +27,18 @@ public class WfmcAuditError {
      *
      * @param throwable              object exception that is thrown
      * @param wmProcessInstanceAudit object returned by the audit service
-     * @param proceedingJoinPoint    to get the name of the method that throws the exception
+     * @param auditedMethodName      the name of the method that throws the exception
      * @return the object saved into the WMErrorAudit
      */
     public WMErrorAudit saveErrorIntoEntityWmErrorAudit(Throwable throwable,
                                                         WMProcessInstanceAudit wmProcessInstanceAudit,
-                                                        ProceedingJoinPoint proceedingJoinPoint) {
+                                                        String auditedMethodName) {
         WMErrorAudit errorAudit = new WMErrorAudit();
         errorAudit.setDescription(throwable.toString());
         errorAudit.setMessage(throwable.getMessage());
         errorAudit.setStackTrace(ExceptionUtils.getStackTrace(throwable));
         errorAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
-        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-        Method auditedMethod = methodSignature.getMethod();
-        errorAudit.setAuditedOperation(auditedMethod.getName());
+        errorAudit.setAuditedOperation(auditedMethodName);
 
 //        Timestamp timestamp = new Timestamp(DateTime.now().getMillis());
 //        errorAudit.setOccurrenceTime(timestamp);
