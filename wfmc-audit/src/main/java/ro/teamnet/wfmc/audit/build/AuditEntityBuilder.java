@@ -22,7 +22,14 @@ public class AuditEntityBuilder {
         return wmEventAuditProcessInstance;
     }
 
-    public WMProcessInstanceAudit createwmProcessInstanceAudit(String processInstanceId, String processDefinitionId) {
+    /**
+     * Create an {@link WMProcessInstanceAudit} object by a {@link WMProcessInstanceAudit#processInstanceId} and a
+     * {@link WMProcessInstanceAudit#processDefinitionId}
+     *
+     * @param processInstanceId
+     * @param processDefinitionId
+     */
+    public WMProcessInstanceAudit createwmProcessInstanceAuditWithTwoArguments(String processInstanceId, String processDefinitionId) {
 
         WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
         wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
@@ -51,7 +58,7 @@ public class AuditEntityBuilder {
         return wmEventAuditWorkItem;
     }
 
-    public WMEventAuditWorkItem createwmEventAuditWorkItem2(String username, WMWorkItemAudit wmWorkItemAudit) {
+    public WMEventAuditWorkItem createwmEventAuditWorkItemForReassign(String username, WMWorkItemAudit wmWorkItemAudit) {
 
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
         wmEventAuditWorkItem.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
@@ -63,20 +70,29 @@ public class AuditEntityBuilder {
         return wmEventAuditWorkItem;
     }
 
-    public WMProcessInstanceAudit createwmProcessInstanceAudit2(String processInstanceId) {
+//    public WMProcessInstanceAudit createwmProcessInstanceAudit2(String processInstanceId) {
+//
+//        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
+//        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
+//
+//        return wmProcessInstanceAudit;
+//    }
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
-        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
 
-        return wmProcessInstanceAudit;
-    }
-
-    public WMProcessInstanceAudit createwmProcessInstanceAudit3(String processInstanceId, String processDefinitionId, String procInstName) {
+    /**
+     * Create an {@link WMProcessInstanceAudit} object by a {@link WMProcessInstanceAudit#processInstanceId}, a
+     * {@link WMProcessInstanceAudit#processDefinitionId} and a {@link WMProcessInstanceAudit#processDefinitionBusinessName}
+     *
+     * @param processInstanceId
+     * @param processDefinitionId
+     * @param processDefinitionBusinessName
+     */
+    public WMProcessInstanceAudit createwmProcessInstanceAuditWithAllArguments(String processInstanceId, String processDefinitionId, String processDefinitionBusinessName) {
 
         WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
         wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
         wmProcessInstanceAudit.setProcessDefinitionId(processDefinitionId);
-        wmProcessInstanceAudit.setProcessDefinitionBusinessName(procInstName);
+        wmProcessInstanceAudit.setProcessDefinitionBusinessName(processDefinitionBusinessName);
 
         return wmProcessInstanceAudit;
     }

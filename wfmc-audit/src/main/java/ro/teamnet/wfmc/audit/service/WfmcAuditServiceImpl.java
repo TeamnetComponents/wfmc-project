@@ -29,10 +29,12 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
 
+    public WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId){
 
-    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, int eventCode, String username) {
+        return processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAuditWithAllArguments(processInstanceId, procDefId, procInstName));
+    }
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit3(processInstanceId, procDefId, procInstName));
+    public WMEventAuditProcessInstance saveEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, int eventCode, String username) {
 
         return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode, username));
     }
@@ -45,7 +47,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
     public WMEventAuditWorkItem convertAndSaveCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId) {
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, processDefinitionId));
+        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAuditWithTwoArguments(processInstanceId, processDefinitionId));
 
         WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
 
@@ -54,16 +56,16 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
     public WMEventAuditWorkItem convertAndSaveReassignWorkItem(String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId) {
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, processDefinitionId));
+        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAuditWithTwoArguments(processInstanceId, processDefinitionId));
 
         WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
 
-        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItem2(username, wmWorkItemAudit));
+        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForReassign(username, wmWorkItemAudit));
     }
 
     public WMEventAuditAttribute convertAndSaveAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username) {
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit2(processInstanceId));
+        //WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit2(processInstanceId));
 
         @SuppressWarnings("unchecked")
         WMAttributeAudit wmAttributeAudit = (WMAttributeAudit) attributeAuditWorkItemRepository.save((Iterable<WMAttributeAuditWorkItem>) auditEntityBuilder.createwmAttributeAudit(attributeName));
