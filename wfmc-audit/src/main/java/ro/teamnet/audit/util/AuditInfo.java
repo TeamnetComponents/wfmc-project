@@ -4,6 +4,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ro.teamnet.audit.annotation.AuditedParameter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,7 @@ public class AuditInfo {
     private Object auditedInstance;
     private List<Object> methodArguments;
     private Map<Object, List<Annotation>> argumentAnnotations;
+    private Map<AuditedParameter, Object> argumentsByParameterType;
 
     /**
      * @deprecated Use constructor {@link AuditInfo#AuditInfo(String, java.lang.reflect.Method, Object, Object[])}
@@ -34,8 +36,9 @@ public class AuditInfo {
 
     /**
      * Creates an instance containing audited information.
-     * @param auditableType the type of the audited method, as specified by {@link ro.teamnet.audit.annotation.Auditable#type}
-     * @param method the audited method
+     *
+     * @param auditableType   the type of the audited method, as specified by {@link ro.teamnet.audit.annotation.Auditable#type}
+     * @param method          the audited method
      * @param auditedInstance the instance on which the audited method was called
      * @param methodArguments the arguments used in the audited method call
      */
@@ -43,16 +46,17 @@ public class AuditInfo {
         this.auditableType = auditableType;
         this.method = method;
         this.auditedInstance = auditedInstance;
-        this.methodArguments = new ArrayList<>();
         setArguments(method, methodArguments);
     }
 
     /**
      * Sets the method arguments and any available argument annotations.
-     * @param method the audited method
+     *
+     * @param method          the audited method
      * @param methodArguments the arguments used in the audited method call
      */
     private void setArguments(Method method, Object[] methodArguments) {
+        this.methodArguments = new ArrayList<>();
         this.argumentAnnotations = new HashMap<>();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         for (int i = 0; i < methodArguments.length; i++) {
@@ -61,11 +65,30 @@ public class AuditInfo {
             if (i < parameterAnnotations.length) {
                 this.argumentAnnotations.put(methodArgument, Arrays.asList(parameterAnnotations[i]));
             }
+            setArgumentsByParameterType(methodArgument, parameterAnnotations[i]);
+        }
+    }
+
+    /**
+     * Create a map using {@link AuditedParameter} as key and the corresponding method argument as value. Does not work if multiple
+     * arguments are annotated using the same {@link AuditedParameter#description}.
+     *
+     * @param methodArgument the argument
+     * @param annotations    the annotations for the given argument
+     */
+    private void setArgumentsByParameterType(Object methodArgument, Annotation[] annotations) {
+        this.argumentsByParameterType = new HashMap<>();
+        for (int j = 0; j < annotations.length; j++) {
+            if (annotations[j] instanceof AuditedParameter) {
+                AuditedParameter auditedParameter = (AuditedParameter) annotations[j];
+                this.argumentsByParameterType.put(auditedParameter, methodArgument);
+            }
         }
     }
 
     /**
      * Getter for the auditable type.
+     *
      * @return the type of the audited method, as specified by {@link ro.teamnet.audit.annotation.Auditable#type}
      */
     public String getAuditableType() {
@@ -74,6 +97,7 @@ public class AuditInfo {
 
     /**
      * Getter for the audited method.
+     *
      * @return the audited method
      */
     public Method getMethod() {
@@ -82,6 +106,7 @@ public class AuditInfo {
 
     /**
      * Getter for the audited instance.
+     *
      * @return the instance on which the audited method was called
      */
     public Object getAuditedInstance() {
@@ -90,6 +115,7 @@ public class AuditInfo {
 
     /**
      * Getter for the arguments of the audited method.
+     *
      * @return the arguments used in the audited method call
      */
     public List<Object> getMethodArguments() {
@@ -98,10 +124,19 @@ public class AuditInfo {
 
     /**
      * Getter for the audited method argument annotations.
+     *
      * @return a map of the annotations found on each of the audited method's arguments
      */
     public Map<Object, List<Annotation>> getArgumentAnnotations() {
         return argumentAnnotations;
+    }
+
+    /**
+     *  Getter for the map of method arguments by {@link AuditedParameter}.
+     * @return the map of arguments
+     */
+    public Map<AuditedParameter, Object> getArgumentsByParameterType() {
+        return argumentsByParameterType;
     }
 
     /**

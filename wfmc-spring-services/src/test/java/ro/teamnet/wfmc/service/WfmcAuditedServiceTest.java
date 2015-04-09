@@ -65,32 +65,32 @@ public class WfmcAuditedServiceTest {
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testStartProcess() throws WMWorkflowException {
-        String newProcessInstanceId = wfmcService.startProcess(PROC_INST_ID);
+        String newProcessInstanceId = wfmcService.startProcess("pi_id");
         Assert.assertEquals(WfmcServiceMockImpl.NEW_PROCESS_INSTANCE_ID, newProcessInstanceId);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAbortProcessInstance() throws WMWorkflowException {
-        wfmcService.abortProcessInstance(PROC_INST_ID);
+        wfmcService.abortProcessInstance("pi_id");
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAssignWorkItemAttribute() throws WMWorkflowException {
-        wfmcService.assignWorkItemAttribute(PROC_INST_ID, WORK_ITEM_ID, "attr1", "1");
+        wfmcService.assignWorkItemAttribute("pi_id", "wi_id", "attr1", "1");
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testReassignWorkItem() throws WMWorkflowException {
-        wfmcService.reassignWorkItem("sourceUser", "targetUser", PROC_INST_ID, WORK_ITEM_ID);
+        wfmcService.reassignWorkItem("source_user", "target_user", "pi_id", "wi_id");
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testCompleteWorkItem() throws WMWorkflowException {
-        wfmcService.completeWorkItem(PROC_INST_ID, WORK_ITEM_ID);
+        wfmcService.completeWorkItem("pi_id", "wi_id");
     }
 
 
