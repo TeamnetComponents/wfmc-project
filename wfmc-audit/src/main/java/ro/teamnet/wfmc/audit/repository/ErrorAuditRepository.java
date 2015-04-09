@@ -10,6 +10,6 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
  */
 @Repository
 public interface ErrorAuditRepository extends JpaRepository<WMErrorAudit, Long> {
-    
+
     WMErrorAudit findByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 }

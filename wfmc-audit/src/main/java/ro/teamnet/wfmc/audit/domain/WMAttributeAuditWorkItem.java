@@ -1,13 +1,16 @@
 package ro.teamnet.wfmc.audit.domain;
 
-import javax.persistence.*;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
-* Created by Ioan.Ivan on 3/24/2015.
-*/
+ * Created by Ioan.Ivan on 3/24/2015.
+ */
 @Entity
 @DiscriminatorValue(value = "WI")
-public class WMAttributeAuditWorkItem extends WMAttributeAudit{
+public class WMAttributeAuditWorkItem extends WMAttributeAudit {
 
     @ManyToOne
     @JoinColumn(name = "WM_WORK_ITEM_AUDIT_ID")

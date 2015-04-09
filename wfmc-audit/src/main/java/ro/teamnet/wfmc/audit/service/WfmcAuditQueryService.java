@@ -13,6 +13,6 @@ public interface WfmcAuditQueryService {
     WMProcessInstanceAudit findWMProcessInstanceAuditByProcessDefinitionBusinessName(String processDefinitionBusinessName);
 
     WMEventAudit findWMEventAuditByUsername(String username);
-    
-    WMErrorAudit findWMErrorAuditByWmProcessInstanceAudit (WMProcessInstanceAudit wmProcessInstanceAudit);
+
+    WMErrorAudit findWMErrorAuditByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 }

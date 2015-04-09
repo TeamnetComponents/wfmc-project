@@ -2,6 +2,7 @@ package ro.teamnet.wfmc.audit.domain;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
 import javax.persistence.*;
 
 /**
@@ -17,7 +18,7 @@ public class WMEventAudit {
 
     @Id
     @SequenceGenerator(name = "WM_EVENT_ATTRIBUTE", sequenceName = "WM_EVENT_AUDIT_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_EVENT_ATTRIBUTE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_EVENT_ATTRIBUTE")
     @Column(name = "ID")
     private Long id;
 

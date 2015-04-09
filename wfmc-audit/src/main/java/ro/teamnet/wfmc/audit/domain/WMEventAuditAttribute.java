@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue(value = "AT")
-public class WMEventAuditAttribute extends WMEventAudit{
+public class WMEventAuditAttribute extends WMEventAudit {
 
     @Column(name = "ATTR_VALUE")
     private String attributeValue;

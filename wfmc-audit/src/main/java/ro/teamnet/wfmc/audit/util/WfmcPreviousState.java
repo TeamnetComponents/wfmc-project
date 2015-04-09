@@ -1,9 +1,9 @@
 package ro.teamnet.wfmc.audit.util;
 
 public class WfmcPreviousState {
-    
+
     /**
-     * Previous state when process instance is created  
+     * Previous state when process instance is created
      */
     public static final String CREATE_PROCESS_INSTANCE = "null";
 

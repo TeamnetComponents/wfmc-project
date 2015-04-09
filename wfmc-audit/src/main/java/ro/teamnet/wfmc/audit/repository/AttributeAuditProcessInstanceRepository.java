@@ -9,5 +9,5 @@ import ro.teamnet.wfmc.audit.domain.WMAttributeAuditProcessInstance;
  */
 
 @Repository
-public interface AttributeAuditProcessInstanceRepository extends JpaRepository<WMAttributeAuditProcessInstance, Long>{
+public interface AttributeAuditProcessInstanceRepository extends JpaRepository<WMAttributeAuditProcessInstance, Long> {
 }

@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue(value = "PI")
-public class WMAttributeAuditProcessInstance extends WMAttributeAudit{
+public class WMAttributeAuditProcessInstance extends WMAttributeAudit {
 
 
     @ManyToOne

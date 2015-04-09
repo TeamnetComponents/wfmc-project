@@ -17,7 +17,7 @@ public class WMAttributeAudit implements Serializable {
 
     @Id
     @SequenceGenerator(name = "WM_ATTRIBUTE_WORK_ITEM", sequenceName = "WM_ATTRIBUTE_AUDIT_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_ATTRIBUTE_WORK_ITEM")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_ATTRIBUTE_WORK_ITEM")
     @Column(name = "ID")
     private Long id;
 

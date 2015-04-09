@@ -5,7 +5,8 @@ import org.wfmc.audit.WMAEventCode;
 import org.wfmc.wapi.WMWorkItemState;
 import ro.teamnet.wfmc.audit.domain.*;
 
-import java.util.Date;
+
+//TODO refractoring method name
 
 public class AuditEntityBuilder {
 
@@ -88,7 +89,7 @@ public class AuditEntityBuilder {
         return wmAttributeAudit;
     }
 
-    public WMEventAuditAttribute createwmEventAuditAttribute(Object attributeValue, String username, WMAttributeAudit wmAttributeAudit){
+    public WMEventAuditAttribute createwmEventAuditAttribute(Object attributeValue, String username, WMAttributeAudit wmAttributeAudit) {
 
         WMEventAuditAttribute wmEventAuditAttribute = new WMEventAuditAttribute();
         wmEventAuditAttribute.setCurrentDate(new DateTime());

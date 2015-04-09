@@ -12,16 +12,16 @@
 
     <!-- SEQUENCES -->
     <changeSet author="Mihai.Niculae (generated)" id="1427270112594">
-        <createSequence    incrementBy="1"  sequenceName="WM_ATTRIBUTE_AUDIT_SEQUENCE" startValue="1"/>
+        <createSequence incrementBy="1" sequenceName="WM_ATTRIBUTE_AUDIT_SEQUENCE" startValue="1"/>
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112595">
-        <createSequence    incrementBy="1"  sequenceName="WM_EVENT_AUDIT_SEQUENCE" startValue="1"/>
+        <createSequence incrementBy="1" sequenceName="WM_EVENT_AUDIT_SEQUENCE" startValue="1"/>
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112596">
-        <createSequence    incrementBy="1"  sequenceName="WM_PROCESS_INSTANCE_SEQUENCE" startValue="1"/>
+        <createSequence incrementBy="1" sequenceName="WM_PROCESS_INSTANCE_SEQUENCE" startValue="1"/>
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112597">
-        <createSequence    incrementBy="1"   sequenceName="WM_WORK_ITEM_AUDIT_SEQUENCE" startValue="1"/>
+        <createSequence incrementBy="1" sequenceName="WM_WORK_ITEM_AUDIT_SEQUENCE" startValue="1"/>
     </changeSet>
     <changeSet id="00000000000000" author="audit" dbms="postgresql">
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
@@ -111,21 +111,36 @@
     </changeSet>
 
     <changeSet author="Mihai.Niculae (generated)" id="1427270112602">
-        <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_AUDIT_ID" baseTableName="WM_EVENT_AUDIT" constraintName="FK_EVENT_ATTRIBUTE" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_ATTRIBUTE_AUDIT"/>
+        <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_AUDIT_ID" baseTableName="WM_EVENT_AUDIT"
+                                 constraintName="FK_EVENT_ATTRIBUTE" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
+                                 referencedTableName="WM_ATTRIBUTE_AUDIT"/>
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112603">
-        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_ID" baseTableName="WM_EVENT_AUDIT" constraintName="FK_EVENT_PROCESS_ITEM" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
+        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_ID" baseTableName="WM_EVENT_AUDIT"
+                                 constraintName="FK_EVENT_PROCESS_ITEM" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
+                                 referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
     </changeSet>
 
     <changeSet author="Mihai.Niculae (generated)" id="1427270112604">
-        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_AUDIT_ID" baseTableName="WM_EVENT_AUDIT" constraintName="FK_EVENT_WORK_ITEM" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_WORK_ITEM_AUDIT"/>
+        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_AUDIT_ID" baseTableName="WM_EVENT_AUDIT"
+                                 constraintName="FK_EVENT_WORK_ITEM" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
+                                 referencedTableName="WM_WORK_ITEM_AUDIT"/>
     </changeSet>
 
     <changeSet author="Mihai.Niculae (generated)" id="1427270112605">
-        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_AUDIT_ID" baseTableName="WM_ATTRIBUTE_AUDIT" constraintName="FK_ATTR_PROCESS_INSTANCE_ID" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
+        <addForeignKeyConstraint baseColumnNames="WM_PROCESS_INSTANCE_AUDIT_ID" baseTableName="WM_ATTRIBUTE_AUDIT"
+                                 constraintName="FK_ATTR_PROCESS_INSTANCE_ID" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
     </changeSet>
     <changeSet author="Mihai.Niculae (generated)" id="1427270112606">
-        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_ID" baseTableName="WM_ATTRIBUTE_AUDIT" constraintName="FK_ATTR_WORK_ITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="WM_WORK_ITEM_AUDIT"/>
+        <addForeignKeyConstraint baseColumnNames="WM_WORK_ITEM_ID" baseTableName="WM_ATTRIBUTE_AUDIT"
+                                 constraintName="FK_ATTR_WORK_ITEM_ID" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
+                                 referencedTableName="WM_WORK_ITEM_AUDIT"/>
     </changeSet>
 
     <!-- Create WM_ERROR_AUDIT SEQUENCE -->
@@ -145,16 +160,16 @@
                 <constraints nullable="false"/>
             </column>
             <column name="audited_operation" type="varchar(255)">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="stack_trace" type="CLOB">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="occurrence_time" type="timestamp">
                 <!--<constraints  nullable="false"/>-->
             </column>
             <column name="wm_process_instance_error_id" type="bigint">
-                <constraints  nullable="true"/>
+                <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>
@@ -169,13 +184,13 @@
                                  onUpdate="RESTRICT"
                                  referencedColumnNames="ID"
                                  referencedTableName="WM_PROCESS_INSTANCE_AUDIT"/>
-    </changeSet> 
-	<!---->
-	<changeSet author="Mihai Niculae" id="1427270112607">
+    </changeSet>
+    <!---->
+    <changeSet author="Mihai Niculae" id="1427270112607">
         <renameColumn
-                      newColumnName="WM_ATTRIBUTE_AUDIT_ID"
-                      oldColumnName="ATTRIBUTE_AUDIT_ID"
-                      tableName="WM_EVENT_AUDIT"/>
+                newColumnName="WM_ATTRIBUTE_AUDIT_ID"
+                oldColumnName="ATTRIBUTE_AUDIT_ID"
+                tableName="WM_EVENT_AUDIT"/>
     </changeSet>
 
     <changeSet author="Mihai Niculae" id="1427270112608">
@@ -191,7 +206,6 @@
                 oldColumnName="WM_WORK_ITEM_ID"
                 tableName="WM_ATTRIBUTE_AUDIT"/>
     </changeSet>
-	
-	
+
 
 </databaseChangeLog>

@@ -16,7 +16,7 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
 
     @Inject
     private EventAuditRepository eventAuditRepository;
-    
+
     @Inject
     private ErrorAuditRepository errorAuditRepository;
 

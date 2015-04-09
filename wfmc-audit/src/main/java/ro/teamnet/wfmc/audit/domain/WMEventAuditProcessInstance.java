@@ -3,11 +3,11 @@ package ro.teamnet.wfmc.audit.domain;
 import javax.persistence.*;
 
 /**
-* Created by Ioan.Ivan on 3/24/2015.
-*/
+ * Created by Ioan.Ivan on 3/24/2015.
+ */
 @Entity
 @DiscriminatorValue(value = "PI")
-public class WMEventAuditProcessInstance extends WMEventAudit{
+public class WMEventAuditProcessInstance extends WMEventAudit {
 
     @Column(name = "PREVIOUS_STATE")
     private String previousState;

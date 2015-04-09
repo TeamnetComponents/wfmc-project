@@ -1,18 +1,19 @@
 package ro.teamnet.wfmc.audit.util;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
 
 import javax.inject.Inject;
-import java.lang.reflect.Method;
 
 /**
  * An utility class that returns the object saved into the WMErrorAudit entity
  */
+
+// TODO turn into a @Service
+
 @Component
 public class WMAuditErrorUtil {
 

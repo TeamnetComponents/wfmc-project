@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @DiscriminatorValue(value = "WI")
-public class WMEventAuditWorkItem extends WMEventAudit{
+public class WMEventAuditWorkItem extends WMEventAudit {
 
     @Column(name = "WORK_ITEM_STATE")
     private String workItemState;

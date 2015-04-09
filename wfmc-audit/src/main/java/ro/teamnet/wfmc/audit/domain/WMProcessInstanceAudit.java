@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
-* Created by Ioan.Ivan on 3/24/2015.
-*/
+ * Created by Ioan.Ivan on 3/24/2015.
+ */
 
 @Entity
 @Table(name = "WM_PROCESS_INSTANCE_AUDIT")
@@ -13,7 +13,7 @@ public class WMProcessInstanceAudit {
 
     @Id
     @SequenceGenerator(name = "WM_PROCESS_INSTANCE", sequenceName = "WM_PROCESS_INSTANCE_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="WM_PROCESS_INSTANCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WM_PROCESS_INSTANCE")
     @Column(name = "ID")
     private Long id;
 

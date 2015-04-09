@@ -44,6 +44,7 @@ public class AuditSampleServiceTest {
 
     @Inject
     private AuditSampleRepository sampleRepository;
+
     @Test
     public void test() {
         int expectedCount = 0;

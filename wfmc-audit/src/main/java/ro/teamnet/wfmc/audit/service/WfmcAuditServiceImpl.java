@@ -1,15 +1,12 @@
 package ro.teamnet.wfmc.audit.service;
 
 
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import ro.teamnet.wfmc.audit.build.AuditEntityBuilder;
 import ro.teamnet.wfmc.audit.domain.*;
 import ro.teamnet.wfmc.audit.repository.*;
 
 import javax.inject.Inject;
-import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by Ioan.Ivan on 3/26/2015.
@@ -32,20 +29,19 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
 
-    
-    
-    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, int eventCode, String username){
+
+    public WMEventAuditProcessInstance convertAndSaveCreateProcessInstance(String procDefId, String procInstName, String processInstanceId, String previousState, int eventCode, String username) {
 
         WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit3(processInstanceId, procDefId, procInstName));
 
         return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode, username));
     }
 
-    public WMProcessInstanceAudit updateProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit){
-        
+    public WMProcessInstanceAudit updateProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit) {
+
         return processInstanceAuditRepository.save(wmProcessInstanceAudit);
     }
-    
+
 
     public WMEventAuditWorkItem convertAndSaveCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId) {
 

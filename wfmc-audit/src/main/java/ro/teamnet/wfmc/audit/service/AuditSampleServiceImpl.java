@@ -22,7 +22,6 @@ public class AuditSampleServiceImpl implements AuditSampleService {
     }
 
 
-
     @Override
     @Auditable(strategy = AuditStrategy.WFMC, type = "myMethod")
     public String myMethod(Long age, String name) {
