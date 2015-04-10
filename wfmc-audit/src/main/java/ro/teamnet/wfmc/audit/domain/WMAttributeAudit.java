@@ -12,7 +12,6 @@ import java.util.List;
 @Table(name = "WM_ATTRIBUTE_AUDIT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR")
-
 public class WMAttributeAudit implements Serializable {
 
     @Id

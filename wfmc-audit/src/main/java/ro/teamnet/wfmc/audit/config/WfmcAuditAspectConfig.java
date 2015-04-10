@@ -14,6 +14,7 @@ import ro.teamnet.wfmc.audit.aop.WfmcAuditingAspect;
 @Configuration
 @EnableAspectJAutoProxy
 public class WfmcAuditAspectConfig {
+
     private final Logger log = LoggerFactory.getLogger(WfmcAuditAspectConfig.class);
 
     @Bean

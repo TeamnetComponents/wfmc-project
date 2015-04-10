@@ -5,10 +5,25 @@ import org.wfmc.audit.WMAEventCode;
 import org.wfmc.wapi.WMWorkItemState;
 import ro.teamnet.wfmc.audit.domain.*;
 
-
-//TODO refractoring method name
-
 public class AuditEntityBuilder {
+
+    /**
+     * Create an {@link WMProcessInstanceAudit} object by a {@link WMProcessInstanceAudit#processInstanceId}, a
+     * {@link WMProcessInstanceAudit#processDefinitionId} and a {@link WMProcessInstanceAudit#processDefinitionBusinessName}
+     *
+     * @param processInstanceId
+     * @param processDefinitionId
+     * @param processDefinitionBusinessName
+     */
+    public WMProcessInstanceAudit createwmProcessInstanceAudit(String processInstanceId, String processDefinitionId, String processDefinitionBusinessName) {
+
+        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
+        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
+        wmProcessInstanceAudit.setProcessDefinitionId(processDefinitionId);
+        wmProcessInstanceAudit.setProcessDefinitionBusinessName(processDefinitionBusinessName);
+
+        return wmProcessInstanceAudit;
+    }
 
     public WMEventAuditProcessInstance createwmEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, Integer eventCode, String username) {
 
@@ -22,22 +37,6 @@ public class AuditEntityBuilder {
         return wmEventAuditProcessInstance;
     }
 
-    /**
-     * Create an {@link WMProcessInstanceAudit} object by a {@link WMProcessInstanceAudit#processInstanceId} and a
-     * {@link WMProcessInstanceAudit#processDefinitionId}
-     *
-     * @param processInstanceId
-     * @param processDefinitionId
-     */
-    public WMProcessInstanceAudit createwmProcessInstanceAuditWithTwoArguments(String processInstanceId, String processDefinitionId) {
-
-        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
-        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
-        wmProcessInstanceAudit.setProcessDefinitionId(processDefinitionId);
-
-        return wmProcessInstanceAudit;
-    }
-
     public WMWorkItemAudit createwmWorkItemAudit(String workItemId, WMProcessInstanceAudit wmProcessInstanceAudit) {
 
         WMWorkItemAudit wmWorkItemAudit = new WMWorkItemAudit();
@@ -48,7 +47,7 @@ public class AuditEntityBuilder {
 
     }
 
-    public WMEventAuditWorkItem createwmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit) {
+    public WMEventAuditWorkItem createwmEventAuditWorkItemForComplete(String username, WMWorkItemAudit wmWorkItemAudit) {
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
         wmEventAuditWorkItem.setUsername(username);
         wmEventAuditWorkItem.setEventCode(WMAEventCode.COMPLETED_WORK_ITEM.value());
@@ -70,33 +69,6 @@ public class AuditEntityBuilder {
         return wmEventAuditWorkItem;
     }
 
-//    public WMProcessInstanceAudit createwmProcessInstanceAudit2(String processInstanceId) {
-//
-//        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
-//        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
-//
-//        return wmProcessInstanceAudit;
-//    }
-
-
-    /**
-     * Create an {@link WMProcessInstanceAudit} object by a {@link WMProcessInstanceAudit#processInstanceId}, a
-     * {@link WMProcessInstanceAudit#processDefinitionId} and a {@link WMProcessInstanceAudit#processDefinitionBusinessName}
-     *
-     * @param processInstanceId
-     * @param processDefinitionId
-     * @param processDefinitionBusinessName
-     */
-    public WMProcessInstanceAudit createwmProcessInstanceAuditWithAllArguments(String processInstanceId, String processDefinitionId, String processDefinitionBusinessName) {
-
-        WMProcessInstanceAudit wmProcessInstanceAudit = new WMProcessInstanceAudit();
-        wmProcessInstanceAudit.setProcessInstanceId(processInstanceId);
-        wmProcessInstanceAudit.setProcessDefinitionId(processDefinitionId);
-        wmProcessInstanceAudit.setProcessDefinitionBusinessName(processDefinitionBusinessName);
-
-        return wmProcessInstanceAudit;
-    }
-
     public WMAttributeAudit createwmAttributeAudit(String attributeName) {
 
         WMAttributeAudit wmAttributeAudit = new WMAttributeAudit();
@@ -116,15 +88,4 @@ public class AuditEntityBuilder {
 
         return wmEventAuditAttribute;
     }
-
-//    public WMEventAudit createwmEventAudit(Integer eventCode, String username, java.sql.Date currentDate, WMEventAuditProcessInstance wmEventAuditProcessInstance) {
-//
-//        WMEventAudit wmEventAudit = new WMEventAudit();
-//        wmEventAudit.setEventCode(eventCode);
-//        wmEventAudit.setUsername(username);
-//        wmEventAudit.setEventDate(currentDate);
-//
-//        return wmEventAudit;
-//    }
-
 }

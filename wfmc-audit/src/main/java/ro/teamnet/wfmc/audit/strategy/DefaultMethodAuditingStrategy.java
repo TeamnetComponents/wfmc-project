@@ -1,9 +1,13 @@
-package ro.teamnet.wfmc.audit.aop;
+package ro.teamnet.wfmc.audit.strategy;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ro.teamnet.audit.util.AuditInfo;
 
-public class OtherMethodAuditingStrategy implements MethodAuditingStrategy {
 
+@Component
+@Qualifier("default")
+public class DefaultMethodAuditingStrategy implements MethodAuditingStrategy {
 
     @Override
     public void setAuditInfo(AuditInfo auditInfo) {
