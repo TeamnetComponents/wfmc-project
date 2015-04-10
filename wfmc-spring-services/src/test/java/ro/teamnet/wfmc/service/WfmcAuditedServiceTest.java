@@ -12,7 +12,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMWorkflowException;
-import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMEventAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
@@ -52,12 +51,12 @@ public class WfmcAuditedServiceTest {
         log.info("Process instance id: {}", wmProcessInstanceAudit.getProcessInstanceId());
         log.info("Username: {}", wmEventAudit.getUsername());
         log.info("Event code: {}", wmEventAudit.getEventCode());
-        
+
         wfmcService.disconnect();
     }
 
-    
-    @Test    
+
+    @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAssignProcessInstanceAttribute() throws WMWorkflowException {
         wfmcService.assignProcessInstanceAttribute(PROC_INST_ID, "attr1", "1");

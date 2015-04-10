@@ -3,6 +3,7 @@ package ro.teamnet.wfmc.audit.strategy;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.wfmc.audit.WMAEventCode;
+import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
@@ -42,19 +43,19 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
         this.auditInfo = auditInfo;
     }
 
-    public void updateMethodInfo(Object returnValue) {
+    public void auditMethodAfterInvocation(Object auditedMethodReturnValue) {
 
-        processInstanceAudit.setProcessInstanceId(returnValue.toString());
+        processInstanceAudit.setProcessInstanceId(auditedMethodReturnValue.toString());
         wfmcAuditService.updateProcessInstance(processInstanceAudit);
     }
 
-    public void saveError(Throwable throwable) {
+    public void auditMethodInvocationError(Throwable throwable) {
 
         auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
 
-    public void saveMethodInfoBeforeCalling() {
+    public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         processInstanceAudit = wfmcAuditService.saveProcessInstanceAudit(
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_DEFINITION_ID),

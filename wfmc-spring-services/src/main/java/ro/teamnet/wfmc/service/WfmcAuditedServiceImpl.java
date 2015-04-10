@@ -11,7 +11,7 @@ import ro.teamnet.audit.annotation.Auditable;
 
 import javax.inject.Inject;
 
-import static ro.teamnet.audit.constants.AuditStrategy.WFMC;
+import static ro.teamnet.wfmc.audit.constants.WfmcAuditStrategy.WFMC;
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
 
 /**
@@ -20,6 +20,7 @@ import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WfmcAuditedServiceImpl implements WfmcAuditedService {
+
 
     @Inject
     private WfmcService wfmcService;

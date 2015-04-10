@@ -51,7 +51,7 @@
                                  deferrable="false"
                                  initiallyDeferred="false"
                                  onDelete="RESTRICT"
-                                 onUpdate="RESTRICT" />
+                                 onUpdate="RESTRICT"/>
 
         <createTable tableName="WM_ATTRIBUTE_AUDIT">
             <column name="ID" type="bigint">
@@ -91,7 +91,7 @@
             <column name="EVENT_CODE" type="integer"/>
             <column name="USERNAME" type="varchar(20)"/>
             <column name="EVENT_DATE" type="timestamp">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="WM_WORK_ITEM_AUDIT_ID" type="bigint"/>
             <column name="PREVIOUS_STATE" type="varchar(50)"/>
@@ -156,7 +156,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="occurrence_time" type="timestamp">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="wm_process_instance_error_id" type="bigint">
                 <constraints nullable="true"/>
@@ -175,7 +175,6 @@
                                  onDelete="RESTRICT"
                                  onUpdate="RESTRICT"/>
     </changeSet>
-
 
 
 </databaseChangeLog>

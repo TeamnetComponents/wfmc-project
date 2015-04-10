@@ -13,10 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMWorkflowException;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
-import ro.teamnet.wfmc.audit.domain.WMEventAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
-import ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl;
 
 import javax.inject.Inject;
 

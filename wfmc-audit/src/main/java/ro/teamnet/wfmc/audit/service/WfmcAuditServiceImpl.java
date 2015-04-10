@@ -29,7 +29,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
 
-    public WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId){
+    public WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId) {
 
         return processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, procDefId, procInstName));
     }

@@ -29,7 +29,7 @@ public class WMErrorAudit {
     private String stackTrace;
 
     @Column(name = "OCCURRENCE_TIME")
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime occurrenceTime;
 
     @ManyToOne
