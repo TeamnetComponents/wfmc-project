@@ -24,10 +24,10 @@ import javax.inject.Inject;
 @ActiveProfiles("test-error")
 public class WfmcAuditedServiceWithExceptionsTest {
 
-    public static final String PROC_DEF_ID = "pd_id";
-    public static final String USER_IDENTIFICATION = "testUser";
-    public static final String PROC_INST_ID = "pi_id";
-    public static final String WORK_ITEM_ID = "wi_id";
+    private static final String PROC_DEF_ID = "pd_id";
+    private static final String USER_IDENTIFICATION = "testUser";
+    private static final String PROC_INST_ID = "pi_id";
+    private static final String WORK_ITEM_ID = "wi_id";
 
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;

@@ -25,10 +25,10 @@ import javax.inject.Inject;
 @ActiveProfiles("test")
 public class WfmcAuditedServiceTest {
 
-    public static final String PROC_DEF_ID = "pd_id";
-    public static final String USER_IDENTIFICATION = "testUser";
-    public static final String PROC_INST_ID = "pi_id";
-    public static final String WORK_ITEM_ID = "wi_id";
+    private static final String PROC_DEF_ID = "pd_id";
+    private static final String USER_IDENTIFICATION = "testUser";
+    private static final String PROC_INST_ID = "pi_id";
+    private static final String WORK_ITEM_ID = "wi_id";
 
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
@@ -65,32 +65,32 @@ public class WfmcAuditedServiceTest {
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testStartProcess() throws WMWorkflowException {
-        String newProcessInstanceId = wfmcService.startProcess("pi_id");
+        String newProcessInstanceId = wfmcService.startProcess(PROC_INST_ID);
         Assert.assertEquals(WfmcServiceMockImpl.NEW_PROCESS_INSTANCE_ID, newProcessInstanceId);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAbortProcessInstance() throws WMWorkflowException {
-        wfmcService.abortProcessInstance("pi_id");
+        wfmcService.abortProcessInstance(PROC_INST_ID);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAssignWorkItemAttribute() throws WMWorkflowException {
-        wfmcService.assignWorkItemAttribute("pi_id", "wi_id", "attr1", "1");
+        wfmcService.assignWorkItemAttribute(PROC_INST_ID, WORK_ITEM_ID, "attr1", "1");
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testReassignWorkItem() throws WMWorkflowException {
-        wfmcService.reassignWorkItem("source_user", "target_user", "pi_id", "wi_id");
+        wfmcService.reassignWorkItem("source_user", "target_user", PROC_INST_ID, WORK_ITEM_ID);
     }
 
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testCompleteWorkItem() throws WMWorkflowException {
-        wfmcService.completeWorkItem("pi_id", "wi_id");
+        wfmcService.completeWorkItem(PROC_INST_ID, WORK_ITEM_ID);
     }
 
 
