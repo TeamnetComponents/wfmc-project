@@ -11,7 +11,6 @@ import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 import ro.teamnet.audit.annotation.Auditable;
 
 import javax.inject.Inject;
-
 import java.util.List;
 
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditStrategy.WFMC;

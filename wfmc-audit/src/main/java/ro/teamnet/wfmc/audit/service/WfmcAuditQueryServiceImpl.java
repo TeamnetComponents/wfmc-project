@@ -1,5 +1,6 @@
 package ro.teamnet.wfmc.audit.service;
 
+import org.springframework.stereotype.Service;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMEventAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
@@ -9,6 +10,7 @@ import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
 
 import javax.inject.Inject;
 
+@Service
 public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
 
     @Inject

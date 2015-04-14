@@ -7,8 +7,6 @@ import org.springframework.core.env.Environment;
 import org.wfmc.service.WfmcService;
 import org.wfmc.service.WfmcServiceFactory;
 import org.wfmc.wapi.WMConnectInfo;
-import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
-import ro.teamnet.wfmc.audit.service.WfmcAuditQueryServiceImpl;
 
 import javax.inject.Inject;
 
@@ -43,10 +41,5 @@ public class WfmcServiceConfiguration {
         String engineName = environment.getProperty("wmConnectInfo.engineName");
         String scope = environment.getProperty("wmConnectInfo.scope");
         return new WMConnectInfo(userIdentification, password, engineName, scope);
-    }
-
-    @Bean
-    public WfmcAuditQueryService wfmcAuditQueryService() {
-        return new WfmcAuditQueryServiceImpl();
     }
 }
