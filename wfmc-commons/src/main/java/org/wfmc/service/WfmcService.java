@@ -1,5 +1,6 @@
 package org.wfmc.service;
 
+import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi2.WAPI2;
 
 /**
@@ -8,4 +9,7 @@ import org.wfmc.wapi2.WAPI2;
 public interface WfmcService extends Service, XpdlInterface, WAPI2 {
 
     public String getServiceInstance();
+
+    //FIXME: remove this getter after removing jdbc auditing
+    WMConnectInfo getWmConnectInfo();
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Created by Mihai.Niculae on 3/12/2015.
+ * FIXME: rename this interface to something meaningful
  */
 public interface XpdlInterface {
 
@@ -15,6 +16,4 @@ public interface XpdlInterface {
 
     public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException;
 
-
-    WMConnectInfo getWmConnectInfo();
 }

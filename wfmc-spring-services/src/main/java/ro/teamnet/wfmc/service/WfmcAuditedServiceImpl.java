@@ -7,9 +7,12 @@ import org.wfmc.service.WfmcService;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
 import org.wfmc.wapi2.WMEntityIterator;
+import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 import ro.teamnet.audit.annotation.Auditable;
 
 import javax.inject.Inject;
+
+import java.util.List;
 
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditStrategy.WFMC;
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
@@ -382,4 +385,15 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     public void terminateApp(int toolAgentHandle, String procInstId, String workItemId) throws WMWorkflowException {
         wfmcService.terminateApp(toolAgentHandle, procInstId, workItemId);
     }
+
+    @Override
+    public WorkflowProcess getWorkFlowProcess(String processDefinitionId) throws WMWorkflowException {
+        return wfmcService.getWorkFlowProcess(processDefinitionId);
+    }
+
+    @Override
+    public List<WMWorkItem> getNextSteps(String processInstanceId, String workItemId) throws WMWorkflowException {
+        return wfmcService.getNextSteps(processInstanceId, workItemId);
+    }
+
 }

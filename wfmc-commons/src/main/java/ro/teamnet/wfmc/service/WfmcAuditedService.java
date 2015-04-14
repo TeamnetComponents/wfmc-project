@@ -1,5 +1,6 @@
 package ro.teamnet.wfmc.service;
 
+import org.wfmc.service.XpdlInterface;
 import org.wfmc.wapi.WMWorkflowException;
 import org.wfmc.wapi2.WAPI2;
 import ro.teamnet.audit.annotation.AuditedParameter;
@@ -12,7 +13,7 @@ import static ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter.*;
  * The {@link ro.teamnet.audit.annotation.Auditable} annotation must be provided in the implementing classes for each
  * auditable method.
  */
-public interface WfmcAuditedService extends WAPI2 {
+public interface WfmcAuditedService extends WAPI2, XpdlInterface {
     /**
      * Retrieves the current user identification.
      * If no user is connected to the WM, method returns {@code null}.
