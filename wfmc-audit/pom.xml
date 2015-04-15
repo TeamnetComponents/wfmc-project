@@ -14,7 +14,7 @@
 
     <groupId>ro.teamnet.wfmc.audit</groupId>
     <artifactId>wfmc-audit</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
 
     <properties>
         <HikariCP.version>2.2.5</HikariCP.version>
@@ -133,11 +133,6 @@
                     <groupId>com.codahale.metrics</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.wfmc</groupId>
-            <artifactId>wfmc-api</artifactId>
-            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -362,5 +357,23 @@
             <version>${oracle.driver.version}</version>
         </dependency>
     </dependencies>
-
+    <repositories>
+        <repository>
+            <id>tni-hq-artifact</id>
+            <name>tni-hq-artifact-releases</name>
+            <url>http://tni-hq-artifactory/tn-components</url>
+        </repository>
+    </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
