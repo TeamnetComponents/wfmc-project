@@ -14,8 +14,8 @@ import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
 import javax.inject.Inject;
 
 @Component
-@Qualifier(WfmcAuditedMethod.ASSIGN_PROCESS_INSTANCE_ATTRIBUTE)
-public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAuditingStrategy {
+@Qualifier(WfmcAuditedMethod.REASSIGN_WORK_ITEM)
+public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy {
 
     @Inject
     private WfmcAuditService wfmcAuditService;
@@ -34,12 +34,14 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        wfmcAuditService.convertAndSaveAssignAttributeAudit(
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_NAME),
-                auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_VALUE),
+        wfmcAuditService.convertAndSaveReassignWorkItem(
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID),
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.SOURCE_USER),
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.TARGET_USER),
                 username,
-                getWmProcessInstanceAudit()
-        );
+                getWmProcessInstanceAudit().getProcessDefinitionId(),
+                getWmProcessInstanceAudit().getProcessDefinitionBusinessName());
     }
 
     @Override
@@ -60,4 +62,4 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
         Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
         return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
     }
- }
+}

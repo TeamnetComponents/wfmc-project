@@ -12,13 +12,13 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.wfmc.audit.WMAEventCode;
 import org.wfmc.wapi.WMConnectInfo;
+import org.wfmc.wapi.WMWorkItemState;
 import org.wfmc.wapi.WMWorkflowException;
-import ro.teamnet.wfmc.audit.domain.WMAttributeAuditProcessInstance;
-import ro.teamnet.wfmc.audit.domain.WMEventAudit;
-import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
-import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.domain.*;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
+import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 import ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl;
 
 import javax.inject.Inject;
@@ -56,6 +56,7 @@ public class WfmcAuditedServiceTest {
     public void testCreateProcessInstance() throws WMWorkflowException {
         String processInstanceId = wfmcService.createProcessInstance(PROC_DEF_ID, "my procInstName");
         Assert.assertEquals(WfmcServiceMockImpl.PROCESS_INSTANCE_ID, processInstanceId);
+
         WMProcessInstanceAudit wmProcessInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessDefinitionBusinessName("my procInstName");
         WMEventAudit wmEventAudit = wfmcAuditQueryService.findWMEventAuditByUsername(USER_IDENTIFICATION);
         Assert.assertEquals("The process definition id isn't the same!", wmProcessInstanceAudit.getProcessDefinitionId(), PROC_DEF_ID);
@@ -82,6 +83,7 @@ public class WfmcAuditedServiceTest {
         log.info("Attribute value: {}", wmEventAuditAttribute.getAttributeValue());
         Assert.assertEquals("The attribute name isn't the same!", wmEventAuditAttribute.getWmAttributeAudit().getAttributeName(), "attr1");
         log.info("Attribute audit name: {}", wmEventAuditAttribute.getWmAttributeAudit().getAttributeName());
+
         WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance = wfmcAuditQueryService.findWMAttributeAuditProcessInstanceByWMProcessInstanceAudit(wmProcessInstanceAudit);
         Assert.assertEquals("The process instance id isn't the same!", wmAttributeAuditProcessInstance.getWmProcessInstanceAudit().getProcessInstanceId(),
                 wmProcessInstanceAudit.getProcessInstanceId());
@@ -104,7 +106,16 @@ public class WfmcAuditedServiceTest {
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAbortProcessInstance() throws WMWorkflowException {
-        wfmcService.abortProcessInstance(PROC_INST_ID);
+        String processInstanceId = wfmcService.createProcessInstance(PROC_DEF_ID, "my procInstName");
+        wfmcService.abortProcessInstance(processInstanceId);
+
+        WMEventAuditProcessInstance wmEventAuditProcessInstance = wfmcAuditQueryService.findWMEventAuditProcessInstanceByPreviousState(WfmcPreviousState.ABORT_PROCESS_INSTANCE);
+        Assert.assertEquals("The previous state isn't the same!", wmEventAuditProcessInstance.getPreviousState(), WfmcPreviousState.ABORT_PROCESS_INSTANCE);
+        log.info("Previous state: {}", wmEventAuditProcessInstance.getPreviousState());
+        Assert.assertEquals("The process instance id isn't the same!", wmEventAuditProcessInstance.getWmProcessInstanceAudit().getProcessInstanceId(), processInstanceId);
+        log.info("The process instance id: {}", wmEventAuditProcessInstance.getWmProcessInstanceAudit().getProcessInstanceId());
+        Assert.assertEquals("The event code isn't the same!", wmEventAuditProcessInstance.getEventCode(), Integer.valueOf(WMAEventCode.ABORTED_ACTIVITY_INSTANCE.value()));
+        log.info("Event code: {}", wmEventAuditProcessInstance.getEventCode());
     }
 
     @Test
@@ -116,7 +127,26 @@ public class WfmcAuditedServiceTest {
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testReassignWorkItem() throws WMWorkflowException {
-        wfmcService.reassignWorkItem("source_user", "target_user", PROC_INST_ID, WORK_ITEM_ID);
+        String processInstanceId = wfmcService.createProcessInstance(PROC_DEF_ID, "my procInstName");
+        wfmcService.reassignWorkItem("source_user", "target_user", processInstanceId, WORK_ITEM_ID);
+
+        WMWorkItemAudit wmWorkItemAudit = wfmcAuditQueryService.findWMWorkItemAuditByWorkItemId(WORK_ITEM_ID);
+        Assert.assertEquals("ReassignWorkItem: the work item id isn't the same!", wmWorkItemAudit.getWorkItemId(), WORK_ITEM_ID);
+        log.info("Work item id: {}", wmWorkItemAudit.getWorkItemId());
+        Assert.assertEquals("ReassignWorkItem: the process instance id isn't the same!", wmWorkItemAudit.getWmProcessInstanceAudit().getProcessInstanceId(), processInstanceId);
+        log.info("Process instance id: {}", wmWorkItemAudit.getWmProcessInstanceAudit().getProcessInstanceId());
+        log.info("Process definition id: {}", wmWorkItemAudit.getWmProcessInstanceAudit().getProcessDefinitionId());
+        log.info("Process definition business name: {}", wmWorkItemAudit.getWmProcessInstanceAudit().getProcessDefinitionBusinessName());
+
+        WMEventAuditWorkItem wmEventAuditWorkItem = wfmcAuditQueryService.findWMEventAuditWorkItemByWmWorkItemAudit(wmWorkItemAudit);
+        Assert.assertEquals("The event audit work item state isn't the same!", wmEventAuditWorkItem.getWorkItemState(), WMWorkItemState.OPEN_RUNNING_TAG);
+        log.info("The event audit work item state: {}", wmEventAuditWorkItem.getWorkItemState());
+        Assert.assertEquals("The event audit work item id isn't the same!", wmEventAuditWorkItem.getWmWorkItemAudit().getWorkItemId(), WORK_ITEM_ID);
+        log.info("The event audit work item id: {}", wmEventAuditWorkItem.getWmWorkItemAudit().getWorkItemId());
+        Assert.assertEquals("The username isn't the same!", wmEventAuditWorkItem.getUsername(), "testUser");
+        log.info("Username: {}", wmEventAuditWorkItem.getUsername());
+        Assert.assertEquals("The event code isn't the same!", wmEventAuditWorkItem.getEventCode(), Integer.valueOf(WMAEventCode.REASSIGNED_WORK_ITEM_INT));
+        log.info("Event code: {}", wmEventAuditWorkItem.getEventCode());
     }
 
     @Test

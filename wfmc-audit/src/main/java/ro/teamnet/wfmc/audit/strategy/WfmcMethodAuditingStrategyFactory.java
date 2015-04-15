@@ -22,6 +22,14 @@ public class WfmcMethodAuditingStrategyFactory implements MethodAuditingStrategy
     AssignProcessInstanceAttributeAuditingStrategy assignProcessInstanceAttribute;
 
     @Inject
+    @Qualifier(WfmcAuditedMethod.REASSIGN_WORK_ITEM)
+    ReassignWorkItemAuditingStrategy reassignWorkItemAuditingStrategy;
+
+    @Inject
+    @Qualifier(WfmcAuditedMethod.ABORT_PROCESS_INSTANCE)
+    AbortProcessInstanceAuditingStrategy abortProcessInstanceAuditingStrategy;
+
+    @Inject
     @Qualifier("default")
     DefaultMethodAuditingStrategy defaultStrategy;
 
@@ -32,6 +40,10 @@ public class WfmcMethodAuditingStrategyFactory implements MethodAuditingStrategy
                 return createProcessInstance;
             case WfmcAuditedMethod.ASSIGN_PROCESS_INSTANCE_ATTRIBUTE:
                 return assignProcessInstanceAttribute;
+            case WfmcAuditedMethod.REASSIGN_WORK_ITEM:
+                return reassignWorkItemAuditingStrategy;
+            case WfmcAuditedMethod.ABORT_PROCESS_INSTANCE:
+                return  abortProcessInstanceAuditingStrategy;
             default:
                 return defaultStrategy;
         }

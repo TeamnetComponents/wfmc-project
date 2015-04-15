@@ -32,24 +32,47 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
      * @param attributeName the attribute name to assign
      * @param attributeValue the value to assign to the attribute
      * @param username the current username
-     * @param processDefinitionBusinessName used to find the WMProcessInstanceAudit
+     * @param wmProcessInstanceAudit
      * @return the instance for further operations.
      */
     @Override
-    public WMEventAuditAttribute convertAndSaveAssignAttributeAudit(String attributeName, Object attributeValue, String username, String processDefinitionBusinessName, WMProcessInstanceAudit wmProcessInstanceAudit) {
+    public WMEventAuditAttribute convertAndSaveAssignAttributeAudit(String attributeName, Object attributeValue, String username, WMProcessInstanceAudit wmProcessInstanceAudit) {
 
         WMAttributeAuditProcessInstance wmAttributeAudit = auditEntityBuilder.createwmAttributeAudit(attributeName, wmProcessInstanceAudit);
         return eventAuditAttributeRepository.save(auditEntityBuilder.createwmEventAuditAttribute(attributeValue, username, wmAttributeAudit));
     }
+
     /**
-     * Update the list of {@link WMAttributeAudit#wmEventAuditAttributes} with {@link WMEventAuditAttribute}
-     * @param wmEventAuditAttribute the object to update
-     * @return the instance for further operations.
+     * Save an {@link WMEventAuditWorkItem} object.
+     * @param processInstanceId
+     * @param workItemId
+     * @param sourceUser
+     * @param targetUser
+     * @param username
+     * @param processDefinitionId
+     * @return an instance for further operations.
      */
     @Override
-    public WMEventAuditAttribute updateEventAuditAttributes(WMEventAuditAttribute wmEventAuditAttribute) {
+    public WMEventAuditWorkItem convertAndSaveReassignWorkItem(String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId, String processBusinessName) {
 
-        return eventAuditAttributeRepository.save(wmEventAuditAttribute);
+        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, processDefinitionId, processBusinessName));
+
+        WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
+
+        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForReassign(username, wmWorkItemAudit));
+    }
+
+    /**
+     *
+     * @param wmProcessInstanceAudit
+     * @param previousState
+     * @param eventCode
+     * @param username
+     * @return
+     */
+    public WMEventAuditProcessInstance convertAndSaveAbortProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, Integer eventCode,String username) {
+
+        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode,username));
     }
 
     
@@ -81,15 +104,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
         return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForComplete(username, wmWorkItemAudit));
     }
 
-    @Override
-    public WMEventAuditWorkItem convertAndSaveReassignWorkItem(String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId) {
 
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, processDefinitionId, null));
-
-        WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
-
-        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForReassign(username, wmWorkItemAudit));
-    }
 
     /*public WMEventAuditAttribute convertAndSaveAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username) {
 

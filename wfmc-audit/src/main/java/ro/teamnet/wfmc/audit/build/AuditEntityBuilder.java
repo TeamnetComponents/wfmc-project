@@ -25,6 +25,14 @@ public class AuditEntityBuilder {
         return wmProcessInstanceAudit;
     }
 
+    /**
+     * Create an {@link WMEventAuditProcessInstance} used for {@link ro.teamnet.wfmc.audit.strategy.AbortProcessInstanceAuditingStrategy} to save audit into database
+     * @param wmProcessInstanceAudit
+     * @param previousState
+     * @param eventCode
+     * @param username
+     * @return the instance for further operations
+     */
     public WMEventAuditProcessInstance createwmEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, Integer eventCode, String username) {
 
         WMEventAuditProcessInstance wmEventAuditProcessInstance = new WMEventAuditProcessInstance();
@@ -56,6 +64,14 @@ public class AuditEntityBuilder {
         return wmEventAuditWorkItem;
     }
 
+
+    /**
+     * Create an {@link WMEventAuditWorkItem} object by a {@link WMEventAuditWorkItem#wmWorkItemAudit} and a
+     * {@link WMEventAuditWorkItem#workItemState}
+     * @param username
+     * @param wmWorkItemAudit
+     * @return an instance for further operations.
+     */
     public WMEventAuditWorkItem createwmEventAuditWorkItemForReassign(String username, WMWorkItemAudit wmWorkItemAudit) {
 
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
@@ -69,7 +85,7 @@ public class AuditEntityBuilder {
     }
 
     /**
-     * Save an {@link WMAttributeAuditProcessInstance} object by a {@link WMAttributeAuditProcessInstance#attributeName} and
+     * Create an {@link WMAttributeAuditProcessInstance} object by a {@link WMAttributeAuditProcessInstance#attributeName} and
      * a {@link WMProcessInstanceAudit} object
      * @param attributeName
      * @param wmProcessInstanceAudit
@@ -85,7 +101,7 @@ public class AuditEntityBuilder {
     }
 
     /**
-     * Save an {@link WMEventAuditAttribute} object with an {@link WMEventAuditAttribute#attributeValue},
+     * Create an {@link WMEventAuditAttribute} object with an {@link WMEventAuditAttribute#attributeValue},
      * {@link WMAttributeAudit} object and a {@link WMEventAudit} object populated with {@link WMEventAudit#username},
      * {@link WMEventAudit#eventCode} and {@link WMEventAudit#eventDate}
      * @param attributeValue
