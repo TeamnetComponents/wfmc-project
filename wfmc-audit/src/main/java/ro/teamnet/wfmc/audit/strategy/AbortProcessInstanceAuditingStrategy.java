@@ -2,6 +2,7 @@ package ro.teamnet.wfmc.audit.strategy;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.wfmc.audit.WMAEventCode;
 import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
@@ -10,19 +11,20 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
+import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 
 import javax.inject.Inject;
 
 @Component
-@Qualifier(WfmcAuditedMethod.ASSIGN_PROCESS_INSTANCE_ATTRIBUTE)
-public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAuditingStrategy {
+@Qualifier(WfmcAuditedMethod.ABORT_PROCESS_INSTANCE)
+public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrategy {
 
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorUtil auditErrorUtil;
-    @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
+    @Inject
+    private WMAuditErrorUtil auditErrorUtil;
 
     private AuditInfo auditInfo;
 
@@ -34,11 +36,11 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        wfmcAuditService.convertAndSaveAssignAttributeAudit(
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_NAME),
-                auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_VALUE),
-                username,
-                getWmProcessInstanceAudit()
+        wfmcAuditService.convertAndSaveAbortProcessInstance(
+                getWmProcessInstanceAudit(),
+                WfmcPreviousState.ABORT_PROCESS_INSTANCE,
+                WMAEventCode.ABORTED_ACTIVITY_INSTANCE.value(),
+                username
         );
     }
 
@@ -60,4 +62,4 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
         Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
         return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
     }
- }
+}

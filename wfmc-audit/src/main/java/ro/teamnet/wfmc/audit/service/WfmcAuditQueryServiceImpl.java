@@ -30,6 +30,15 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     @Inject
     private AttributeAuditProcessInstanceRepository attributeAuditProcessInstanceRepository;
 
+    @Inject
+    private WorkItemAuditRepository workItemAuditRepository;
+
+    @Inject
+    private EventAuditWorkItemRepository eventAuditWorkItemRepository;
+
+    @Inject
+    private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
+
     @Override
     public WMProcessInstanceAudit findByProcessInstanceId(String processInstanceId) {
         return processInstanceAuditRepository.findByProcessInstanceId(processInstanceId);
@@ -58,5 +67,30 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     @Override
     public WMAttributeAuditProcessInstance findWMAttributeAuditProcessInstanceByWMProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
         return attributeAuditProcessInstanceRepository.findByWmProcessInstanceAudit(wmProcessInstanceAudit);
+    }
+
+    @Override
+    public WMWorkItemAudit findWMWorkItemAuditByWorkItemId(String workItemId) {
+        return workItemAuditRepository.findByWorkItemId(workItemId);
+    }
+
+    @Override
+    public WMEventAuditWorkItem findWMEventAuditWorkItemByWorkItemState(String workItemState) {
+        return eventAuditWorkItemRepository.findByWorkItemState(workItemState);
+    }
+
+    @Override
+    public WMEventAuditWorkItem findWMEventAuditWorkItemByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit) {
+        return eventAuditWorkItemRepository.findByWmWorkItemAudit(wmWorkItemAudit);
+    }
+
+    @Override
+    public WMEventAuditProcessInstance findWMEventAuditProcessInstanceByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
+        return eventAuditProcessInstanceRepository.findByWmProcessInstanceAudit(wmProcessInstanceAudit);
+    }
+
+    @Override
+    public WMEventAuditProcessInstance findWMEventAuditProcessInstanceByPreviousState(String previousState) {
+        return eventAuditProcessInstanceRepository.findByPreviousState(previousState);
     }
 }
