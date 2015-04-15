@@ -7,6 +7,8 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
 import ro.teamnet.wfmc.audit.repository.EventAuditRepository;
 import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
+import ro.teamnet.wfmc.audit.domain.*;
+import ro.teamnet.wfmc.audit.repository.*;
 
 import javax.inject.Inject;
 
@@ -22,14 +24,15 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     @Inject
     private ErrorAuditRepository errorAuditRepository;
 
-    @Override
-    public WMProcessInstanceAudit findWMProcessInstanceAuditByProcessInstanceId(String processInstanceId) {
-        return processInstanceAuditRepository.findOne(Long.valueOf(processInstanceId));
-    }
+    @Inject
+    private EventAuditAttributeRepository eventAuditAttributeRepository;
+
+    @Inject
+    private AttributeAuditProcessInstanceRepository attributeAuditProcessInstanceRepository;
 
     @Override
-    public WMProcessInstanceAudit findWMProcessInstanceAuditById(Long id) {
-        return processInstanceAuditRepository.findOne(id);
+    public WMProcessInstanceAudit findByProcessInstanceId(String processInstanceId) {
+        return processInstanceAuditRepository.findByProcessInstanceId(processInstanceId);
     }
 
     @Override
@@ -45,5 +48,15 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     @Override
     public WMErrorAudit findWMErrorAuditByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
         return errorAuditRepository.findByWmProcessInstanceAudit(wmProcessInstanceAudit);
+    }
+
+    @Override
+    public WMEventAuditAttribute findWMEventAuditAttributeByAttributeValue(String attributeValue) {
+        return eventAuditAttributeRepository.findByAttributeValue(attributeValue);
+    }
+
+    @Override
+    public WMAttributeAuditProcessInstance findWMAttributeAuditProcessInstanceByWMProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
+        return attributeAuditProcessInstanceRepository.findByWmProcessInstanceAudit(wmProcessInstanceAudit);
     }
 }

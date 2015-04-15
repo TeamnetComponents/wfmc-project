@@ -10,9 +10,7 @@ import javax.persistence.*;
 @DiscriminatorValue(value = "PI")
 public class WMAttributeAuditProcessInstance extends WMAttributeAudit {
 
-
     @ManyToOne
-    @Transient
     @JoinColumn(name = "WM_PROCESS_INSTANCE_AUDIT_ID")
     private WMProcessInstanceAudit wmProcessInstanceAudit;
 

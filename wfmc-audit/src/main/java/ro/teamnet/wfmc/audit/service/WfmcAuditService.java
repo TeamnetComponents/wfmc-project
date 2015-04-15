@@ -1,9 +1,6 @@
 package ro.teamnet.wfmc.audit.service;
 
-import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
-import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
-import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
-import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.domain.*;
 
 /**
  * Created by Ioan.Ivan on 3/26/2015.
@@ -14,7 +11,7 @@ public interface WfmcAuditService {
 
     WMEventAuditWorkItem convertAndSaveCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId);
 
-    WMEventAuditAttribute convertAndSaveAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username);
+    //WMEventAuditAttribute convertAndSaveAssignWorkItemAttribute(String processInstanceId, String workItemId, String attributeName, Object attributeValue, String username);
 
     WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId);
 
@@ -22,4 +19,8 @@ public interface WfmcAuditService {
 
     WMProcessInstanceAudit updateProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit);
 
+    //WMEventAuditAttribute convertAndSaveAssignAttributeAudit(String attributeName, Object attributeValue, String username);
+
+    WMEventAuditAttribute updateEventAuditAttributes(WMEventAuditAttribute wmEventAuditAttribute);
+    WMEventAuditAttribute convertAndSaveAssignAttributeAudit(String attributeName, Object attributeValue, String username, String processDefinitionBusinessName, WMProcessInstanceAudit wmProcessInstanceAudit);
 }

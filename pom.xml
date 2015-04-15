@@ -31,8 +31,6 @@
         </repository>
     </repositories>
 
-
-
     <properties>
         <artifactory-maven-plugin.version>2.2.1</artifactory-maven-plugin.version>
     </properties>

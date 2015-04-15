@@ -13,7 +13,7 @@ public class WMEventAuditAttribute extends WMEventAudit {
     @Column(name = "ATTR_VALUE")
     private String attributeValue;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "WM_ATTRIBUTE_AUDIT_ID")
     private WMAttributeAudit wmAttributeAudit;
 

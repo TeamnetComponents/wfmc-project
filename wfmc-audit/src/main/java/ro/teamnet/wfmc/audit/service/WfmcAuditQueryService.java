@@ -1,18 +1,18 @@
 package ro.teamnet.wfmc.audit.service;
 
-import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
-import ro.teamnet.wfmc.audit.domain.WMEventAudit;
-import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.domain.*;
 
 public interface WfmcAuditQueryService {
 
-    WMProcessInstanceAudit findWMProcessInstanceAuditByProcessInstanceId(String processInstanceId);
-
-    WMProcessInstanceAudit findWMProcessInstanceAuditById(Long id);
+    WMProcessInstanceAudit findByProcessInstanceId(String processInstanceId);
 
     WMProcessInstanceAudit findWMProcessInstanceAuditByProcessDefinitionBusinessName(String processDefinitionBusinessName);
 
     WMEventAudit findWMEventAuditByUsername(String username);
 
     WMErrorAudit findWMErrorAuditByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
+
+    WMEventAuditAttribute findWMEventAuditAttributeByAttributeValue(String attributeValue);
+
+    WMAttributeAuditProcessInstance findWMAttributeAuditProcessInstanceByWMProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 }

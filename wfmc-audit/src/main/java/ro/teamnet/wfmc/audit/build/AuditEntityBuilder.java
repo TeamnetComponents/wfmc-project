@@ -44,7 +44,6 @@ public class AuditEntityBuilder {
         wmWorkItemAudit.setWmProcessInstanceAudit(wmProcessInstanceAudit);
 
         return wmWorkItemAudit;
-
     }
 
     public WMEventAuditWorkItem createwmEventAuditWorkItemForComplete(String username, WMWorkItemAudit wmWorkItemAudit) {
@@ -69,22 +68,39 @@ public class AuditEntityBuilder {
         return wmEventAuditWorkItem;
     }
 
-    public WMAttributeAudit createwmAttributeAudit(String attributeName) {
+    /**
+     * Save an {@link WMAttributeAuditProcessInstance} object by a {@link WMAttributeAuditProcessInstance#attributeName} and
+     * a {@link WMProcessInstanceAudit} object
+     * @param attributeName
+     * @param wmProcessInstanceAudit
+     * @return an instance of the object for further operations
+     */
+    public WMAttributeAuditProcessInstance createwmAttributeAudit(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit) {
 
-        WMAttributeAudit wmAttributeAudit = new WMAttributeAudit();
-        wmAttributeAudit.setAttributeName(attributeName);
+        WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance = new WMAttributeAuditProcessInstance();
+        wmAttributeAuditProcessInstance.setWmProcessInstanceAudit(wmProcessInstanceAudit);
+        wmAttributeAuditProcessInstance.setAttributeName(attributeName);
 
-        return wmAttributeAudit;
+        return wmAttributeAuditProcessInstance;
     }
 
-    public WMEventAuditAttribute createwmEventAuditAttribute(Object attributeValue, String username, WMAttributeAudit wmAttributeAudit) {
+    /**
+     * Save an {@link WMEventAuditAttribute} object with an {@link WMEventAuditAttribute#attributeValue},
+     * {@link WMAttributeAudit} object and a {@link WMEventAudit} object populated with {@link WMEventAudit#username},
+     * {@link WMEventAudit#eventCode} and {@link WMEventAudit#eventDate}
+     * @param attributeValue
+     * @param username
+     * @param wmAttributeAuditProcessInstance
+     * @return an instance for further operations
+     */
+    public WMEventAuditAttribute createwmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance) {
 
         WMEventAuditAttribute wmEventAuditAttribute = new WMEventAuditAttribute();
         wmEventAuditAttribute.setEventDate(new DateTime());
         wmEventAuditAttribute.setEventCode(WMAEventCode.ASSIGNED_ACTIVITY_INSTANCE_ATTRIBUTES.value());
         wmEventAuditAttribute.setUsername(username);
         wmEventAuditAttribute.setAttributeValue(attributeValue.toString());
-        wmEventAuditAttribute.setWmAttributeAudit(wmAttributeAudit);
+        wmEventAuditAttribute.setWmAttributeAudit(wmAttributeAuditProcessInstance);
 
         return wmEventAuditAttribute;
     }

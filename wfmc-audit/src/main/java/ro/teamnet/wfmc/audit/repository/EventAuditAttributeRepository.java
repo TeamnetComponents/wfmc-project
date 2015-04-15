@@ -10,4 +10,6 @@ import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
 
 @Repository
 public interface EventAuditAttributeRepository extends JpaRepository<WMEventAuditAttribute, Long> {
+
+    WMEventAuditAttribute findByAttributeValue(String attributeValue);
 }

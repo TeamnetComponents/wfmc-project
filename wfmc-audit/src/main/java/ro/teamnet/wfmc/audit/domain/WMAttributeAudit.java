@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "WM_ATTRIBUTE_AUDIT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR")
-public class WMAttributeAudit implements Serializable {
+public abstract class WMAttributeAudit implements Serializable {
 
     @Id
     @SequenceGenerator(name = "WM_ATTRIBUTE_AUDIT_GENERATOR", sequenceName = "WM_ATTRIBUTE_AUDIT_SEQUENCE")
@@ -23,10 +23,8 @@ public class WMAttributeAudit implements Serializable {
     @Column(name = "ATTRIBUTE_NAME")
     private String attributeName;
 
-    @Transient
     @OneToMany(mappedBy = "wmAttributeAudit")
     private List<WMEventAuditAttribute> wmEventAuditAttributes;
-
 
     public Long getId() {
         return id;
