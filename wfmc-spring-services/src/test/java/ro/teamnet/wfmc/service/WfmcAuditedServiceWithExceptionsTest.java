@@ -1,6 +1,7 @@
 package ro.teamnet.wfmc.service;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -81,6 +82,7 @@ public class WfmcAuditedServiceWithExceptionsTest {
     }
 
     @Test
+    @Ignore
     @Transactional("wfmcAuditTransactionManager")
     public void testReassignWorkItem() throws WMWorkflowException {
         wfmcServiceWithExceptions.reassignWorkItem("sourceUser", "targetUser", PROC_INST_ID, WORK_ITEM_ID);

@@ -13,23 +13,18 @@
 
     <groupId>ro.teamnet.wfmc</groupId>
     <artifactId>wfmc-spring-services</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <dependencies>
         <dependency>
             <groupId>org.wfmc</groupId>
-            <artifactId>wfmc-api</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wfmc</groupId>
             <artifactId>wfmc-commons</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>5.0</version>
         </dependency>
         <dependency>
             <groupId>org.wfmc</groupId>
             <artifactId>wfmc-impl-elo</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>4.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -40,11 +35,6 @@
                     <artifactId>velocity</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>ro.teamnet.wfmc.audit</groupId>
-            <artifactId>wfmc-audit</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -75,5 +65,16 @@
             <version>4.1.3.RELEASE</version>
         </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
