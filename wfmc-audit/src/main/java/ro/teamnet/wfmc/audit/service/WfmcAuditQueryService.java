@@ -8,7 +8,9 @@ public interface WfmcAuditQueryService {
 
     WMProcessInstanceAudit findWMProcessInstanceAuditByProcessDefinitionBusinessName(String processDefinitionBusinessName);
 
-    WMEventAudit findWMEventAuditByUsername(String username);
+    WMEventAudit findByUsername(String username);
+
+    WMEventAudit findByEventCode(int eventCode);
 
     WMErrorAudit findWMErrorAuditByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 
@@ -25,4 +27,5 @@ public interface WfmcAuditQueryService {
     WMEventAuditProcessInstance findWMEventAuditProcessInstanceByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 
     WMEventAuditProcessInstance findWMEventAuditProcessInstanceByPreviousState(String previousState);
+
 }

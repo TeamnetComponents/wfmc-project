@@ -9,5 +9,7 @@ import ro.teamnet.wfmc.audit.domain.WMEventAudit;
 public interface EventAuditRepository extends JpaRepository<WMEventAudit, Long> {
 
     public WMEventAudit findByUsername(String username);
+
+    public WMEventAudit findByEventCode(int eventCode);
 }
 

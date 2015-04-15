@@ -1,12 +1,6 @@
 package ro.teamnet.wfmc.audit.service;
 
 import org.springframework.stereotype.Service;
-import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
-import ro.teamnet.wfmc.audit.domain.WMEventAudit;
-import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
-import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
-import ro.teamnet.wfmc.audit.repository.EventAuditRepository;
-import ro.teamnet.wfmc.audit.repository.ProcessInstanceAuditRepository;
 import ro.teamnet.wfmc.audit.domain.*;
 import ro.teamnet.wfmc.audit.repository.*;
 
@@ -17,25 +11,18 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
 
     @Inject
     private ProcessInstanceAuditRepository processInstanceAuditRepository;
-
     @Inject
     private EventAuditRepository eventAuditRepository;
-
     @Inject
     private ErrorAuditRepository errorAuditRepository;
-
     @Inject
     private EventAuditAttributeRepository eventAuditAttributeRepository;
-
     @Inject
     private AttributeAuditProcessInstanceRepository attributeAuditProcessInstanceRepository;
-
     @Inject
     private WorkItemAuditRepository workItemAuditRepository;
-
     @Inject
     private EventAuditWorkItemRepository eventAuditWorkItemRepository;
-
     @Inject
     private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
 
@@ -50,8 +37,13 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     }
 
     @Override
-    public WMEventAudit findWMEventAuditByUsername(String username) {
+    public WMEventAudit findByUsername(String username) {
         return eventAuditRepository.findByUsername(username);
+    }
+
+    @Override
+    public WMEventAudit findByEventCode(int eventCode) {
+        return eventAuditRepository.findByEventCode(eventCode);
     }
 
     @Override

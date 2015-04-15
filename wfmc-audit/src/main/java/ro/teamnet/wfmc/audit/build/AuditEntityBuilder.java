@@ -26,6 +26,22 @@ public class AuditEntityBuilder {
     }
 
     /**
+     * Create a new {@link WMProcessInstanceAudit} object by another {@link WMProcessInstanceAudit} built on call <code>createProcessInstance()</code>
+     *
+     * @param wmProcessInstanceAudit
+     * @return
+     */
+    public WMProcessInstanceAudit createwmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
+
+        WMProcessInstanceAudit newwmProcessInstanceAudit = new WMProcessInstanceAudit();
+        newwmProcessInstanceAudit.setProcessInstanceId(wmProcessInstanceAudit.getProcessInstanceId());
+        newwmProcessInstanceAudit.setProcessDefinitionId(wmProcessInstanceAudit.getProcessDefinitionId());
+        newwmProcessInstanceAudit.setProcessDefinitionBusinessName(wmProcessInstanceAudit.getProcessDefinitionBusinessName());
+
+        return newwmProcessInstanceAudit;
+    }
+
+    /**
      * Create an {@link WMEventAuditProcessInstance} used for {@link ro.teamnet.wfmc.audit.strategy.AbortProcessInstanceAuditingStrategy} to save audit into database
      * @param wmProcessInstanceAudit
      * @param previousState
@@ -84,6 +100,15 @@ public class AuditEntityBuilder {
         return wmEventAuditWorkItem;
     }
 
+    public WMAttributeAuditWorkItem createwmAttributeAudit(String attributeName, WMWorkItemAudit wmWorkItemAudit) {
+
+        WMAttributeAuditWorkItem wmAttributeAuditWorkItem = new WMAttributeAuditWorkItem();
+        wmAttributeAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
+        wmAttributeAuditWorkItem.setAttributeName(attributeName);
+
+        return wmAttributeAuditWorkItem;
+    }
+
     /**
      * Create an {@link WMAttributeAuditProcessInstance} object by a {@link WMAttributeAuditProcessInstance#attributeName} and
      * a {@link WMProcessInstanceAudit} object
@@ -117,6 +142,27 @@ public class AuditEntityBuilder {
         wmEventAuditAttribute.setUsername(username);
         wmEventAuditAttribute.setAttributeValue(attributeValue.toString());
         wmEventAuditAttribute.setWmAttributeAudit(wmAttributeAuditProcessInstance);
+
+        return wmEventAuditAttribute;
+    }
+
+    /**
+     * Save an {@link WMEventAuditAttribute} object with an {@link WMEventAuditAttribute#attributeValue},
+     * {@link WMAttributeAudit} object and a {@link WMEventAudit} object populated with {@link WMEventAudit#username},
+     * {@link WMEventAudit#eventCode} and {@link WMEventAudit#eventDate}
+     * @param attributeValue
+     * @param username
+     * @param wmAttributeAuditWorkItem
+     * @return an instance for further operations
+     */
+    public WMEventAuditAttribute createwmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditWorkItem wmAttributeAuditWorkItem) {
+
+        WMEventAuditAttribute wmEventAuditAttribute = new WMEventAuditAttribute();
+        wmEventAuditAttribute.setEventDate(new DateTime());
+        wmEventAuditAttribute.setEventCode(WMAEventCode.ASSIGNED_ACTIVITY_INSTANCE_ATTRIBUTES.value());
+        wmEventAuditAttribute.setUsername(username);
+        wmEventAuditAttribute.setAttributeValue(attributeValue.toString());
+        wmEventAuditAttribute.setWmAttributeAudit(wmAttributeAuditWorkItem);
 
         return wmEventAuditAttribute;
     }

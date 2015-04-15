@@ -22,6 +22,14 @@ public class WfmcMethodAuditingStrategyFactory implements MethodAuditingStrategy
     AssignProcessInstanceAttributeAuditingStrategy assignProcessInstanceAttribute;
 
     @Inject
+    @Qualifier(WfmcAuditedMethod.START_PROCESS)
+    StartProcessAuditingStrategy startProcessAuditingStrategy;
+
+    @Inject
+    @Qualifier(WfmcAuditedMethod.ASSIGN_WORK_ITEM_ATTRIBUTE)
+    AssignWorkItemAttributeAuditingStrategy assignWorkItemAttributeAuditingStrategy;
+
+    @Inject
     @Qualifier(WfmcAuditedMethod.REASSIGN_WORK_ITEM)
     ReassignWorkItemAuditingStrategy reassignWorkItemAuditingStrategy;
 
@@ -38,8 +46,12 @@ public class WfmcMethodAuditingStrategyFactory implements MethodAuditingStrategy
         switch (methodName) {
             case WfmcAuditedMethod.CREATE_PROCESS_INSTANCE:
                 return createProcessInstance;
+            case WfmcAuditedMethod.START_PROCESS:
+                return startProcessAuditingStrategy;
             case WfmcAuditedMethod.ASSIGN_PROCESS_INSTANCE_ATTRIBUTE:
                 return assignProcessInstanceAttribute;
+            case WfmcAuditedMethod.ASSIGN_WORK_ITEM_ATTRIBUTE:
+                return assignWorkItemAttributeAuditingStrategy;
             case WfmcAuditedMethod.REASSIGN_WORK_ITEM:
                 return reassignWorkItemAuditingStrategy;
             case WfmcAuditedMethod.ABORT_PROCESS_INSTANCE:
