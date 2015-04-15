@@ -29,6 +29,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     private WMConnectInfo wmConnectInfo = null;
 
+    @Override
     public String getUserIdentification() {
         if (wmConnectInfo == null) {
             return null;
