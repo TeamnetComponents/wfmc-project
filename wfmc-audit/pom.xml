@@ -14,7 +14,7 @@
 
     <groupId>ro.teamnet.wfmc.audit</groupId>
     <artifactId>wfmc-audit</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
 
     <properties>
         <HikariCP.version>2.2.5</HikariCP.version>

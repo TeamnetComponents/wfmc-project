@@ -13,18 +13,18 @@
 
     <groupId>ro.teamnet.wfmc</groupId>
     <artifactId>wfmc-spring-services</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>org.wfmc</groupId>
             <artifactId>wfmc-commons</artifactId>
-            <version>5.0</version>
+            <version>6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.wfmc</groupId>
             <artifactId>wfmc-impl-elo</artifactId>
-            <version>4.0</version>
+            <version>5.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
