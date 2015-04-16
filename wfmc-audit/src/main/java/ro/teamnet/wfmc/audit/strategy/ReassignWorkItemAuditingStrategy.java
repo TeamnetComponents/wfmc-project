@@ -32,7 +32,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
         this.auditInfo = auditInfo;
     }
 
-    //TODO: de stabilit cum se salveaza valorile pentru SOURCE_USER si TARGET_USER in structura de auditare exitenta sau de modificat structura pentru a le include si pe ele.
+    //TODO @Andra: de stabilit cum se salveaza valorile pentru SOURCE_USER si TARGET_USER in structura de auditare exitenta sau de modificat structura pentru a le include si pe ele.
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);

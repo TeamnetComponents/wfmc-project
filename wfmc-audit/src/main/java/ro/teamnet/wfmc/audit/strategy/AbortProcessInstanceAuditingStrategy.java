@@ -11,7 +11,6 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
-import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 
 import javax.inject.Inject;
 
@@ -37,6 +36,9 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         wfmcAuditService.convertAndSaveAbortProcessInstance(
+                //TODO salvati processInstanceAudit intr-un field si nu mai apelati getterul peste tot, deoarece face un find costisitor in spate
+                //de fixat asta si in alte strategii unde s-a folosit getter in loc de field
+                // luati ca exemplu AssignProcessInstanceAttributeAuditingStrategy
                 getWmProcessInstanceAudit(),
                 WMAEventCode.ABORTED_ACTIVITY_INSTANCE.value(),
                 username

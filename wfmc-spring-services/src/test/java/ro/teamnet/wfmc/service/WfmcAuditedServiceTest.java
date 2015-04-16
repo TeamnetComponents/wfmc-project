@@ -31,7 +31,7 @@ public class WfmcAuditedServiceTest {
 
 
     private static final String USER_IDENTIFICATION = "testUser";
-//TODO : de pus la loc - pentru a prinde eventualele buguri, e bine sa avem valori diferite de numele atributului
+    //TODO: de pus la loc stringurile de mai jos in teste - pentru a prinde eventualele buguri, e bine sa avem valori diferite de numele atributului
     /*private static final String PROC_DEF_ID = "pd_id";
     private static final String PROC_INST_ID = "pi_id";
     private static final String WORK_ITEM_ID = "wi_id";
@@ -68,7 +68,7 @@ public class WfmcAuditedServiceTest {
 
         Assert.assertEquals("CreateProcess: The process instance id isn't the same!", wmProcessInstanceAudit.getProcessInstanceId(), WfmcAuditedParameter.PROCESS_INSTANCE_ID);
         log.info("Process instance id: {}", wmProcessInstanceAudit.getProcessInstanceId());
-        Assert.assertEquals("CreateProcess: The process definition id isn't the same!", wmProcessInstanceAudit.getProcessDefinitionId(),WfmcAuditedParameter.PROCESS_DEFINITION_ID);
+        Assert.assertEquals("CreateProcess: The process definition id isn't the same!", wmProcessInstanceAudit.getProcessDefinitionId(), WfmcAuditedParameter.PROCESS_DEFINITION_ID);
         log.info("Process definition id: {}", wmProcessInstanceAudit.getProcessDefinitionId());
         Assert.assertEquals("CreateProcess: The process instance name isn't the same!", wmProcessInstanceAudit.getProcessDefinitionBusinessName(), WfmcAuditedParameter.PROCESS_INSTANCE_NAME);
         log.info("Process instance name: {}", wmProcessInstanceAudit.getProcessDefinitionBusinessName());

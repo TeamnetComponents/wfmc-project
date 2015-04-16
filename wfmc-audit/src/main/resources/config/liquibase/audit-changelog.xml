@@ -57,7 +57,7 @@
             <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="ATTRIBUTE_NAME" type="varchar(15)"/>
+            <column name="ATTRIBUTE_NAME" type="varchar(100)"/>
             <column name="DISCRIMINATOR" type="varchar(2)"/>
             <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="bigint"/>
             <column name="WM_WORK_ITEM_AUDIT_ID" type="bigint"/>
@@ -89,7 +89,7 @@
             </column>
             <column name="DISCRIMINATOR" type="varchar(2)"/>
             <column name="EVENT_CODE" type="integer"/>
-            <column name="USERNAME" type="varchar(20)"/>
+            <column name="USERNAME" type="varchar(50)"/>
             <column name="EVENT_DATE" type="timestamp">
                 <constraints nullable="false"/>
             </column>
@@ -97,7 +97,7 @@
             <column name="PREVIOUS_STATE" type="varchar(50)"/>
             <column name="WORK_ITEM_STATE" type="varchar(50)"/>
             <column name="WM_ATTRIBUTE_AUDIT_ID" type="bigint"/>
-            <column name="ATTR_VALUE" type="varchar(50)"/>
+            <column name="ATTR_VALUE" type="varchar(1000)"/>
             <column name="WM_PROCESS_INSTANCE_AUDIT_ID" type="bigint"/>
         </createTable>
 

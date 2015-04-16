@@ -1,6 +1,9 @@
 package ro.teamnet.wfmc.audit.domain;
 
-import javax.persistence.*;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Created by Ioan.Ivan on 3/25/2015.

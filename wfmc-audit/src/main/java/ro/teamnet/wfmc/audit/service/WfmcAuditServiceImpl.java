@@ -14,11 +14,16 @@ import javax.inject.Inject;
 @Service
 public class WfmcAuditServiceImpl implements WfmcAuditService {
 
+//TODO : de facut curatenie aici: se vor folosi aceleasi conventii de nume pentru toate metodele, se vor elimina duplicatele
+// de exemplu convertAndSaveAbortProcessInstance si saveEventAuditProcessInstance au aceeasi implementare, prima ar trebui sa dispara.
 
     @Inject
     private EventAuditWorkItemRepository eventAuditWorkItemRepository;
     @Inject
     private EventAuditAttributeRepository eventAuditAttributeRepository;
+
+    @Inject
+    private AttributeAuditProcessInstanceRepository attributeAuditProcessInstanceRepository;
     @Inject
     private AttributeAuditWorkItemRepository attributeAuditWorkItemRepository;
     @Inject
@@ -42,8 +47,12 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     @Override
     public WMEventAuditAttribute convertAndSaveAssignAttributeAudit(String attributeName, Object attributeValue, String username, WMProcessInstanceAudit wmProcessInstanceAudit) {
 
-        WMAttributeAuditProcessInstance wmAttributeAudit = auditEntityBuilder.createwmAttributeAudit(attributeName, wmProcessInstanceAudit);
+        WMAttributeAuditProcessInstance wmAttributeAudit = saveAttributeAuditProcessInstance(attributeName, wmProcessInstanceAudit);
         return eventAuditAttributeRepository.save(auditEntityBuilder.createwmEventAuditAttribute(attributeValue, username, wmAttributeAudit));
+    }
+
+    private WMAttributeAuditProcessInstance saveAttributeAuditProcessInstance(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit) {
+        return attributeAuditProcessInstanceRepository.save(auditEntityBuilder.createwmAttributeAudit(attributeName, wmProcessInstanceAudit));
     }
 
     public WMWorkItemAudit savewmWorkItemAudit(String workItemId, WMProcessInstanceAudit wmProcessInstanceAudit) {
@@ -54,6 +63,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     public WMAttributeAuditWorkItem savewmAttributeAuditWorkItem(String attributeName, WMWorkItemAudit wmWorkItemAudit) {
         return attributeAuditWorkItemRepository.save(auditEntityBuilder.createwmAttributeAudit(attributeName, wmWorkItemAudit));
     }
+
     /**
      * Save an {@link WMEventAuditWorkItem} object.
      *
@@ -70,6 +80,7 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
         WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
         return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForReassign(username, wmWorkItemAudit));
     }
+
     /**
      * @param wmProcessInstanceAudit
      * @param eventCode

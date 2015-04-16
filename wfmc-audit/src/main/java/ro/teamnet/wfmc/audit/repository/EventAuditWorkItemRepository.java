@@ -13,5 +13,6 @@ import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
 public interface EventAuditWorkItemRepository extends JpaRepository<WMEventAuditWorkItem, Long> {
 
     WMEventAuditWorkItem findByWorkItemState(String workItemState);
+
     WMEventAuditWorkItem findByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit);
 }

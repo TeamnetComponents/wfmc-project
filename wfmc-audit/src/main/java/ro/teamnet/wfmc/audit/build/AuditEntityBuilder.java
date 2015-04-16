@@ -43,6 +43,7 @@ public class AuditEntityBuilder {
 
     /**
      * Create an {@link WMEventAuditProcessInstance} used for {@link ro.teamnet.wfmc.audit.strategy.AbortProcessInstanceAuditingStrategy} to save audit into database
+     *
      * @param wmProcessInstanceAudit
      * @param eventCode
      * @param username
@@ -83,6 +84,7 @@ public class AuditEntityBuilder {
     /**
      * Create an {@link WMEventAuditWorkItem} object by a {@link WMEventAuditWorkItem#wmWorkItemAudit} and a
      * {@link WMEventAuditWorkItem#workItemState}
+     *
      * @param username
      * @param wmWorkItemAudit
      * @return an instance for further operations.
@@ -95,7 +97,7 @@ public class AuditEntityBuilder {
         wmEventAuditWorkItem.setEventDate(new DateTime());
         wmEventAuditWorkItem.setUsername(username);
         wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
-        //TODO: de vazut cum salvam si source / target user. adaugam coloanele in WMEventAuditWorkItem?
+        //TODO @Andra: de vazut cum salvam si source / target user. adaugam coloanele in WMEventAuditWorkItem?
         // Sau salvam cate un WMAttributeAuditWorkItem pentru source user, respectiv target user, si le legam la event?
         return wmEventAuditWorkItem;
     }
@@ -112,6 +114,7 @@ public class AuditEntityBuilder {
     /**
      * Create an {@link WMAttributeAuditProcessInstance} object by a {@link WMAttributeAuditProcessInstance#attributeName} and
      * a {@link WMProcessInstanceAudit} object
+     *
      * @param attributeName
      * @param wmProcessInstanceAudit
      * @return an instance of the object for further operations
@@ -129,6 +132,7 @@ public class AuditEntityBuilder {
      * Create an {@link WMEventAuditAttribute} object with an {@link WMEventAuditAttribute#attributeValue},
      * {@link WMAttributeAudit} object and a {@link WMEventAudit} object populated with {@link WMEventAudit#username},
      * {@link WMEventAudit#eventCode} and {@link WMEventAudit#eventDate}
+     *
      * @param attributeValue
      * @param username
      * @param wmAttributeAuditProcessInstance
@@ -150,6 +154,7 @@ public class AuditEntityBuilder {
      * Save an {@link WMEventAuditAttribute} object with an {@link WMEventAuditAttribute#attributeValue},
      * {@link WMAttributeAudit} object and a {@link WMEventAudit} object populated with {@link WMEventAudit#username},
      * {@link WMEventAudit#eventCode} and {@link WMEventAudit#eventDate}
+     *
      * @param attributeValue
      * @param username
      * @param wmAttributeAuditWorkItem

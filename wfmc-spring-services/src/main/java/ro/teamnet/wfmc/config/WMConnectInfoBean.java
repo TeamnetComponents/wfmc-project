@@ -13,7 +13,7 @@ public class WMConnectInfoBean {
     private String engineName;
     private String scope;
 
-    public WMConnectInfo getWMConnectInfo(){
+    public WMConnectInfo getWMConnectInfo() {
         return new WMConnectInfo(userIdentification, password, engineName, scope);
     }
 

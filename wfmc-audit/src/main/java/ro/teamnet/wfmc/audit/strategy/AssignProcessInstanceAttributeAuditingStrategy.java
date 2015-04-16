@@ -17,6 +17,7 @@ import javax.inject.Inject;
 @Qualifier(WfmcAuditedMethod.ASSIGN_PROCESS_INSTANCE_ATTRIBUTE)
 public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAuditingStrategy {
 
+    private WMProcessInstanceAudit processInstanceAudit;
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
@@ -33,12 +34,13 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
 
     @Override
     public void auditMethodBeforeInvocation() {
+        processInstanceAudit = getWmProcessInstanceAudit();
         String username = getUserIdentification(auditInfo);
         wfmcAuditService.convertAndSaveAssignAttributeAudit(
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_NAME),
                 auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_VALUE),
                 username,
-                getWmProcessInstanceAudit()
+                processInstanceAudit
         );
     }
 
@@ -49,7 +51,7 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, getWmProcessInstanceAudit(), auditInfo.getMethod().getName());
+        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {
@@ -60,4 +62,4 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
         Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
         return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
     }
- }
+}
