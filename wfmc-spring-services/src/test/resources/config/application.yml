@@ -1,22 +1,24 @@
-wfmcAudit:
-    datasource:
-        dataSourceClassName: org.h2.jdbcx.JdbcDataSource
-        driverClassName: org.h2.Driver
-        url: jdbc:h2:mem:wfmcaudit;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-        databaseName:
-        serverName:
-        username:
-        password:
+wfmc:
+    audit:
+        datasource:
+            dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+            driverClassName: org.h2.Driver
+            url: jdbc:h2:mem:wfmcaudit;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+            databaseName:
+            serverName:
+            username:
+            password:
 
-wmConnectInfo:
-    userIdentification: mockUser
-    password: mockPass
-    engineName: mockEngine
-    scope: mockScope
+    service:
+        instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl
 
-wfmcService:
-    instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl
     cacheService:
         instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceCacheMockImpl
+
+    wmConnectInfo:
+        userIdentification: mockUser
+        password: mockPass
+        engineName: mockEngine
+        scope: mockScope
 
 spring.velocity.checkTemplateLocation: false

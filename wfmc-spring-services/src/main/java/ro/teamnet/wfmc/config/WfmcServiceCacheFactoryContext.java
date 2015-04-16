@@ -10,7 +10,7 @@ import java.util.Properties;
  * Configuration properties for the WfmcServiceCacheFactory.
  */
 @Component
-@ConfigurationProperties(prefix = "wfmcService.cacheService")
+@ConfigurationProperties(prefix = "wfmc.cacheService")
 public class WfmcServiceCacheFactoryContext {
 
     private String instanceName;

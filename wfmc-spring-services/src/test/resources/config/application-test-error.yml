@@ -1,4 +1,3 @@
-wfmcService:
-    instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceMockWithExceptionsImpl
-
 spring.profiles.active: test-error
+
+wfmc.service.instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceMockWithExceptionsImpl

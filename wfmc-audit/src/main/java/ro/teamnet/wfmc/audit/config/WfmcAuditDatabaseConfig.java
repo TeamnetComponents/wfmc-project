@@ -36,7 +36,7 @@ public class WfmcAuditDatabaseConfig {
     private Environment env;
 
     @Bean(name = "wfmcAuditDataSource")
-    @ConfigurationProperties(prefix = "wfmcAudit.datasource")
+    @ConfigurationProperties(prefix = "wfmc.audit.datasource")
     public DataSource dataSource() {
         log.info("Configuring audit data source");
         return DataSourceBuilder.create().build();

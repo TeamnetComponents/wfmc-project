@@ -10,7 +10,7 @@ import java.util.Properties;
  * Configuration properties for the WfmcServiceFactory.
  */
 @Component
-@ConfigurationProperties(prefix = "wfmcService")
+@ConfigurationProperties(prefix = "wfmc.service")
 public class WfmcServiceFactoryContext {
 
     private String instanceName;

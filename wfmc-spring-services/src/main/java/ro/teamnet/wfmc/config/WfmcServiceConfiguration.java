@@ -24,11 +24,14 @@ public class WfmcServiceConfiguration {
     @Inject
     private WfmcServiceCacheFactoryContext wfmcServiceCacheFactoryContext;
 
+    @Inject
+    private WMConnectInfoBean wmConnectInfoBean;
+
     @Bean
     public WfmcService wfmcService() {
         try {
             WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(wfmcServiceFactoryContext.getProperties());
-            return wfmcServiceFactory.getInstance(wfmcServiceCacheFactoryContext.getProperties());
+            return wfmcServiceFactory.getService(wfmcServiceCacheFactoryContext.getProperties());
         } catch (Exception e) {
             throw new BeanCreationException("Could not create WfmcService", e);
         }
@@ -36,10 +39,6 @@ public class WfmcServiceConfiguration {
 
     @Bean
     public WMConnectInfo wmConnectInfo() {
-        String userIdentification = environment.getProperty("wmConnectInfo.userIdentification");
-        String password = environment.getProperty("wmConnectInfo.password");
-        String engineName = environment.getProperty("wmConnectInfo.engineName");
-        String scope = environment.getProperty("wmConnectInfo.scope");
-        return new WMConnectInfo(userIdentification, password, engineName, scope);
+        return wmConnectInfoBean.getWMConnectInfo();
     }
 }

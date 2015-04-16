@@ -83,7 +83,7 @@ public class WfmcServiceFactory extends ServiceFactory<WfmcService> {
         return wfmcService;
     }
 
-    public WfmcService getInstance(Properties wfmcServiceCacheContext) throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
+    public WfmcService getService(Properties wfmcServiceCacheContext) throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
         WfmcService wfmcService = null;
         wfmcService = super.getInstance();
 
