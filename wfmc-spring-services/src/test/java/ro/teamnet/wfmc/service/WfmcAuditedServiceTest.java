@@ -19,7 +19,6 @@ import org.wfmc.wapi.WMWorkflowException;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.*;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
-import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 import ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl;
 
 import javax.inject.Inject;
@@ -32,7 +31,7 @@ public class WfmcAuditedServiceTest {
 
 
     private static final String USER_IDENTIFICATION = "testUser";
-
+//TODO : de pus la loc - pentru a prinde eventualele buguri, e bine sa avem valori diferite de numele atributului
     /*private static final String PROC_DEF_ID = "pd_id";
     private static final String PROC_INST_ID = "pi_id";
     private static final String WORK_ITEM_ID = "wi_id";
