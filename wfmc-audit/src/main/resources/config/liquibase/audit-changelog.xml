@@ -30,7 +30,9 @@
             <column name="ID" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="PROCESS_INSTANCE_ID" type="varchar(10)"/>
+            <column name="PROCESS_INSTANCE_ID" type="varchar(1000)">
+            <constraints primaryKey="true" nullable="false"/>
+            </column>
             <column name="PROCESS_DEFINITION_ID" type="varchar(10)"/>
             <column name="PROCESS_DEF_BUSINESS_NAME" type="varchar(20)"/>
         </createTable>
@@ -175,6 +177,5 @@
                                  onDelete="RESTRICT"
                                  onUpdate="RESTRICT"/>
     </changeSet>
-
 
 </databaseChangeLog>
