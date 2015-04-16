@@ -26,6 +26,5 @@ public interface WfmcAuditQueryService {
 
     WMEventAuditProcessInstance findWMEventAuditProcessInstanceByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 
-    WMEventAuditProcessInstance findWMEventAuditProcessInstanceByPreviousState(String previousState);
 
 }

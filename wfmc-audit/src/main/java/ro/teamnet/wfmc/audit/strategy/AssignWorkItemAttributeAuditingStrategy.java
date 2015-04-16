@@ -41,12 +41,17 @@ public class AssignWorkItemAttributeAuditingStrategy implements MethodAuditingSt
 
         wmWorkItemAudit = wfmcAuditService.savewmWorkItemAudit(
                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
-                getWmProcessInstanceAudit());
+                getWmProcessInstanceAudit()
+        );
         wmAttributeAuditWorkItem = wfmcAuditService.savewmAttributeAuditWorkItem(
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_NAME),
-               wmWorkItemAudit);
-        wmEventAuditAttribute = wfmcAuditService.savewmEventAuditAttribute(auditInfo.getArgumentsByParameterDescription().
-                get(WfmcAuditedParameter.ATTRIBUTE_VALUE), username, wmAttributeAuditWorkItem);
+                 wmWorkItemAudit
+        );
+        wmEventAuditAttribute = wfmcAuditService.savewmEventAuditAttribute(
+                auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.ATTRIBUTE_VALUE),
+                username,
+                wmAttributeAuditWorkItem
+        );
     }
 
     @Override

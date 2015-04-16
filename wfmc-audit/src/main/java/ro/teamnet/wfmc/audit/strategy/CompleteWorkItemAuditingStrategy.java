@@ -7,7 +7,10 @@ import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
+import ro.teamnet.wfmc.audit.repository.EventAuditWorkItemRepository;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
@@ -15,9 +18,10 @@ import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 
 import javax.inject.Inject;
 
+
 @Component
-@Qualifier(WfmcAuditedMethod.ABORT_PROCESS_INSTANCE)
-public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrategy {
+@Qualifier(value = WfmcAuditedMethod.COMPLETE_WORK_ITEM)
+public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy {
 
     @Inject
     private WfmcAuditService wfmcAuditService;
@@ -25,6 +29,9 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     private WfmcAuditQueryService wfmcAuditQueryService;
     @Inject
     private WMAuditErrorUtil auditErrorUtil;
+
+    private WMWorkItemAudit wmWorkItemAudit;
+    private WMEventAuditWorkItem wmEventAuditWorkItem;
 
     private AuditInfo auditInfo;
 
@@ -36,11 +43,11 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        wfmcAuditService.convertAndSaveAbortProcessInstance(
-                getWmProcessInstanceAudit(),
-                WMAEventCode.ABORTED_ACTIVITY_INSTANCE.value(),
-                username
-        );
+        wmWorkItemAudit = wfmcAuditService.savewmWorkItemAudit(
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
+                getWmProcessInstanceAudit());
+        wmEventAuditWorkItem = wfmcAuditService.savewmEventAuditWorkItem(username, wmWorkItemAudit);
+
     }
 
     @Override

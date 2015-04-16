@@ -38,6 +38,10 @@ public class WfmcMethodAuditingStrategyFactory implements MethodAuditingStrategy
     AbortProcessInstanceAuditingStrategy abortProcessInstanceAuditingStrategy;
 
     @Inject
+    @Qualifier(WfmcAuditedMethod.COMPLETE_WORK_ITEM)
+    CompleteWorkItemAuditingStrategy completeWorkItemAuditingStrategy;
+
+    @Inject
     @Qualifier("default")
     DefaultMethodAuditingStrategy defaultStrategy;
 
@@ -55,7 +59,9 @@ public class WfmcMethodAuditingStrategyFactory implements MethodAuditingStrategy
             case WfmcAuditedMethod.REASSIGN_WORK_ITEM:
                 return reassignWorkItemAuditingStrategy;
             case WfmcAuditedMethod.ABORT_PROCESS_INSTANCE:
-                return  abortProcessInstanceAuditingStrategy;
+                return abortProcessInstanceAuditingStrategy;
+            case WfmcAuditedMethod.COMPLETE_WORK_ITEM:
+                return completeWorkItemAuditingStrategy;
             default:
                 return defaultStrategy;
         }

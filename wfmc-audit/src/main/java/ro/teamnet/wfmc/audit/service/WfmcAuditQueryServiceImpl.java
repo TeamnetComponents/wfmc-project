@@ -80,9 +80,4 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     public WMEventAuditProcessInstance findWMEventAuditProcessInstanceByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {
         return eventAuditProcessInstanceRepository.findByWmProcessInstanceAudit(wmProcessInstanceAudit);
     }
-
-    @Override
-    public WMEventAuditProcessInstance findWMEventAuditProcessInstanceByPreviousState(String previousState) {
-        return eventAuditProcessInstanceRepository.findByPreviousState(previousState);
-    }
 }

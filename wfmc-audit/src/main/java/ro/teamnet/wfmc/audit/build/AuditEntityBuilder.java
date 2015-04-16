@@ -44,16 +44,14 @@ public class AuditEntityBuilder {
     /**
      * Create an {@link WMEventAuditProcessInstance} used for {@link ro.teamnet.wfmc.audit.strategy.AbortProcessInstanceAuditingStrategy} to save audit into database
      * @param wmProcessInstanceAudit
-     * @param previousState
      * @param eventCode
      * @param username
      * @return the instance for further operations
      */
-    public WMEventAuditProcessInstance createwmEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, Integer eventCode, String username) {
+    public WMEventAuditProcessInstance createwmEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, Integer eventCode, String username) {
 
         WMEventAuditProcessInstance wmEventAuditProcessInstance = new WMEventAuditProcessInstance();
         wmEventAuditProcessInstance.setWmProcessInstanceAudit(wmProcessInstanceAudit);
-        wmEventAuditProcessInstance.setPreviousState(previousState);
         wmEventAuditProcessInstance.setEventCode(eventCode);
         wmEventAuditProcessInstance.setUsername(username);
         wmEventAuditProcessInstance.setEventDate(new DateTime());
@@ -70,12 +68,13 @@ public class AuditEntityBuilder {
         return wmWorkItemAudit;
     }
 
-    public WMEventAuditWorkItem createwmEventAuditWorkItemForComplete(String username, WMWorkItemAudit wmWorkItemAudit) {
+    public WMEventAuditWorkItem createwmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit) {
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
         wmEventAuditWorkItem.setUsername(username);
         wmEventAuditWorkItem.setEventCode(WMAEventCode.COMPLETED_WORK_ITEM.value());
         wmEventAuditWorkItem.setEventDate(new DateTime());
         wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
+        wmEventAuditWorkItem.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
 
         return wmEventAuditWorkItem;
     }

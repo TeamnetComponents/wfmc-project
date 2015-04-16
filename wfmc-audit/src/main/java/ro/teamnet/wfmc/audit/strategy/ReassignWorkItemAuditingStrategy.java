@@ -41,7 +41,8 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.TARGET_USER),
                 username,
                 getWmProcessInstanceAudit().getProcessDefinitionId(),
-                getWmProcessInstanceAudit().getProcessDefinitionBusinessName());
+                getWmProcessInstanceAudit().getProcessDefinitionBusinessName()
+        );
     }
 
     @Override

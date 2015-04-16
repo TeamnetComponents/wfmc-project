@@ -61,8 +61,10 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
         processInstanceAudit = wfmcAuditQueryService.findByProcessInstanceId(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
 
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
-                processInstanceAudit, WfmcPreviousState.START_PROCESS_INSTANCE,
-                WMAEventCode.STARTED_PROCESS_INSTANCE_INT, username);
+                processInstanceAudit,
+                WMAEventCode.STARTED_PROCESS_INSTANCE_INT,
+                username
+        );
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

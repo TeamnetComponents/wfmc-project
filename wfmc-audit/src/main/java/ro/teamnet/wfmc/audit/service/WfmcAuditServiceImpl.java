@@ -46,7 +46,6 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
         return eventAuditAttributeRepository.save(auditEntityBuilder.createwmEventAuditAttribute(attributeValue, username, wmAttributeAudit));
     }
 
-
     public WMWorkItemAudit savewmWorkItemAudit(String workItemId, WMProcessInstanceAudit wmProcessInstanceAudit) {
         return workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
     }
@@ -55,7 +54,6 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     public WMAttributeAuditWorkItem savewmAttributeAuditWorkItem(String attributeName, WMWorkItemAudit wmWorkItemAudit) {
         return attributeAuditWorkItemRepository.save(auditEntityBuilder.createwmAttributeAudit(attributeName, wmWorkItemAudit));
     }
-
     /**
      * Save an {@link WMEventAuditWorkItem} object.
      *
@@ -77,17 +75,15 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
         return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForReassign(username, wmWorkItemAudit));
     }
-
     /**
      * @param wmProcessInstanceAudit
-     * @param previousState
      * @param eventCode
      * @param username
      * @return
      */
-    public WMEventAuditProcessInstance convertAndSaveAbortProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, Integer eventCode, String username) {
+    public WMEventAuditProcessInstance convertAndSaveAbortProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, Integer eventCode, String username) {
 
-        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode, username));
+        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, eventCode, username));
     }
 
 
@@ -98,15 +94,21 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     }
 
     @Override
+    public WMEventAuditWorkItem savewmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit) {
+        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItem(username, wmWorkItemAudit));
+    }
+
+
+    @Override
     public WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId) {
 
         return processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, procDefId, procInstName));
     }
 
     @Override
-    public WMEventAuditProcessInstance saveEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, String previousState, int eventCode, String username) {
+    public WMEventAuditProcessInstance saveEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, int eventCode, String username) {
 
-        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, previousState, eventCode, username));
+        return eventAuditProcessInstanceRepository.save(auditEntityBuilder.createwmEventAuditProcessInstance(wmProcessInstanceAudit, eventCode, username));
     }
 
     @Override
@@ -114,14 +116,4 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
         return processInstanceAuditRepository.save(wmProcessInstanceAudit);
     }
-
-//    @Override
-//    public WMEventAuditWorkItem convertAndSaveCompleteWorkItem(String processInstanceId, String workItemId, String username, String processDefinitionId) {
-//
-//        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, processDefinitionId, null));
-//
-//        WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
-//
-//        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForComplete(username, wmWorkItemAudit));
-//    }
 }

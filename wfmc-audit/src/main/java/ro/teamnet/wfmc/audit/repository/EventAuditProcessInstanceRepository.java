@@ -12,6 +12,5 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 @Repository
 public interface EventAuditProcessInstanceRepository extends JpaRepository<WMEventAuditProcessInstance, Long> {
 
-    WMEventAuditProcessInstance findByPreviousState(String previousState);
     WMEventAuditProcessInstance findByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 }

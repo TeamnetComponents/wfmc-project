@@ -59,11 +59,14 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
         String username = getUserIdentification(auditInfo);
         processInstanceAudit = wfmcAuditService.saveProcessInstanceAudit(
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_DEFINITION_ID),
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_NAME), null);
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_NAME), null
+        );
 
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
-                processInstanceAudit, WfmcPreviousState.CREATE_PROCESS_INSTANCE,
-                WMAEventCode.CREATED_PROCESS_INSTANCE_INT, username);
+                processInstanceAudit,
+                WMAEventCode.CREATED_PROCESS_INSTANCE_INT,
+                username
+        );
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {
