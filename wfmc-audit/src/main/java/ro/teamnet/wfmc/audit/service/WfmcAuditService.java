@@ -7,7 +7,7 @@ import ro.teamnet.wfmc.audit.domain.*;
  */
 public interface WfmcAuditService {
 
-    WMEventAuditWorkItem convertAndSaveReassignWorkItem(String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId, String processBusinessName);
+    WMEventAuditWorkItem convertAndSaveReassignWorkItem(WMProcessInstanceAudit wmProcessInstanceAudit, String processInstanceId, String workItemId, String sourceUser, String targetUser, String username);
 
     WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId);
 

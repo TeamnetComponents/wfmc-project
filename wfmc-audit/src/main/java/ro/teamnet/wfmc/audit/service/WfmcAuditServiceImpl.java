@@ -57,22 +57,17 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     /**
      * Save an {@link WMEventAuditWorkItem} object.
      *
+     * @param wmProcessInstanceAudit
      * @param processInstanceId
      * @param workItemId
      * @param sourceUser
      * @param targetUser
      * @param username
-     * @param processDefinitionId
      * @return an instance for further operations.
      */
     @Override
-    public WMEventAuditWorkItem convertAndSaveReassignWorkItem(String processInstanceId, String workItemId, String sourceUser, String targetUser, String username, String processDefinitionId, String processBusinessName) {
-
-
-        WMProcessInstanceAudit wmProcessInstanceAudit = processInstanceAuditRepository.save(auditEntityBuilder.createwmProcessInstanceAudit(processInstanceId, processDefinitionId, processBusinessName));
-
+    public WMEventAuditWorkItem convertAndSaveReassignWorkItem(WMProcessInstanceAudit wmProcessInstanceAudit, String processInstanceId, String workItemId, String sourceUser, String targetUser, String username) {
         WMWorkItemAudit wmWorkItemAudit = workItemAuditRepository.save(auditEntityBuilder.createwmWorkItemAudit(workItemId, wmProcessInstanceAudit));
-
         return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItemForReassign(username, wmWorkItemAudit));
     }
     /**

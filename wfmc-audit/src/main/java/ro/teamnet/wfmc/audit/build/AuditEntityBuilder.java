@@ -95,7 +95,8 @@ public class AuditEntityBuilder {
         wmEventAuditWorkItem.setEventDate(new DateTime());
         wmEventAuditWorkItem.setUsername(username);
         wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
-
+        //TODO: de vazut cum salvam si source / target user. adaugam coloanele in WMEventAuditWorkItem?
+        // Sau salvam cate un WMAttributeAuditWorkItem pentru source user, respectiv target user, si le legam la event?
         return wmEventAuditWorkItem;
     }
 

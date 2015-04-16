@@ -17,6 +17,7 @@ import javax.inject.Inject;
 @Qualifier(WfmcAuditedMethod.REASSIGN_WORK_ITEM)
 public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy {
 
+    private WMProcessInstanceAudit wmProcessInstanceAudit;
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
@@ -31,17 +32,18 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
         this.auditInfo = auditInfo;
     }
 
+    //TODO: de stabilit cum se salveaza valorile pentru SOURCE_USER si TARGET_USER in structura de auditare exitenta sau de modificat structura pentru a le include si pe ele.
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
+        wmProcessInstanceAudit = getWmProcessInstanceAudit();
         wfmcAuditService.convertAndSaveReassignWorkItem(
+                wmProcessInstanceAudit,
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID),
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.SOURCE_USER),
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.TARGET_USER),
-                username,
-                getWmProcessInstanceAudit().getProcessDefinitionId(),
-                getWmProcessInstanceAudit().getProcessDefinitionBusinessName()
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.SOURCE_USER),//nu e salvat
+                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.TARGET_USER), // nu e salvat
+                username
         );
     }
 
@@ -52,7 +54,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, getWmProcessInstanceAudit(), auditInfo.getMethod().getName());
+        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, wmProcessInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {
