@@ -12,7 +12,6 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
-import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 
 import javax.inject.Inject;
 
@@ -58,8 +57,8 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
 
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        processInstanceAudit = wfmcAuditQueryService.findByProcessInstanceId(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-
+        String processInstanceId = (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_DEFINITION_ID);
+        processInstanceAudit = wfmcAuditQueryService.findByProcessInstanceId(processInstanceId);
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
                 processInstanceAudit,
                 WMAEventCode.STARTED_PROCESS_INSTANCE_INT,
