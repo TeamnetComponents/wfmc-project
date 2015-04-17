@@ -23,15 +23,13 @@ public class CompleteWorkItemAuditingStrategy extends HMethods implements Method
 
     @Inject
     private WfmcAuditService wfmcAuditService;
-    @Inject
-    private WfmcAuditQueryService wfmcAuditQueryService;
+
     @Inject
     private WMAuditErrorService auditErrorService;
 
     private WMWorkItemAudit wmWorkItemAudit;
     private WMEventAuditWorkItem wmEventAuditWorkItem;
     private WMProcessInstanceAudit processInstanceAudit;
-
 
     @Override
     public void auditMethodBeforeInvocation() {
@@ -52,14 +50,5 @@ public class CompleteWorkItemAuditingStrategy extends HMethods implements Method
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
         auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
-    }
-
-    private String getUserIdentification(AuditInfo auditInfo) {
-        return (String) auditInfo.invokeMethodOnInstance("getUserIdentification");
-    }
-
-    private WMProcessInstanceAudit getWmProcessInstanceAudit() {
-        Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }

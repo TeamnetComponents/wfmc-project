@@ -22,8 +22,6 @@ public class AssignProcessInstanceAttributeAuditingStrategy extends HMethods imp
     private WfmcAuditService wfmcAuditService;
     @Inject
     private WMAuditErrorService auditErrorService;
-    @Inject
-    private WfmcAuditQueryService wfmcAuditQueryService;
 
     private WMProcessInstanceAudit processInstanceAudit;
 
@@ -47,14 +45,5 @@ public class AssignProcessInstanceAttributeAuditingStrategy extends HMethods imp
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
         auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
-    }
-
-    private String getUserIdentification(AuditInfo auditInfo) {
-        return (String) auditInfo.invokeMethodOnInstance("getUserIdentification");
-    }
-
-    private WMProcessInstanceAudit getWmProcessInstanceAudit() {
-        Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }

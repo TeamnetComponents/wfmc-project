@@ -22,19 +22,17 @@ public class ReassignWorkItemAuditingStrategy extends HMethods implements Method
     private WfmcAuditService wfmcAuditService;
     @Inject
     private WMAuditErrorService auditErrorService;
-    @Inject
-    private WfmcAuditQueryService wfmcAuditQueryService;
 
-    private WMProcessInstanceAudit ProcessInstanceAudit;
+    private WMProcessInstanceAudit processInstanceAudit;
 
     //TODO @Andra: de stabilit cum se salveaza valorile pentru SOURCE_USER si TARGET_USER in structura de auditare exitenta sau de modificat structura pentru a le include si pe ele.
   
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        ProcessInstanceAudit = getWmProcessInstanceAudit();
+        processInstanceAudit = getWmProcessInstanceAudit();
         wfmcAuditService.convertAndSaveReassignWorkItem(
-                ProcessInstanceAudit,
+                processInstanceAudit,
                 (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID),
                 (String) getMethodParameter(WfmcAuditedParameter.WORK_ITEM_ID),
                 (String) getMethodParameter(WfmcAuditedParameter.SOURCE_USER),//nu e salvat
@@ -42,23 +40,12 @@ public class ReassignWorkItemAuditingStrategy extends HMethods implements Method
                 username
         );
     }
-
     @Override
     public void auditMethodAfterInvocation(Object o) {
         //it doesn't execute because it doesn't need any update
     }
-
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, ProcessInstanceAudit, auditInfo.getMethod().getName());
-    }
-
-    private String getUserIdentification(AuditInfo auditInfo) {
-        return (String) auditInfo.invokeMethodOnInstance("getUserIdentification");
-    }
-
-    private WMProcessInstanceAudit getWmProcessInstanceAudit() {
-        Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 }

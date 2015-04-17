@@ -27,13 +27,17 @@ public class CreateProcessInstanceAuditingStrategy extends HMethods implements M
     private WMProcessInstanceAudit processInstanceAudit;
     private WMEventAuditProcessInstance eventAuditProcessInstance;
 
-    /**
-     * hold information about audited method
-     */
-
-    public AuditInfo getAuditInfo() {
-
-        return auditInfo;
+    public void auditMethodBeforeInvocation() {
+        String username = getUserIdentification(auditInfo);
+        processInstanceAudit = wfmcAuditService.saveProcessInstanceAudit(
+                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_DEFINITION_ID),
+                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_NAME), null
+        );
+        eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
+                processInstanceAudit,
+                WMAEventCode.CREATED_PROCESS_INSTANCE_INT,
+                username
+        );
     }
 
     public void auditMethodAfterInvocation(Object auditedMethodReturnValue) {
@@ -45,24 +49,5 @@ public class CreateProcessInstanceAuditingStrategy extends HMethods implements M
     public void auditMethodInvocationError(Throwable throwable) {
 
         auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
-    }
-
-
-    public void auditMethodBeforeInvocation() {
-        String username = getUserIdentification(auditInfo);
-        processInstanceAudit = wfmcAuditService.saveProcessInstanceAudit(
-                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_DEFINITION_ID),
-                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_NAME), null
-        );
-
-        eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
-                processInstanceAudit,
-                WMAEventCode.CREATED_PROCESS_INSTANCE_INT,
-                username
-        );
-    }
-
-    private String getUserIdentification(AuditInfo auditInfo) {
-        return (String) auditInfo.invokeMethodOnInstance("getUserIdentification");
     }
 }
