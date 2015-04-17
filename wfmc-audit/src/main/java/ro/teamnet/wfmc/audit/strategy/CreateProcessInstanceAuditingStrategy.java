@@ -9,9 +9,8 @@ import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
-import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
-import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
+import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 
 import javax.inject.Inject;
 
@@ -22,7 +21,7 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorService auditErrorUtil;
+    private WMAuditErrorService auditErrorService;
 
     private WMProcessInstanceAudit processInstanceAudit;
     private WMEventAuditProcessInstance eventAuditProcessInstance;
@@ -50,7 +49,7 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
 
     public void auditMethodInvocationError(Throwable throwable) {
 
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
 

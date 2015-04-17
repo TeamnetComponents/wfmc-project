@@ -20,7 +20,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorService auditErrorUtil;
+    private WMAuditErrorService auditErrorService;
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
 
@@ -54,7 +54,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, ProcessInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, ProcessInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

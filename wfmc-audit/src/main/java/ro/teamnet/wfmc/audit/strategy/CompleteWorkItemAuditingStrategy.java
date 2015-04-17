@@ -2,7 +2,6 @@ package ro.teamnet.wfmc.audit.strategy;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.wfmc.audit.WMAEventCode;
 import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
@@ -10,11 +9,9 @@ import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
-import ro.teamnet.wfmc.audit.repository.EventAuditWorkItemRepository;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
-import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
-import ro.teamnet.wfmc.audit.util.WfmcPreviousState;
 
 import javax.inject.Inject;
 
@@ -28,7 +25,7 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
     @Inject
-    private WMAuditErrorService auditErrorUtil;
+    private WMAuditErrorService auditErrorService;
 
     private WMWorkItemAudit wmWorkItemAudit;
     private WMEventAuditWorkItem wmEventAuditWorkItem;
@@ -59,7 +56,7 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

@@ -8,11 +8,12 @@ import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMAttributeAuditWorkItem;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
-import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 
 import javax.inject.Inject;
 
@@ -25,7 +26,7 @@ public class AssignWorkItemAttributeAuditingStrategy implements MethodAuditingSt
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorService auditErrorUtil;
+    private WMAuditErrorService auditErrorService;
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
 
@@ -67,7 +68,7 @@ public class AssignWorkItemAttributeAuditingStrategy implements MethodAuditingSt
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {
@@ -76,7 +77,7 @@ public class AssignWorkItemAttributeAuditingStrategy implements MethodAuditingSt
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
+        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }
 

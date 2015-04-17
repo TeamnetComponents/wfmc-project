@@ -8,10 +8,9 @@ import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
-import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
-import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
 
 import javax.inject.Inject;
 
@@ -24,7 +23,7 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
     @Inject
-    private ro.teamnet.wfmc.audit.domain.WMAuditError
+    private WMAuditErrorService wmAuditErrorService;
 
     private AuditInfo auditInfo;
     private WMProcessInstanceAudit processInstanceAudit;
@@ -52,7 +51,7 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
+        wmAuditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

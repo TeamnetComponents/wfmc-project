@@ -21,7 +21,7 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorService auditErrorUtil;
+    private WMAuditErrorService auditErrorService;
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
 
@@ -52,7 +52,7 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

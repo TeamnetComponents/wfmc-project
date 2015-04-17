@@ -9,10 +9,9 @@ import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
-import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
-import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 
 import javax.inject.Inject;
 
@@ -23,7 +22,7 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorService auditErrorUtil;
+    private WMAuditErrorService auditErrorService;
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
 
@@ -53,7 +52,7 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
 
     public void auditMethodInvocationError(Throwable throwable) {
 
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorService.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     public void auditMethodBeforeInvocation() {
@@ -61,7 +60,7 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
         processInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
 
         String processInstanceId = (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        processInstanceAudit = wfmcAuditQueryService.findByProcessInstanceId(processInstanceId);
+        processInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(processInstanceId);
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
                 processInstanceAudit,
                 WMAEventCode.STARTED_PROCESS_INSTANCE_INT,
