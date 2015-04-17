@@ -60,6 +60,6 @@ public class CompleteWorkItemAuditingStrategy extends HMethods implements Method
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
+        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }

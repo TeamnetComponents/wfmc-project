@@ -53,7 +53,7 @@ public class StartProcessAuditingStrategy extends HMethods implements MethodAudi
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         String processInstanceId = (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        processInstanceAudit = wfmcAuditQueryService.findByProcessInstanceId(processInstanceId);
+        processInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(processInstanceId);
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
                 processInstanceAudit,
                 WMAEventCode.STARTED_PROCESS_INSTANCE_INT,

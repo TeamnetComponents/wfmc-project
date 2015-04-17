@@ -56,6 +56,6 @@ public class AbortProcessInstanceAuditingStrategy extends HMethods implements Me
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
+        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }
