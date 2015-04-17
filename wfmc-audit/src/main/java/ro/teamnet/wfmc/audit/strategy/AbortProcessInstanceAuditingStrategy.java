@@ -11,12 +11,13 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
+import ro.teamnet.wfmc.audit.util.HMethods;
 
 import javax.inject.Inject;
 
 @Component
 @Qualifier(WfmcAuditedMethod.ABORT_PROCESS_INSTANCE)
-public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrategy {
+public class AbortProcessInstanceAuditingStrategy extends HMethods implements MethodAuditingStrategy {
 
     @Inject
     private WfmcAuditService wfmcAuditService;
@@ -25,13 +26,8 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     @Inject
     private WMAuditErrorService wmAuditErrorService;
 
-    private AuditInfo auditInfo;
     private WMProcessInstanceAudit processInstanceAudit;
 
-    @Override
-    public void setAuditInfo(AuditInfo auditInfo) {
-        this.auditInfo = auditInfo;
-    }
 
     @Override
     public void auditMethodBeforeInvocation() {
@@ -59,7 +55,7 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     }
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
-        Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
+        Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
+        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
     }
 }

@@ -12,13 +12,14 @@ import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
 import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
+import ro.teamnet.wfmc.audit.util.HMethods;
 
 import javax.inject.Inject;
 
 
 @Component
 @Qualifier(value = WfmcAuditedMethod.COMPLETE_WORK_ITEM)
-public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy {
+public class CompleteWorkItemAuditingStrategy extends HMethods implements MethodAuditingStrategy {
 
     @Inject
     private WfmcAuditService wfmcAuditService;
@@ -29,21 +30,15 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     private WMWorkItemAudit wmWorkItemAudit;
     private WMEventAuditWorkItem wmEventAuditWorkItem;
-
-    private AuditInfo auditInfo;
     private WMProcessInstanceAudit processInstanceAudit;
 
-    @Override
-    public void setAuditInfo(AuditInfo auditInfo) {
-        this.auditInfo = auditInfo;
-    }
 
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         processInstanceAudit = getWmProcessInstanceAudit();
         wmWorkItemAudit = wfmcAuditService.savewmWorkItemAudit(
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
+                (String) getMethodParameter(WfmcAuditedParameter.WORK_ITEM_ID),
                 processInstanceAudit);
         wmEventAuditWorkItem = wfmcAuditService.savewmEventAuditWorkItem(username, wmWorkItemAudit);
 
@@ -64,7 +59,7 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
     }
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
-        Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
+        Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
+        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
     }
 }

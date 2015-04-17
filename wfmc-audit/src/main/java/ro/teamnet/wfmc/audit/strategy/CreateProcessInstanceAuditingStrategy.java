@@ -11,12 +11,13 @@ import ro.teamnet.wfmc.audit.domain.WMEventAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
+import ro.teamnet.wfmc.audit.util.HMethods;
 
 import javax.inject.Inject;
 
 @Component
 @Qualifier(WfmcAuditedMethod.CREATE_PROCESS_INSTANCE)
-public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStrategy {
+public class CreateProcessInstanceAuditingStrategy extends HMethods implements MethodAuditingStrategy {
 
     @Inject
     private WfmcAuditService wfmcAuditService;
@@ -26,19 +27,13 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
     private WMProcessInstanceAudit processInstanceAudit;
     private WMEventAuditProcessInstance eventAuditProcessInstance;
 
-
     /**
      * hold information about audited method
      */
-    private AuditInfo auditInfo;
 
     public AuditInfo getAuditInfo() {
 
         return auditInfo;
-    }
-
-    public void setAuditInfo(AuditInfo auditInfo) {
-        this.auditInfo = auditInfo;
     }
 
     public void auditMethodAfterInvocation(Object auditedMethodReturnValue) {
@@ -56,8 +51,8 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         processInstanceAudit = wfmcAuditService.saveProcessInstanceAudit(
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_DEFINITION_ID),
-                (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_NAME), null
+                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_DEFINITION_ID),
+                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_NAME), null
         );
 
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(

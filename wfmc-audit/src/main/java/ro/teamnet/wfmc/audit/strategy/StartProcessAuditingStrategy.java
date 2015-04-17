@@ -12,13 +12,14 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
+import ro.teamnet.wfmc.audit.util.HMethods;
 
 import javax.inject.Inject;
 
 @Component
 @Qualifier(WfmcAuditedMethod.START_PROCESS)
-public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
-
+public class StartProcessAuditingStrategy extends HMethods implements MethodAuditingStrategy {
+    
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
@@ -27,21 +28,15 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
     private WfmcAuditQueryService wfmcAuditQueryService;
 
     private WMProcessInstanceAudit processInstanceAudit;
-
     private WMEventAuditProcessInstance eventAuditProcessInstance;
 
     /**
      * hold information about audited method
      */
-    private AuditInfo auditInfo;
 
     public AuditInfo getAuditInfo() {
 
         return auditInfo;
-    }
-
-    public void setAuditInfo(AuditInfo auditInfo) {
-        this.auditInfo = auditInfo;
     }
 
     public void auditMethodAfterInvocation(Object auditedMethodReturnValue) {
@@ -57,10 +52,8 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
 
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        processInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-
-        String processInstanceId = (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        processInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(processInstanceId);
+        String processInstanceId = (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
+        processInstanceAudit = wfmcAuditQueryService.findByProcessInstanceId(processInstanceId);
         eventAuditProcessInstance = wfmcAuditService.saveEventAuditProcessInstance(
                 processInstanceAudit,
                 WMAEventCode.STARTED_PROCESS_INSTANCE_INT,
