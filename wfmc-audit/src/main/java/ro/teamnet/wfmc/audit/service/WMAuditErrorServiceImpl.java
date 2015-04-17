@@ -1,4 +1,4 @@
-package ro.teamnet.wfmc.audit.util;
+package ro.teamnet.wfmc.audit.service;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
-import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 
 import javax.inject.Inject;
 

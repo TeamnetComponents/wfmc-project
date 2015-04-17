@@ -31,7 +31,7 @@ public abstract class HMethods implements MethodAuditingStrategy {
     public String getUserIdentification(AuditInfo auditInfo) {
         return (String) auditInfo.invokeMethodOnInstance("getUserIdentification");
     }
-    
+
     public WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
         return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());

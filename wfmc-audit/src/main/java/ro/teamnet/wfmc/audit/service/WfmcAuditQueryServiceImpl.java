@@ -40,7 +40,7 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     }
 
     @Override
-    public WMEventAudit findWMEventAuditByUsername(String username) {
+    public WMEventAudit[] findWMEventAuditByUsername(String username) {
         return eventAuditRepository.findByUsername(username);
     }
 
