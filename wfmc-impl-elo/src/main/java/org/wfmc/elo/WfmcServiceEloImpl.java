@@ -321,7 +321,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
                     FindTasksInfo findTasksInfo = wfMCToEloObjectConverter.convertWMFilterWorkItemToFindTasksInfo((WMFilterWorkItem) filter);
                     FindResult findResult = ixConnection.ix().findFirstTasks(findTasksInfo, MAX_RESULT);
                     UserTask[] userTasks = findResult.getTasks();
-                    WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks);
+                    WMWorkItem[] wmWorkItems = eloToWfMCObjectConverter.convertUserTasksToWMWorkItems(userTasks, ixConnection);
                     return new WMWorkItemIteratorImpl(wmWorkItems);
                 } else {
                     WFDiagram wfDiagram = ixConnection.ix().checkoutWorkFlow(processInstanceId, WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO);

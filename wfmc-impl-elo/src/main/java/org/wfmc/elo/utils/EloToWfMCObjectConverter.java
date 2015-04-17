@@ -28,7 +28,8 @@ public class EloToWfMCObjectConverter {
 
     }
 
-    public WMWorkItem[] convertUserTasksToWMWorkItems(UserTask[] userTasks) {
+    public WMWorkItem[] convertUserTasksToWMWorkItems(UserTask[] userTasks, IXConnection ixConnection) throws
+        RemoteException{
         WMWorkItem[] wmWorkItems = new WMWorkItem[userTasks.length];
         List<WMWorkItem> wmWorkItemsList = new ArrayList<>();
         for (int i = 0; i < userTasks.length; i++) {
@@ -40,7 +41,7 @@ public class EloToWfMCObjectConverter {
             wmWorkItem.setName(userTask.getWfNode().getNodeName());
             wmWorkItem.setPriority(userTask.getWfNode().getPrio());
             wmWorkItem.setId(String.valueOf(userTask.getWfNode().getNodeId()));
-            wmWorkItem.setProcessInstanceId(String.valueOf(userTask.getWfNode().getFlowId()));
+            wmWorkItem.setProcessInstanceId(ixConnection.ix().checkoutWorkFlow(String.valueOf(userTask.getWfNode().getFlowId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO).getGuid());
             WMParticipantImpl user = new WMParticipantImpl(userTask.getWfNode().getUserName());
             wmWorkItem.setParticipant(user);
             wmWorkItem.setProcessDefinitionId(null);//TODO: setProcessDefinitionId - ar trebui sa ne incarcam flow-ul
@@ -99,7 +100,7 @@ public class EloToWfMCObjectConverter {
             wmWorkItem.setName(userTask.getWfNode().getNodeName());
             wmWorkItem.setPriority(userTask.getWfNode().getPrio());
             wmWorkItem.setId(String.valueOf(userTask.getWfNode().getNodeId()));
-            wmWorkItem.setProcessInstanceId(String.valueOf(userTask.getWfNode().getFlowId()));
+            wmWorkItem.setProcessInstanceId(ixConnection.ix().checkoutWorkFlow(String.valueOf(userTask.getWfNode().getFlowId()), WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO).getGuid());
             WMParticipantImpl user = new WMParticipantImpl(userTask.getWfNode().getUserName());
             wmWorkItem.setParticipant(user);
             //pt asta avem nevoie de conextiune - tb sa luam id-ul workflow template-ului echivalent de proces

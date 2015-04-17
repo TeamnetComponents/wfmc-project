@@ -1,6 +1,7 @@
 package org.wfmc.service;
 
 import org.fest.assertions.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.wfmc.audit.*;
 import org.wfmc.service.utils.DatabaseAuditHelper;
@@ -26,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class WfmcServiceFactoryTest {
 
 
-    @Test
+    @Ignore
     public void testWfmcServiceAuditWithAuditInternalImpl()
             throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
@@ -39,7 +40,7 @@ public class WfmcServiceFactoryTest {
     }
 
 
-    @Test
+    @Ignore
     public void testWfmcServiceAuditWithAuditInternalImplCacheIsNotNull()
             throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
@@ -50,7 +51,7 @@ public class WfmcServiceFactoryTest {
         Assertions.assertThat(((WfmcServiceAuditImpl)((WfmcServiceAuditImpl)wfmcService).getInternalService()).getWfmcServiceCache()).isNotNull();
     }
 
-    @Test
+    @Ignore
     public void testDataSourceConnection()
             throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
@@ -60,7 +61,7 @@ public class WfmcServiceFactoryTest {
     }
 
 
-    @Test
+    @Ignore
     public void testInsertReassignWorkItemAudit() throws SQLException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
         Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -138,7 +139,7 @@ public class WfmcServiceFactoryTest {
         }
 
 
-    @Test
+    @Ignore
     public void testInsertCompleteWorkItemAudit() throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
        Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -203,7 +204,7 @@ public class WfmcServiceFactoryTest {
 
 
 
-    @Test
+    @Ignore
     public void testInsertAssignProcessInstanceAttributeAudit() throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
 
         PreparedStatement preparedStatement = null;
@@ -336,7 +337,7 @@ public class WfmcServiceFactoryTest {
 
 
 
-    @Test
+    @Ignore
     public void testUpdateIdCreateProcessInstanceAudit() throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
         ResourceBundle configBundle = ResourceBundle.getBundle("wapi-elo-renns");
         WfmcServiceFactory wfmcServiceFactory = new WfmcServiceFactory(convertResourceBundleToProperties(configBundle));
@@ -349,7 +350,7 @@ public class WfmcServiceFactoryTest {
 
     }
 
-    @Test
+    @Ignore
     public void testInsertCreateProcessInstanceAudit()
             throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, SQLException {
 

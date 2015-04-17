@@ -582,7 +582,8 @@ public class WfmcServiceEloImplTest {
         String processName = "Test";
 
         wfmcServiceEloImpl.connect(wmConnectInfo);
-        int processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6");
+        String processInstanceId = wfmcServiceEloImpl.getIxConnection().ix().checkoutWorkFlow(
+            String.valueOf(wfmcServiceEloImpl.getIxConnection().ix().startWorkFlow(processDefinitionId, processName, "6")),WFTypeC.ACTIVE, WFDiagramC.mbAll, LockC.NO).getGuid();
         WMFilter wmFilter = WMFilterBuilder.createWMFilterWorkItem();
 
         WMWorkItemIterator wmWorkItemIterator = wfmcServiceEloImpl.listWorkItems(wmFilter, true);
@@ -597,9 +598,9 @@ public class WfmcServiceEloImplTest {
         }
 
         Assertions.assertThat(wmWorkItems).isNotNull();
-        Assertions.assertThat(newProcessInstanceId).isEqualTo(String.valueOf(processInstanceId));
+        Assertions.assertThat(newProcessInstanceId).isEqualTo(processInstanceId);
 
-        wfmcServiceEloImpl.abortProcessInstance(String.valueOf(processInstanceId));
+        wfmcServiceEloImpl.abortProcessInstance(processInstanceId);
     }
 
     @Test
