@@ -17,7 +17,6 @@ import javax.inject.Inject;
 @Qualifier(WfmcAuditedMethod.REASSIGN_WORK_ITEM)
 public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy {
 
-    private WMProcessInstanceAudit wmProcessInstanceAudit;
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
@@ -26,6 +25,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
     private WfmcAuditQueryService wfmcAuditQueryService;
 
     private AuditInfo auditInfo;
+    private WMProcessInstanceAudit ProcessInstanceAudit;
 
     @Override
     public void setAuditInfo(AuditInfo auditInfo) {
@@ -36,9 +36,9 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
-        wmProcessInstanceAudit = getWmProcessInstanceAudit();
+        ProcessInstanceAudit = getWmProcessInstanceAudit();
         wfmcAuditService.convertAndSaveReassignWorkItem(
-                wmProcessInstanceAudit,
+                ProcessInstanceAudit,
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID),
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.SOURCE_USER),//nu e salvat
@@ -54,7 +54,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, wmProcessInstanceAudit, auditInfo.getMethod().getName());
+        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, ProcessInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

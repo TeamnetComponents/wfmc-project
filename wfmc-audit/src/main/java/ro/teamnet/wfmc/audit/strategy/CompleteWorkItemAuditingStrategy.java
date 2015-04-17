@@ -29,8 +29,8 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     private WMWorkItemAudit wmWorkItemAudit;
     private WMEventAuditWorkItem wmEventAuditWorkItem;
-
     private AuditInfo auditInfo;
+    private WMProcessInstanceAudit processInstanceAudit;
 
     @Override
     public void setAuditInfo(AuditInfo auditInfo) {
@@ -40,9 +40,10 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
+        processInstanceAudit = getWmProcessInstanceAudit();
         wmWorkItemAudit = wfmcAuditService.savewmWorkItemAudit(
                 (String) auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.WORK_ITEM_ID),
-                getWmProcessInstanceAudit());
+                processInstanceAudit);
         wmEventAuditWorkItem = wfmcAuditService.savewmEventAuditWorkItem(username, wmWorkItemAudit);
 
     }
@@ -54,7 +55,7 @@ public class CompleteWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, getWmProcessInstanceAudit(), auditInfo.getMethod().getName());
+        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

@@ -27,7 +27,6 @@ public class StartProcessAuditingStrategy implements MethodAuditingStrategy {
     private WfmcAuditQueryService wfmcAuditQueryService;
 
     private WMProcessInstanceAudit processInstanceAudit;
-
     private WMEventAuditProcessInstance eventAuditProcessInstance;
 
     /**

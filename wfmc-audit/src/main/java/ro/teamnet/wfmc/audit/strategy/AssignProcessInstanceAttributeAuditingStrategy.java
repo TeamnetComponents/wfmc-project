@@ -17,7 +17,7 @@ import javax.inject.Inject;
 @Qualifier(WfmcAuditedMethod.ASSIGN_PROCESS_INSTANCE_ATTRIBUTE)
 public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAuditingStrategy {
 
-    private WMProcessInstanceAudit processInstanceAudit;
+
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
@@ -26,6 +26,7 @@ public class AssignProcessInstanceAttributeAuditingStrategy implements MethodAud
     private WfmcAuditQueryService wfmcAuditQueryService;
 
     private AuditInfo auditInfo;
+    private WMProcessInstanceAudit processInstanceAudit;
 
     @Override
     public void setAuditInfo(AuditInfo auditInfo) {

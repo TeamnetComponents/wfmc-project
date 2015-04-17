@@ -26,6 +26,7 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     private WMAuditErrorUtil auditErrorUtil;
 
     private AuditInfo auditInfo;
+    private WMProcessInstanceAudit processInstanceAudit;
 
     @Override
     public void setAuditInfo(AuditInfo auditInfo) {
@@ -35,11 +36,9 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     @Override
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
+        processInstanceAudit = getWmProcessInstanceAudit();
         wfmcAuditService.convertAndSaveAbortProcessInstance(
-                //TODO salvati processInstanceAudit intr-un field si nu mai apelati getterul peste tot, deoarece face un find costisitor in spate
-                //de fixat asta si in alte strategii unde s-a folosit getter in loc de field
-                // luati ca exemplu AssignProcessInstanceAttributeAuditingStrategy
-                getWmProcessInstanceAudit(),
+                processInstanceAudit,
                 WMAEventCode.ABORTED_ACTIVITY_INSTANCE.value(),
                 username
         );
@@ -52,7 +51,7 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
 
     @Override
     public void auditMethodInvocationError(Throwable throwable) {
-        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, getWmProcessInstanceAudit(), auditInfo.getMethod().getName());
+        auditErrorUtil.saveErrorIntoEntityWmErrorAudit(throwable, processInstanceAudit, auditInfo.getMethod().getName());
     }
 
     private String getUserIdentification(AuditInfo auditInfo) {

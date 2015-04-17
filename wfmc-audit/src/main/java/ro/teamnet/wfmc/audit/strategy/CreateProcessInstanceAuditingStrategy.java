@@ -24,7 +24,6 @@ public class CreateProcessInstanceAuditingStrategy implements MethodAuditingStra
     private WMAuditErrorUtil auditErrorUtil;
 
     private WMProcessInstanceAudit processInstanceAudit;
-
     private WMEventAuditProcessInstance eventAuditProcessInstance;
 
 
