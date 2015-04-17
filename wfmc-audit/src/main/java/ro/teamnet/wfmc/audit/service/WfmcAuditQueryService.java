@@ -4,13 +4,13 @@ import ro.teamnet.wfmc.audit.domain.*;
 
 public interface WfmcAuditQueryService {
 
-    WMProcessInstanceAudit findByProcessInstanceId(String processInstanceId);
+    WMProcessInstanceAudit findWMProcessInstanceAuditByProcessInstanceId(String processInstanceId);
 
     WMProcessInstanceAudit findWMProcessInstanceAuditByProcessDefinitionBusinessName(String processDefinitionBusinessName);
 
-    WMEventAudit findByUsername(String username);
+    WMEventAudit findWMEventAuditByUsername(String username);
 
-    WMEventAudit findByEventCode(int eventCode);
+    WMEventAudit findWMEventAuditByEventCode(int eventCode);
 
     WMErrorAudit findWMErrorAuditByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 
@@ -20,11 +20,10 @@ public interface WfmcAuditQueryService {
 
     WMWorkItemAudit findWMWorkItemAuditByWorkItemId(String workItemId);
 
-    WMEventAuditWorkItem findWMEventAuditWorkItemByWorkItemState(String workItemState);
-
     WMEventAuditWorkItem findWMEventAuditWorkItemByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit);
 
-    WMEventAuditProcessInstance findWMEventAuditProcessInstanceByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
+    WMAttributeAuditWorkItem findWMAttributeAuditWorkItemByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit);
 
+    WMEventAuditProcessInstance findWMEventAuditProcessInstanceByWmProcessInstanceAudit(WMProcessInstanceAudit wmProcessInstanceAudit);
 
 }

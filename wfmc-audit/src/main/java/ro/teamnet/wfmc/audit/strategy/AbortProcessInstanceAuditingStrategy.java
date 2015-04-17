@@ -10,6 +10,7 @@ import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
 
 import javax.inject.Inject;
@@ -23,7 +24,7 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
     @Inject
-    private WMAuditErrorUtil auditErrorUtil;
+    private ro.teamnet.wfmc.audit.domain.WMAuditError
 
     private AuditInfo auditInfo;
     private WMProcessInstanceAudit processInstanceAudit;
@@ -60,6 +61,6 @@ public class AbortProcessInstanceAuditingStrategy implements MethodAuditingStrat
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
+        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }

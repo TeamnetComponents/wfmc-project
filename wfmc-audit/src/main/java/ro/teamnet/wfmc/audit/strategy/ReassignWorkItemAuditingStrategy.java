@@ -9,7 +9,7 @@ import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
-import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 
 import javax.inject.Inject;
 
@@ -20,7 +20,7 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorUtil auditErrorUtil;
+    private WMAuditErrorService auditErrorUtil;
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
 
@@ -63,6 +63,6 @@ public class ReassignWorkItemAuditingStrategy implements MethodAuditingStrategy 
 
     private WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = auditInfo.getArgumentsByParameterDescription().get(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
-        return wfmcAuditQueryService.findByProcessInstanceId(procInstId.toString());
+        return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());
     }
 }

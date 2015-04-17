@@ -24,11 +24,13 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     @Inject
     private EventAuditWorkItemRepository eventAuditWorkItemRepository;
     @Inject
+    private AttributeAuditWorkItemRepository attributeAuditWorkItemRepository;
+    @Inject
     private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
 
     //TODO: de redenumit toate findBy-urile in findCevaBy - ca sa fie clar din numele metodei ce cauta
     @Override
-    public WMProcessInstanceAudit findByProcessInstanceId(String processInstanceId) {
+    public WMProcessInstanceAudit findWMProcessInstanceAuditByProcessInstanceId(String processInstanceId) {
         return processInstanceAuditRepository.findByProcessInstanceId(processInstanceId);
     }
 
@@ -38,12 +40,12 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     }
 
     @Override
-    public WMEventAudit findByUsername(String username) {
+    public WMEventAudit findWMEventAuditByUsername(String username) {
         return eventAuditRepository.findByUsername(username);
     }
 
     @Override
-    public WMEventAudit findByEventCode(int eventCode) {
+    public WMEventAudit findWMEventAuditByEventCode(int eventCode) {
         return eventAuditRepository.findByEventCode(eventCode);
     }
 
@@ -68,13 +70,13 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     }
 
     @Override
-    public WMEventAuditWorkItem findWMEventAuditWorkItemByWorkItemState(String workItemState) {
-        return eventAuditWorkItemRepository.findByWorkItemState(workItemState);
+    public WMEventAuditWorkItem findWMEventAuditWorkItemByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit) {
+        return eventAuditWorkItemRepository.findByWmWorkItemAudit(wmWorkItemAudit);
     }
 
     @Override
-    public WMEventAuditWorkItem findWMEventAuditWorkItemByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit) {
-        return eventAuditWorkItemRepository.findByWmWorkItemAudit(wmWorkItemAudit);
+    public WMAttributeAuditWorkItem findWMAttributeAuditWorkItemByWmWorkItemAudit(WMWorkItemAudit wmWorkItemAudit) {
+        return attributeAuditWorkItemRepository.findByWmWorkItemAudit(wmWorkItemAudit);
     }
 
     @Override

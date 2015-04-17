@@ -3,6 +3,7 @@ package ro.teamnet.wfmc.audit.util;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+import org.wfmc.wapi.WMError;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.repository.ErrorAuditRepository;
@@ -15,13 +16,13 @@ import javax.inject.Inject;
 
 // TODO turn into a @Service
 
-@Component
-public class WMAuditErrorUtil {
+@Service
+public class WMAuditErrorService {
 
     @Inject
     private ErrorAuditRepository errorAuditRepository;
 
-    public WMAuditErrorUtil() {
+    public WMAuditErrorService() {
     }
 
     /**
@@ -43,8 +44,7 @@ public class WMAuditErrorUtil {
         errorAudit.setAuditedOperation(auditedMethodName);
         errorAudit.setOccurrenceTime(new DateTime());
 
-        WMErrorAudit savedError = errorAuditRepository.save(errorAudit);
-        return savedError;
+        return errorAuditRepository.save(errorAudit);
     }
 
     public WMErrorAudit updateErrorEntityWmErrorAudit(WMProcessInstanceAudit wmProcessInstanceAudit) {

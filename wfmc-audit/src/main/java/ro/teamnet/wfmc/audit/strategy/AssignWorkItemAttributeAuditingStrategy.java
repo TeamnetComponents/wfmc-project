@@ -12,7 +12,7 @@ import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
-import ro.teamnet.wfmc.audit.util.WMAuditErrorUtil;
+import ro.teamnet.wfmc.audit.service.WMAuditErrorService;
 
 import javax.inject.Inject;
 
@@ -25,10 +25,13 @@ public class AssignWorkItemAttributeAuditingStrategy implements MethodAuditingSt
     @Inject
     private WfmcAuditService wfmcAuditService;
     @Inject
-    private WMAuditErrorUtil auditErrorUtil;
+    private WMAuditErrorService auditErrorUtil;
     @Inject
     private WfmcAuditQueryService wfmcAuditQueryService;
 
+    private WMEventAuditAttribute wmEventAuditAttribute;
+    private  WMWorkItemAudit wmWorkItemAudit;
+    private WMAttributeAuditWorkItem wmAttributeAuditWorkItem;
     private AuditInfo auditInfo;
     private WMProcessInstanceAudit processInstanceAudit;
 
