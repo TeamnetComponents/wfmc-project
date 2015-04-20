@@ -7,7 +7,9 @@ import ro.teamnet.wfmc.audit.domain.*;
  */
 public interface WfmcAuditService {
 
-    WMEventAuditWorkItem convertAndSaveReassignWorkItem(WMProcessInstanceAudit wmProcessInstanceAudit, String processInstanceId, String workItemId, String sourceUser, String targetUser, String username);
+    WMEventAuditAttribute saveWmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAudit);
+
+    WMAttributeAuditProcessInstance saveWmAttributeAuditProcessInstance(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit);
 
     WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId);
 
@@ -15,9 +17,7 @@ public interface WfmcAuditService {
 
     WMProcessInstanceAudit updateProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit);
 
-    WMEventAuditAttribute convertAndSaveAssignAttributeAudit(String attributeName, Object attributeValue, String username, WMProcessInstanceAudit wmProcessInstanceAudit);
-
-    WMEventAuditProcessInstance convertAndSaveAbortProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, Integer eventCode, String username);
+    WMEventAuditProcessInstance saveWmEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, Integer eventCode, String username);
 
     WMWorkItemAudit savewmWorkItemAudit(String workItemId, WMProcessInstanceAudit wmProcessInstanceAudit);
 
@@ -26,5 +26,4 @@ public interface WfmcAuditService {
     WMEventAuditAttribute savewmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditWorkItem wmAttributeAuditWorkItem);
 
     WMEventAuditWorkItem savewmEventAuditWorkItem(String workItemState, WMWorkItemAudit wmWorkItemAudit);
-
 }

@@ -6,6 +6,7 @@ import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
+import ro.teamnet.wfmc.audit.domain.WMAttributeAuditProcessInstance;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
@@ -24,16 +25,23 @@ public class AssignProcessInstanceAttributeAuditingStrategy extends HMethods imp
     private WMAuditErrorService auditErrorService;
 
     private WMProcessInstanceAudit processInstanceAudit;
+    private WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance;
+    private HMethods hMethods;
 
     @Override
     public void auditMethodBeforeInvocation() {
         processInstanceAudit = getWmProcessInstanceAudit();
         String username = getUserIdentification(auditInfo);
-        wfmcAuditService.convertAndSaveAssignAttributeAudit(
+
+        wmAttributeAuditProcessInstance = wfmcAuditService.saveWmAttributeAuditProcessInstance(
                 (String) getMethodParameter(WfmcAuditedParameter.ATTRIBUTE_NAME),
+                processInstanceAudit
+        );
+
+        wfmcAuditService.saveWmEventAuditAttribute(
                 getMethodParameter(WfmcAuditedParameter.ATTRIBUTE_VALUE),
                 username,
-                processInstanceAudit
+                wmAttributeAuditProcessInstance
         );
     }
 

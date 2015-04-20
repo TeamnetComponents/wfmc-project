@@ -6,7 +6,9 @@ import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedParameter;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
+import ro.teamnet.wfmc.audit.domain.WMWorkItemAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 import ro.teamnet.wfmc.audit.service.WfmcAuditService;
 import ro.teamnet.wfmc.audit.util.HMethods;
@@ -24,6 +26,8 @@ public class ReassignWorkItemAuditingStrategy extends HMethods implements Method
     private WMAuditErrorService auditErrorService;
 
     private WMProcessInstanceAudit processInstanceAudit;
+    private WMWorkItemAudit wmWorkItemAudit;
+    private WMEventAuditWorkItem wmEventAuditWorkItem;
 
     //TODO @Andra: de stabilit cum se salveaza valorile pentru SOURCE_USER si TARGET_USER in structura de auditare exitenta sau de modificat structura pentru a le include si pe ele.
   
@@ -31,14 +35,11 @@ public class ReassignWorkItemAuditingStrategy extends HMethods implements Method
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         processInstanceAudit = getWmProcessInstanceAudit();
-        wfmcAuditService.convertAndSaveReassignWorkItem(
-                processInstanceAudit,
-                (String) getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID),
+        wmWorkItemAudit = wfmcAuditService.savewmWorkItemAudit(
                 (String) getMethodParameter(WfmcAuditedParameter.WORK_ITEM_ID),
-                (String) getMethodParameter(WfmcAuditedParameter.SOURCE_USER),//nu e salvat
-                (String) getMethodParameter(WfmcAuditedParameter.TARGET_USER), // nu e salvat
-                username
-        );
+                processInstanceAudit);
+        wmEventAuditWorkItem = wfmcAuditService.savewmEventAuditWorkItem(username, wmWorkItemAudit);
+
     }
     @Override
     public void auditMethodAfterInvocation(Object o) {

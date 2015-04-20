@@ -27,7 +27,7 @@ public class AbortProcessInstanceAuditingStrategy extends HMethods implements Me
     public void auditMethodBeforeInvocation() {
         String username = getUserIdentification(auditInfo);
         processInstanceAudit = getWmProcessInstanceAudit();
-        wfmcAuditService.convertAndSaveAbortProcessInstance(
+        wfmcAuditService.saveWmEventAuditProcessInstance(
                 processInstanceAudit,
                 WMAEventCode.ABORTED_ACTIVITY_INSTANCE.value(),
                 username
