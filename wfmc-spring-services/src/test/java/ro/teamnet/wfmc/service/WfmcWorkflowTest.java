@@ -10,12 +10,12 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.wfmc.audit.WMAEventCode;
 import org.wfmc.impl.base.WMWorkItemAttributeNames;
 import org.wfmc.wapi.WMConnectInfo;
-import org.wfmc.wapi.WMWorkItemState;
 import org.wfmc.wapi.WMWorkflowException;
-import ro.teamnet.wfmc.audit.domain.*;
+import ro.teamnet.wfmc.audit.domain.WMEventAudit;
+import ro.teamnet.wfmc.audit.domain.WMEventAuditAttribute;
+import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
 
 import javax.inject.Inject;
@@ -35,7 +35,7 @@ public class WfmcWorkflowTest {
 
     private Logger log = LoggerFactory.getLogger(WfmcWorkflowTest.class);
 
-    //TODO: de completat acest test cu asserturi
+    //TODO : JavaDoc pentru clasele si metodele publice
     @Test
     @Transactional("wfmcAuditTransactionManager")
     public void testAllWorkflowOperations() throws WMWorkflowException {
@@ -59,12 +59,15 @@ public class WfmcWorkflowTest {
         log.info("Process definition id is : {}", wmProcessInstanceAudit.getProcessDefinitionId());
         log.info("Process instance id is : {}", wmProcessInstanceAudit.getProcessInstanceId());
 
+
         wfmcService.assignProcessInstanceAttribute(procInstIdTemp, attrName, attrValue);
         WMEventAuditAttribute wmEventAuditAttribute = wfmcAuditQueryService.findWMEventAuditAttributeByAttributeValue(attrValue);
         assertEquals("AssignProcessInstanceAttribute: The attribute value isn't the same!", attrValue, wmEventAuditAttribute.getAttributeValue());
         log.info("Attribute value: {}", wmEventAuditAttribute.getAttributeValue());
         assertEquals("AssignProcessInstanceAttribute: The attribute name isn't the same!", attrName, wmEventAuditAttribute.getWmAttributeAudit().getAttributeName());
         log.info("Attribute name: {}", wmEventAuditAttribute.getWmAttributeAudit().getAttributeName());
+
+
 
         wfmcService.assignProcessInstanceAttribute(procInstIdTemp, attrName, newAttrValue);
         WMEventAuditAttribute wmEventAuditAttribute1 = wfmcAuditQueryService.findWMEventAuditAttributeByAttributeValue(attrValue);
@@ -77,10 +80,10 @@ public class WfmcWorkflowTest {
         WMEventAudit[] wmEventAudit = wfmcAuditQueryService.findWMEventAuditByUsername(username);
         Assert.assertEquals("StartProcess: The new process instance id isn't the same!", currentProcessInstanceId, wmProcessInstanceAudit.getProcessInstanceId());
         log.info("New process instance id: {}", wmProcessInstanceAudit.getProcessInstanceId());
-        Assert.assertEquals("StartProcess: The username isn't the same!", username, wmEventAudit[0].getUsername());
-        log.info("Username: {}", wmEventAudit[0].getUsername());
-        Assert.assertNotNull(wmEventAudit[0].getEventCode());
-        log.info("Event code: {}", wmEventAudit[0].getEventCode());
+        Assert.assertEquals("StartProcess: The username isn't the same!", username, wmEventAudit[wmEventAudit.length - 1].getUsername());
+        log.info("Username: {}", wmEventAudit[wmEventAudit.length - 1].getUsername());
+        Assert.assertNotNull(wmEventAudit[wmEventAudit.length - 1].getEventCode());
+        log.info("Event code: {}", wmEventAudit[wmEventAudit.length - 1].getEventCode());
 
         wfmcService.reassignWorkItem("Andra", "Daniel", currentProcessInstanceId, workItemId);
         wfmcService.assignWorkItemAttribute(currentProcessInstanceId, workItemId, WMWorkItemAttributeNames.TRANSITION_NEXT_WORK_ITEM_ID.toString(), nextNodeTrimite);

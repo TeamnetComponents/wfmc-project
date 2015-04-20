@@ -24,14 +24,31 @@ public abstract class HMethods implements MethodAuditingStrategy {
         this.auditInfo = auditInfo;
     }
 
+    /**
+     * Determine the value of an argument base on its descriptions
+     *
+     * @param parameter a string which determine the name of the argument
+     * @return an argument by its descriptions
+     */
     public Object getMethodParameter(String parameter) {
         return auditInfo.getArgumentsByParameterDescription().get(parameter);
     }
 
+    /**
+     * Determine the user who call actual method
+     *
+     * @param auditInfo hold information about audited method
+     * @return the username
+     */
     public String getUserIdentification(AuditInfo auditInfo) {
         return (String) auditInfo.invokeMethodOnInstance("getUserIdentification");
     }
 
+    /**
+     * Find an {@link ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit} object by its {@link ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit#processInstanceId}
+     *
+     * @return the {@link ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit}
+     */
     public WMProcessInstanceAudit getWmProcessInstanceAudit() {
         Object procInstId = getMethodParameter(WfmcAuditedParameter.PROCESS_INSTANCE_ID);
         return wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(procInstId.toString());

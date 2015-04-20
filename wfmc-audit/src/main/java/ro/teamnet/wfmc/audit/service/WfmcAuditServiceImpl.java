@@ -8,6 +8,9 @@ import ro.teamnet.wfmc.audit.repository.*;
 
 import javax.inject.Inject;
 
+/**
+ * Created by Ioan.Ivan on 3/26/2015.
+ */
 @Service
 public class WfmcAuditServiceImpl implements WfmcAuditService {
 
@@ -27,29 +30,6 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     private WorkItemAuditRepository workItemAuditRepository;
 
     AuditEntityBuilder auditEntityBuilder = new AuditEntityBuilder();
-
-    /**
-     * Save an {@link WMEventAuditAttribute} into the {@link WMEventAudit} table with the discriminator column AT, for the {@link ro.teamnet.wfmc.audit.strategy.AssignProcessInstanceAttributeAuditingStrategy}
-     * @param attributeValue the value of the attribute assigned
-     * @param username the username who call the method
-     * @param wmAttributeAuditProcessInstance to set the value property {@link WMAttributeAudit#attributeName} from {@link WMAttributeAudit} entity
-     * @return the object for further operations
-     */
-    @Override
-    public WMEventAuditAttribute saveWmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance) {
-        return eventAuditAttributeRepository.save(auditEntityBuilder.createwmEventAuditAttribute(attributeValue, username, wmAttributeAuditProcessInstance));
-    }
-
-    /**
-     * Save an {@link WMAttributeAuditProcessInstance} into the table {@link WMAttributeAudit} table with the discriminator column PI, for the {@link ro.teamnet.wfmc.audit.strategy.AssignProcessInstanceAttributeAuditingStrategy}
-     * @param attributeName the name of the attribute to assign
-     * @param wmProcessInstanceAudit save the connection to the {@link WMProcessInstanceAudit}
-     * @return the object for further operations
-     */
-    @Override
-    public WMAttributeAuditProcessInstance saveWmAttributeAuditProcessInstance(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit) {
-        return attributeAuditProcessInstanceRepository.save(auditEntityBuilder.createwmAttributeAudit(attributeName, wmProcessInstanceAudit));
-    }
 
     /**
      * Save an {@link WMWorkItemAudit} object on its own table, for the {@link ro.teamnet.wfmc.audit.strategy.AssignWorkItemAttributeAuditingStrategy}, {@link ro.teamnet.wfmc.audit.strategy.ReassignWorkItemAuditingStrategy}
@@ -148,4 +128,28 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
 
         return processInstanceAuditRepository.save(wmProcessInstanceAudit);
     }
+
+    /**
+            * Save an {@link WMEventAuditAttribute} into the {@link WMEventAudit} table with the discriminator column AT, for the {@link ro.teamnet.wfmc.audit.strategy.AssignProcessInstanceAttributeAuditingStrategy}
+    * @param attributeValue the value of the attribute assigned
+    * @param username the username who call the method
+    * @param wmAttributeAuditProcessInstance to set the value property {@link WMAttributeAudit#attributeName} from {@link WMAttributeAudit} entity
+    * @return the object for further operations
+    */
+    @Override
+    public WMEventAuditAttribute saveWmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance) {
+        return eventAuditAttributeRepository.save(auditEntityBuilder.createwmEventAuditAttribute(attributeValue, username, wmAttributeAuditProcessInstance));
+    }
+
+    /**
+     * Save an {@link WMAttributeAuditProcessInstance} into the table {@link WMAttributeAudit} table with the discriminator column PI, for the {@link ro.teamnet.wfmc.audit.strategy.AssignProcessInstanceAttributeAuditingStrategy}
+     * @param attributeName the name of the attribute to assign
+     * @param wmProcessInstanceAudit save the connection to the {@link WMProcessInstanceAudit}
+     * @return the object for further operations
+     */
+    @Override
+    public WMAttributeAuditProcessInstance saveWmAttributeAuditProcessInstance(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit) {
+        return attributeAuditProcessInstanceRepository.save(auditEntityBuilder.createwmAttributeAudit(attributeName, wmProcessInstanceAudit));
+    }
+
 }

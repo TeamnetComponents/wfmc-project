@@ -7,10 +7,6 @@ import ro.teamnet.wfmc.audit.domain.*;
  */
 public interface WfmcAuditService {
 
-    WMEventAuditAttribute saveWmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAudit);
-
-    WMAttributeAuditProcessInstance saveWmAttributeAuditProcessInstance(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit);
-
     WMProcessInstanceAudit saveProcessInstanceAudit(String procDefId, String procInstName, String processInstanceId);
 
     WMEventAuditProcessInstance saveEventAuditProcessInstance(WMProcessInstanceAudit wmProcessInstanceAudit, int eventCode, String username);
@@ -26,4 +22,8 @@ public interface WfmcAuditService {
     WMEventAuditAttribute savewmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditWorkItem wmAttributeAuditWorkItem);
 
     WMEventAuditWorkItem savewmEventAuditWorkItem(String workItemState, WMWorkItemAudit wmWorkItemAudit);
+
+    WMEventAuditAttribute saveWmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance);
+
+    WMAttributeAuditProcessInstance saveWmAttributeAuditProcessInstance(String attributeName, WMProcessInstanceAudit wmProcessInstanceAudit);
 }

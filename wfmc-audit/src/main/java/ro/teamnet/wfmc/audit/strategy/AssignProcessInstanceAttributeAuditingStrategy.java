@@ -2,6 +2,7 @@ package ro.teamnet.wfmc.audit.strategy;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.wfmc.audit.WMAAssignProcessInstanceAttributeData;
 import ro.teamnet.audit.strategy.MethodAuditingStrategy;
 import ro.teamnet.audit.util.AuditInfo;
 import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
@@ -26,7 +27,6 @@ public class AssignProcessInstanceAttributeAuditingStrategy extends HMethods imp
 
     private WMProcessInstanceAudit processInstanceAudit;
     private WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance;
-    private HMethods hMethods;
 
     @Override
     public void auditMethodBeforeInvocation() {
@@ -43,6 +43,7 @@ public class AssignProcessInstanceAttributeAuditingStrategy extends HMethods imp
                 username,
                 wmAttributeAuditProcessInstance
         );
+
     }
 
     @Override

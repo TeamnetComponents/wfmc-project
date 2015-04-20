@@ -28,7 +28,6 @@ public class WfmcAuditQueryServiceImpl implements WfmcAuditQueryService {
     @Inject
     private EventAuditProcessInstanceRepository eventAuditProcessInstanceRepository;
 
-    //TODO: de redenumit toate findBy-urile in findCevaBy - ca sa fie clar din numele metodei ce cauta
     @Override
     public WMProcessInstanceAudit findWMProcessInstanceAuditByProcessInstanceId(String processInstanceId) {
         return processInstanceAuditRepository.findByProcessInstanceId(processInstanceId);

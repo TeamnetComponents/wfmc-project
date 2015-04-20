@@ -13,7 +13,6 @@ import javax.inject.Inject;
  * An utility class that returns the object saved into the WMErrorAudit entity
  */
 
-// TODO turn into a @Service
 
 @Service
 public class WMAuditErrorServiceImpl implements WMAuditErrorService {

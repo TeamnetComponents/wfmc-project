@@ -39,7 +39,6 @@ public class ReassignWorkItemAuditingStrategy extends HMethods implements Method
                 (String) getMethodParameter(WfmcAuditedParameter.WORK_ITEM_ID),
                 processInstanceAudit);
         wmEventAuditWorkItem = wfmcAuditService.savewmEventAuditWorkItem(username, wmWorkItemAudit);
-
     }
     @Override
     public void auditMethodAfterInvocation(Object o) {
