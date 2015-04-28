@@ -1,12 +1,14 @@
 package ro.teamnet.wfmc.audit.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -36,28 +38,47 @@ public class WfmcAuditDatabaseConfig {
     private Environment env;
 
 
-//    @Bean(name = "wfmcAuditDataSource")
-//    public DataSource dataSource() {
-//        log.info("Configuring audit data source");
-//        RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "wfmc.audit.datasource.");
-//        HikariConfig configuration = new HikariConfig();
-//        configuration.setJdbcUrl(propertyResolver.getProperty("url"));
-//        configuration.setUsername(propertyResolver.getProperty("username"));
-//        configuration.setPassword(propertyResolver.getProperty("password"));
-//        return new HikariDataSource(configuration);
-//    }
-
     @Bean(name = "wfmcAuditDataSource")
     public DataSource dataSource() {
-        log.info("Configuring audit data source");
+        log.info("Configuring WfMC audit data source");
         RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "wfmc.audit.datasource.");
 
-        return DataSourceBuilder.create()
-//                .type(com.zaxxer.hikari.HikariDataSource.class)
-                .url(propertyResolver.getProperty("url"))
-                .username(propertyResolver.getProperty("username"))
-                .password(propertyResolver.getProperty("password"))
-                .build();
+        String dataSourceClassName = propertyResolver.getProperty("dataSourceClassName");
+        if (!isPropertyValid(dataSourceClassName)) {
+            String message = "Property wfmc.audit.datasource.dataSourceClassName is missing!";
+            log.error(message);
+            throw new ApplicationContextException(message);
+        }
+        String url = propertyResolver.getProperty("url");
+        String jdbcUrl = propertyResolver.getProperty("jdbcUrl");
+        String databaseName = propertyResolver.getProperty("databaseName");
+        String serverName = propertyResolver.getProperty("serverName");
+
+        if (!isPropertyValid(url) && !isPropertyValid(jdbcUrl)
+                && (!isPropertyValid(databaseName) || !isPropertyValid(serverName))) {
+            String message = "Unable to configure te wfmc audit datasource. " +
+                    "Please specify the url or the databaseName and serverName for wfmc.audit.datasource.";
+            log.error(message);
+            throw new ApplicationContextException(message);
+        }
+        HikariConfig configuration = new HikariConfig();
+        configuration.setDataSourceClassName(dataSourceClassName);
+        if (isPropertyValid(url)) {
+            configuration.addDataSourceProperty("url", url);
+        } else if (isPropertyValid(jdbcUrl)) {
+            configuration.addDataSourceProperty("url", jdbcUrl);
+        } else {
+            configuration.addDataSourceProperty("databaseName", databaseName);
+            configuration.addDataSourceProperty("serverName", serverName);
+        }
+        configuration.addDataSourceProperty("user", propertyResolver.getProperty("username"));
+        configuration.addDataSourceProperty("password", propertyResolver.getProperty("password"));
+
+        return new HikariDataSource(configuration);
+    }
+
+    private boolean isPropertyValid(String property) {
+        return property != null && !"".equals(property);
     }
 
     @Bean(name = "wfmcAuditLiquibase")
