@@ -2,7 +2,6 @@ wfmc:
     audit:
         datasource:
             dataSourceClassName: oracle.jdbc.pool.OracleDataSource
-            driverClassName: oracle.jdbc.driver.OracleDriver
             url: jdbc:oracle:thin:@//10.6.38.61:1521/renns
             databaseName: renns
             serverName: 10.6.38.61

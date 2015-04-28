@@ -2,7 +2,6 @@ wfmc:
     audit:
         datasource:
             dataSourceClassName: org.h2.jdbcx.JdbcDataSource
-            driverClassName: org.h2.Driver
             url: jdbc:h2:mem:wfmcaudit;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
             databaseName:
             serverName:
