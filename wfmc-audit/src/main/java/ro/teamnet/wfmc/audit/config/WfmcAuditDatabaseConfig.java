@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -35,13 +35,30 @@ public class WfmcAuditDatabaseConfig {
     @Inject
     private Environment env;
 
+
+//    @Bean(name = "wfmcAuditDataSource")
+//    public DataSource dataSource() {
+//        log.info("Configuring audit data source");
+//        RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "wfmc.audit.datasource.");
+//        HikariConfig configuration = new HikariConfig();
+//        configuration.setJdbcUrl(propertyResolver.getProperty("url"));
+//        configuration.setUsername(propertyResolver.getProperty("username"));
+//        configuration.setPassword(propertyResolver.getProperty("password"));
+//        return new HikariDataSource(configuration);
+//    }
+
     @Bean(name = "wfmcAuditDataSource")
-    @ConfigurationProperties(prefix = "wfmc.audit.datasource")
     public DataSource dataSource() {
         log.info("Configuring audit data source");
-        return DataSourceBuilder.create().build();
-    }
+        RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "wfmc.audit.datasource.");
 
+        return DataSourceBuilder.create()
+//                .type(com.zaxxer.hikari.HikariDataSource.class)
+                .url(propertyResolver.getProperty("url"))
+                .username(propertyResolver.getProperty("username"))
+                .password(propertyResolver.getProperty("password"))
+                .build();
+    }
 
     @Bean(name = "wfmcAuditLiquibase")
     public SpringLiquibase liquibase(@Qualifier("wfmcAuditDataSource") DataSource dataSource) {
