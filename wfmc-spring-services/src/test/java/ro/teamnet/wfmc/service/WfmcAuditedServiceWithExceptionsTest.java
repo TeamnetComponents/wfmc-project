@@ -1,7 +1,6 @@
 package ro.teamnet.wfmc.service;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.wfmc.wapi.WMConnectInfo;
 import org.wfmc.wapi.WMWorkflowException;
+import ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod;
 import ro.teamnet.wfmc.audit.domain.WMErrorAudit;
 import ro.teamnet.wfmc.audit.domain.WMProcessInstanceAudit;
 import ro.teamnet.wfmc.audit.service.WfmcAuditQueryService;
@@ -47,6 +47,7 @@ public class WfmcAuditedServiceWithExceptionsTest {
         WMProcessInstanceAudit wmProcessInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessDefinitionBusinessName("my procInstName");
         WMErrorAudit wmErrorAudit = wfmcAuditQueryService.findWMErrorAuditByWmProcessInstanceAudit(wmProcessInstanceAudit);
         Assert.assertNotNull(wmErrorAudit);
+        Assert.assertEquals("The error occurred for a different audited operation!",WfmcAuditedMethod.CREATE_PROCESS_INSTANCE, wmErrorAudit.getAuditedOperation());
         log.info("Description: {}", wmErrorAudit.getDescription());
         log.info("Message: {}", wmErrorAudit.getMessage());
         log.info("Audited Op: {}", wmErrorAudit.getAuditedOperation());
@@ -82,10 +83,18 @@ public class WfmcAuditedServiceWithExceptionsTest {
     }
 
     @Test
-    @Ignore
     @Transactional("wfmcAuditTransactionManager")
     public void testReassignWorkItem() throws WMWorkflowException {
         wfmcServiceWithExceptions.reassignWorkItem("sourceUser", "targetUser", PROC_INST_ID, WORK_ITEM_ID);
+        WMProcessInstanceAudit wmProcessInstanceAudit = wfmcAuditQueryService.findWMProcessInstanceAuditByProcessInstanceId(null);
+        WMErrorAudit wmErrorAudit = wfmcAuditQueryService.findWMErrorAuditByWmProcessInstanceAudit(wmProcessInstanceAudit);
+        Assert.assertNotNull(wmErrorAudit);
+        Assert.assertEquals("The error occurred for a different audited operation!", WfmcAuditedMethod.REASSIGN_WORK_ITEM, wmErrorAudit.getAuditedOperation());
+        log.info("Audited Op: {}", wmErrorAudit.getAuditedOperation());
+        log.info("Description: {}", wmErrorAudit.getDescription());
+        log.info("Message: {}", wmErrorAudit.getMessage());
+        log.info("Stack Trace: {}", wmErrorAudit.getStackTrace());
+        log.info("Occurence time: {}", wmErrorAudit.getOccurrenceTime());
     }
 
     @Test
