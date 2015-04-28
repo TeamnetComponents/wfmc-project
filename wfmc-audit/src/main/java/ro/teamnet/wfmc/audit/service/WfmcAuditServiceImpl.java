@@ -2,6 +2,7 @@ package ro.teamnet.wfmc.audit.service;
 
 
 import org.springframework.stereotype.Service;
+import org.wfmc.audit.WMAEventCode;
 import ro.teamnet.wfmc.audit.build.AuditEntityBuilder;
 import ro.teamnet.wfmc.audit.domain.*;
 import ro.teamnet.wfmc.audit.repository.*;
@@ -82,12 +83,13 @@ public class WfmcAuditServiceImpl implements WfmcAuditService {
     /**
      * Save an {@link ro.teamnet.wfmc.audit.domain.WMEventAuditWorkItem} object into the {@link ro.teamnet.wfmc.audit.domain.WMEventAudit} with the discriminator column WI, for the {@link ro.teamnet.wfmc.audit.strategy.CompleteWorkItemAuditingStrategy}, {@link ro.teamnet.wfmc.audit.strategy.ReassignWorkItemAuditingStrategy}
      * @param username the username who call the method
-     * @param wmWorkItemAudit the link to the {@link ro.teamnet.wfmc.audit.domain.WMWorkItemAudit}
+     * @param wmWorkItemAudit the link to the {@link WMWorkItemAudit}
+     * @param eventCode
      * @return the object for further operations
      */
     @Override
-    public WMEventAuditWorkItem savewmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit) {
-        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItem(username, wmWorkItemAudit));
+    public WMEventAuditWorkItem savewmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit, WMAEventCode eventCode) {
+        return eventAuditWorkItemRepository.save(auditEntityBuilder.createwmEventAuditWorkItem(username, wmWorkItemAudit, eventCode));
     }
 
     /**

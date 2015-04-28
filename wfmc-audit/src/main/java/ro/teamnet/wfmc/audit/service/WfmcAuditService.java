@@ -1,5 +1,6 @@
 package ro.teamnet.wfmc.audit.service;
 
+import org.wfmc.audit.WMAEventCode;
 import ro.teamnet.wfmc.audit.domain.*;
 
 /**
@@ -21,7 +22,7 @@ public interface WfmcAuditService {
 
     WMEventAuditAttribute savewmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditWorkItem wmAttributeAuditWorkItem);
 
-    WMEventAuditWorkItem savewmEventAuditWorkItem(String workItemState, WMWorkItemAudit wmWorkItemAudit);
+    WMEventAuditWorkItem savewmEventAuditWorkItem(String workItemState, WMWorkItemAudit wmWorkItemAudit, WMAEventCode eventCode);
 
     WMEventAuditAttribute saveWmEventAuditAttribute(Object attributeValue, String username, WMAttributeAuditProcessInstance wmAttributeAuditProcessInstance);
 

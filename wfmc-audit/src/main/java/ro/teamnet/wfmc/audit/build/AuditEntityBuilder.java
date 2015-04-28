@@ -69,10 +69,10 @@ public class AuditEntityBuilder {
         return wmWorkItemAudit;
     }
 
-    public WMEventAuditWorkItem createwmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit) {
+    public WMEventAuditWorkItem createwmEventAuditWorkItem(String username, WMWorkItemAudit wmWorkItemAudit, WMAEventCode eventCode) {
         WMEventAuditWorkItem wmEventAuditWorkItem = new WMEventAuditWorkItem();
         wmEventAuditWorkItem.setUsername(username);
-        wmEventAuditWorkItem.setEventCode(WMAEventCode.COMPLETED_WORK_ITEM.value());
+        wmEventAuditWorkItem.setEventCode(eventCode.value());
         wmEventAuditWorkItem.setEventDate(new DateTime());
         wmEventAuditWorkItem.setWmWorkItemAudit(wmWorkItemAudit);
         wmEventAuditWorkItem.setWorkItemState(WMWorkItemState.OPEN_RUNNING_TAG);
