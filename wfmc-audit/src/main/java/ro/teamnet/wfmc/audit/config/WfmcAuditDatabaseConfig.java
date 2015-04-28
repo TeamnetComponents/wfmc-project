@@ -37,8 +37,7 @@ public class WfmcAuditDatabaseConfig {
     @Inject
     private Environment env;
 
-
-    @Bean(name = "wfmcAuditDataSource")
+    @Bean(name = "wfmcAuditDataSource", destroyMethod = "close")
     public DataSource dataSource() {
         log.info("Configuring WfMC audit data source");
         RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "wfmc.audit.datasource.");
