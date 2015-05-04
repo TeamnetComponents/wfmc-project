@@ -73,6 +73,11 @@ public class WfmcAuditDatabaseConfig {
         configuration.addDataSourceProperty("user", propertyResolver.getProperty("username"));
         configuration.addDataSourceProperty("password", propertyResolver.getProperty("password"));
 
+        String testQuery = propertyResolver.getProperty("testQuery");
+        if (isPropertyValid(testQuery)){
+            configuration.setConnectionTestQuery(testQuery);
+        }
+        
         return new HikariDataSource(configuration);
     }
 

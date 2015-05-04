@@ -7,6 +7,7 @@ wfmc:
             serverName:
             username:
             password:
+            testQuery: select 1 from dual
 
     service:
         instanceClass: ro.teamnet.wfmc.service.mock.WfmcServiceMockImpl
