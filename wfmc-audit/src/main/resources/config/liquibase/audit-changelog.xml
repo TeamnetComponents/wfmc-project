@@ -176,4 +176,9 @@
                                  onUpdate="RESTRICT"/>
     </changeSet>
 
+    <changeSet id="201505191535" author="oanam">
+        <modifyDataType tableName="WM_PROCESS_INSTANCE_AUDIT"
+                        columnName="PROCESS_DEFINITION_ID"
+                        newDataType="varchar(1000)"/>
+    </changeSet>
 </databaseChangeLog>
