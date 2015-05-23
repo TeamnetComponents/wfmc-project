@@ -226,7 +226,7 @@ public class EloUtilsService {
         List<WFNode> currentNodesList = new ArrayList<>();
         for (Integer currentNodeId : nodesFromNotDone) {
             for (WFNode wfNode : allNodes) {
-                if (currentNodeId.compareTo(wfNode.getId()) == 0) {
+                if (wfNode.getType() == WFNodeC.TYPE_PERSONNODE && currentNodeId.compareTo(wfNode.getId()) == 0) {
                     currentNodesList.add(wfNode);
                 }
             }
