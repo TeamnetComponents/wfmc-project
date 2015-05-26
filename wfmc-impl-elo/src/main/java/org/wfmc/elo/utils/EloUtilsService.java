@@ -211,24 +211,11 @@ public class EloUtilsService {
 
 
     public List<WFNode> getCurrentNodesFromWFDiagram(WFDiagram wfDiagram) {
-        List<WFNodeAssoc> nodeAssocs = Arrays.asList(wfDiagram.getMatrix().getAssocs());
-        Set<Integer> nodesFromNotDone = new HashSet<>();
-        Set<Integer> nodesToDone = new HashSet();
-        for (WFNodeAssoc assoc : nodeAssocs) {
-            if (assoc.isDone()) {
-                nodesToDone.add(assoc.getNodeTo());
-            } else {
-                nodesFromNotDone.add(assoc.getNodeFrom());
-            }
-        }
-        nodesFromNotDone.retainAll(nodesToDone);
         List<WFNode> allNodes = Arrays.asList(wfDiagram.getNodes());
         List<WFNode> currentNodesList = new ArrayList<>();
-        for (Integer currentNodeId : nodesFromNotDone) {
-            for (WFNode wfNode : allNodes) {
-                if (wfNode.getType() == WFNodeC.TYPE_PERSONNODE && currentNodeId.compareTo(wfNode.getId()) == 0) {
-                    currentNodesList.add(wfNode);
-                }
+        for (WFNode wfNode : allNodes) {
+            if (wfNode.getType() == WFNodeC.TYPE_PERSONNODE && !wfNode.getEnterDateIso().equals("") && wfNode.getExitDateIso().equals("")) {
+                currentNodesList.add(wfNode);
             }
         }
         return currentNodesList;
