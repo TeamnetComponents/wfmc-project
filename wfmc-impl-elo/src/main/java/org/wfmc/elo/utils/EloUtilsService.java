@@ -216,6 +216,7 @@ public class EloUtilsService {
         for (WFNode wfNode : allNodes) {
             if (wfNode.getType() == WFNodeC.TYPE_PERSONNODE && !wfNode.getEnterDateIso().equals("") && wfNode.getExitDateIso().equals("")) {
                 currentNodesList.add(wfNode);
+                break;
             }
         }
         return currentNodesList;
