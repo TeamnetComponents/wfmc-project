@@ -181,4 +181,36 @@
                         columnName="PROCESS_DEFINITION_ID"
                         newDataType="varchar(1000)"/>
     </changeSet>
+    <changeSet id="20150623134900#0" author="AndraS" >
+        <sql>
+            create or replace view v_operatiuni as
+            select
+            decode (a.event_code, 1,'Creare dosar', 18,'Transmitere dosar',23,'Alocare dosar','' ) event, SUBSTR(a.username,0,INSTR(a.username,'@')-1) username,
+            a.PROCESS_INSTANCE_ID, a.event_date from (select  W.PROCESS_INSTANCE_ID,  e.* from WM_PROCESS_INSTANCE_AUDIT w,
+            WM_EVENT_AUDIT e
+            where  E.WM_PROCESS_INSTANCE_AUDIT_ID=w.id and e.event_code=1
+            union
+            select W.PROCESS_INSTANCE_ID, e.* from WM_PROCESS_INSTANCE_AUDIT w,
+            WM_WORK_ITEM_AUDIT wi,
+            WM_EVENT_AUDIT e
+            where  E.wm_WORK_ITEM_audit_id =wi.id and WI.WM_PROCESS_INSTANCE_AUDIT_ID=w.id
+            ) a
+            order by a.event_date
+        </sql>
+    </changeSet>
+    <changeSet id="20150623134900#1" author="AndraS" failOnError="false">
+        <sql>
+            grant select on v_operatiuni to renns_app
+        </sql>
+    </changeSet>
+    <changeSet id="20150623134900#2" author="AndraS" failOnError="false">
+        <sql>
+            grant select on v_operatiuni to renns_test
+        </sql>
+    </changeSet>
+    <changeSet id="20150623134900#3" author="AndraS" failOnError="false">
+        <sql>
+            grant select on v_operatiuni to renns_jenkins
+        </sql>
+    </changeSet>
 </databaseChangeLog>
