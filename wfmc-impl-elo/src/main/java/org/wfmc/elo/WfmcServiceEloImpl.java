@@ -1,5 +1,9 @@
 package org.wfmc.elo;
 
+import de.elo.extension.connection.IXConnectionKey;
+import de.elo.extension.connection.IXConnectionKeyBuilder;
+import de.elo.extension.connection.IXPoolableConnection;
+import de.elo.extension.connection.IXPoolableConnectionManager;
 import de.elo.ix.client.*;
 import de.elo.utils.net.RemoteException;
 import org.apache.commons.lang.StringUtils;
@@ -11,10 +15,7 @@ import org.wfmc.elo.utils.WfMCToEloObjectConverter;
 import org.wfmc.impl.base.*;
 import org.wfmc.impl.base.filter.WMFilterProcessInstance;
 import org.wfmc.impl.base.filter.WMFilterWorkItem;
-import org.wfmc.impl.utils.FileUtils;
-import org.wfmc.impl.utils.TemplateEngine;
-import org.wfmc.impl.utils.Utils;
-import org.wfmc.impl.utils.WfmcUtilsService;
+import org.wfmc.impl.utils.*;
 import org.wfmc.service.WfmcServiceAbstract;
 import org.wfmc.service.WfmcServiceCache;
 import org.wfmc.wapi.*;
@@ -87,8 +88,19 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
-        setWmConnectInfo(connectInfo);
-        borrowIxConnection(getWmConnectInfo());
+
+        if (connectInfo.getClass().isInstance(WMConnectInfoExtended.class)){
+            try {
+                IXPoolableConnectionManager ixPoolableConnectionManager = ((WMConnectInfoExtended) connectInfo).getIxPoolableConnectionManager();
+                IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setDefaultCredentials().build();
+                IXPoolableConnection ixPoolableConnection = ixPoolableConnectionManager.retrieveConnection(ixConnectionKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            setWmConnectInfo(connectInfo);
+            borrowIxConnection(getWmConnectInfo());
+        }
     }
 
     @Override
