@@ -1,8 +1,17 @@
 package ro.teamnet.wfmc.service;
 
+import de.elo.extension.connection.IXPoolableConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.stereotype.Service;
+import org.wfmc.impl.utils.WMConnectInfoExtended;
 import org.wfmc.service.WfmcService;
 import org.wfmc.wapi.*;
 import org.wfmc.wapi2.WMEntity;
@@ -11,7 +20,10 @@ import org.wfmc.xpdl.model.workflow.WorkflowProcess;
 import ro.teamnet.audit.annotation.Auditable;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditStrategy.WFMC;
 import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
@@ -20,14 +32,32 @@ import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
  * An audited wrapper for a WfmcService instance, implemented as a Spring component.
  */
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@DependsOn("environment")
+@PropertySource("classpath:elo-cmis-server.properties")
 public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
 
     @Inject
     private WfmcService wfmcService;
 
-    private WMConnectInfo wmConnectInfo = null;
+    @Inject
+    protected Environment environment;
+
+    private WMConnectInfoExtended wmConnectInfo = null;
+
+    IXPoolableConnectionManager ixPoolableConnectionManager;
+
+    private void setIxPoolableConnectionManager(){
+        Map<String, Object> map = new HashMap();
+        ResourcePropertySource res = (ResourcePropertySource)((AbstractEnvironment) environment).getPropertySources().get("class path resource [elo-cmis-server.properties]");
+//        for(Iterator it = ((AbstractEnvironment) environment).getPropertySources().iterator(); it.hasNext(); ) {
+//            org.springframework.core.env.PropertySource propertySource = (org.springframework.core.env.PropertySource) it.next();
+//            if( propertySource instanceof ResourcePropertySource) {
+                    map.putAll(res.getSource());
+//            }
+//        }
+        ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
+    }
 
     @Override
     public String getUserIdentification() {
@@ -39,7 +69,12 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
-        wmConnectInfo = connectInfo;
+        wmConnectInfo = new WMConnectInfoExtended(connectInfo.getUserIdentification(), connectInfo.getPassword(), connectInfo.getEngineName(),
+                connectInfo.getScope());
+        if (ixPoolableConnectionManager == null){
+            setIxPoolableConnectionManager();
+        }
+        wmConnectInfo.setIxPoolableConnectionManager(ixPoolableConnectionManager);
         wfmcService.connect(wmConnectInfo);
     }
 

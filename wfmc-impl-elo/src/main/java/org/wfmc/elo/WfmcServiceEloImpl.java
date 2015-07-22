@@ -32,6 +32,8 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
 
     private static final int MAX_RESULT = 1000;
 
+    private IXPoolableConnection ixPoolableConnection;
+
     private IXConnection ixConnection;
 //    private IXPoolableConnection ixPoolableConnection;
 
@@ -101,8 +103,9 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
             try {
                 String userIdentification = connectInfo.getUserIdentification();
                 IXPoolableConnectionManager ixPoolableConnectionManager = ((WMConnectInfoExtended) connectInfo).getIxPoolableConnectionManager();
-                IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setDefaultCredentials().build();
-                IXPoolableConnection ixPoolableConnection = ixPoolableConnectionManager.retrieveConnection(ixConnectionKey);
+                //IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setDefaultCredentials().build();
+                IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setBasicCredentials("Administrator", "elo@RENNS2015").build();
+                ixPoolableConnection = ixPoolableConnectionManager.retrieveConnection(ixConnectionKey);
                 ixConnection = ixPoolableConnection.getIxConnection();
                 if (!eloUtilsService.checkIfGroupExist(ixConnection, userIdentification)){
                     eloUtilsService.createUserGroup(ixConnection, userIdentification, null);
@@ -118,7 +121,15 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
 
     @Override
     public void disconnect() throws WMWorkflowException {
-        releaseIXConnection();
+        if (ixPoolableConnection != null ){
+            try {
+                ixPoolableConnection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            releaseIXConnection();
+        }
     }
 
     public WMProcessInstance getProcessInstance(String procInstId) throws WMWorkflowException {

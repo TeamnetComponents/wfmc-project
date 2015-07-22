@@ -59,6 +59,11 @@
             <artifactId>spring-web</artifactId>
             <version>${springframework.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.elo.extension</groupId>
+            <artifactId>elo-commons</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
