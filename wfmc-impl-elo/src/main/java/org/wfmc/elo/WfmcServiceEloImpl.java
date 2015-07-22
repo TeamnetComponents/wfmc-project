@@ -33,6 +33,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     private static final int MAX_RESULT = 1000;
 
     private IXConnection ixConnection;
+//    private IXPoolableConnection ixPoolableConnection;
 
     private EloUtilsService eloUtilsService = new EloUtilsService();
     private WfmcUtilsService wfmcUtilsService = new WfmcUtilsService();
@@ -63,11 +64,18 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     }
 
     private void releaseIXConnection() {
-        if (ixConnection != null) {
+//        if (ixPoolableConnection != null){
+//            try {
+//                ixPoolableConnection.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        } else
+            if (ixConnection != null) {
             ixConnection.logout();
             ixConnection = null;
         }
-        ixConnection = null;
+//        ixConnection = null;
     }
 
     protected IXConnection getIxConnection() {
@@ -89,11 +97,16 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
 
-        if (connectInfo.getClass().isInstance(WMConnectInfoExtended.class)){
+        if (connectInfo instanceof WMConnectInfoExtended){
             try {
+                String userIdentification = connectInfo.getUserIdentification();
                 IXPoolableConnectionManager ixPoolableConnectionManager = ((WMConnectInfoExtended) connectInfo).getIxPoolableConnectionManager();
                 IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setDefaultCredentials().build();
                 IXPoolableConnection ixPoolableConnection = ixPoolableConnectionManager.retrieveConnection(ixConnectionKey);
+                ixConnection = ixPoolableConnection.getIxConnection();
+                if (!eloUtilsService.checkIfGroupExist(ixConnection, userIdentification)){
+                    eloUtilsService.createUserGroup(ixConnection, userIdentification, null);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
