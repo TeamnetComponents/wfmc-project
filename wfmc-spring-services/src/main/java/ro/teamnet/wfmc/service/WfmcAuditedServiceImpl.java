@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
@@ -33,7 +34,12 @@ import static ro.teamnet.wfmc.audit.constants.WfmcAuditedMethod.*;
  */
 @Service
 @DependsOn("environment")
-@PropertySource("classpath:elo-cmis-server.properties")
+@PropertySources({
+        @PropertySource(value = "classpath:elo-cmis-server.properties", ignoreResourceNotFound=true),
+        @PropertySource(value = "classpath:elo-cmis-server_prod.properties", ignoreResourceNotFound=true),
+        @PropertySource(value = "classpath:elo-cmis-server_test.properties", ignoreResourceNotFound=true),
+        @PropertySource(value = "classpath:elo-cmis-server_staging.properties", ignoreResourceNotFound=true),
+})
 public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
 
@@ -49,14 +55,19 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     private void setIxPoolableConnectionManager(){
         Map<String, Object> map = new HashMap();
-        ResourcePropertySource res = (ResourcePropertySource) ((AbstractEnvironment) environment).getPropertySources().get("class path resource [elo-cmis-server.properties]");
-
-//        for(Iterator it = ((AbstractEnvironment) environment).getPropertySources().iterator(); it.hasNext(); ) {
-//            org.springframework.core.env.PropertySource propertySource = (org.springframework.core.env.PropertySource) it.next();
-//            if( propertySource instanceof ResourcePropertySource) {
-                    map.putAll(res.getSource());
-//            }
-//        }
+        String fileNameDependingOnProfile ;
+        String activeProfile = environment.getProperty("spring.profiles.activeForFiles");
+        if (activeProfile.equals("prod")){
+            fileNameDependingOnProfile =  "class path resource [elo-cmis-server_prod.properties]";
+        } else if (activeProfile.equals("test")){
+            fileNameDependingOnProfile ="class path resource [elo-cmis-server_test.properties]";
+        }else if (activeProfile.equals("staging")){
+            fileNameDependingOnProfile ="class path resource [elo-cmis-server_staging.properties]";
+        }else {
+            fileNameDependingOnProfile ="class path resource [elo-cmis-server.properties]";
+        }
+        ResourcePropertySource res = (ResourcePropertySource) ((AbstractEnvironment) environment).getPropertySources().get(fileNameDependingOnProfile);
+        map.putAll(res.getSource());
         if (res != null) {
             ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
         } else {
