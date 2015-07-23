@@ -43,20 +43,25 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     @Inject
     protected Environment environment;
 
-    private WMConnectInfoExtended wmConnectInfo = null;
+    private WMConnectInfo wmConnectInfo = null;
 
     IXPoolableConnectionManager ixPoolableConnectionManager;
 
     private void setIxPoolableConnectionManager(){
         Map<String, Object> map = new HashMap();
-        ResourcePropertySource res = (ResourcePropertySource)((AbstractEnvironment) environment).getPropertySources().get("class path resource [elo-cmis-server.properties]");
+        ResourcePropertySource res = (ResourcePropertySource) ((AbstractEnvironment) environment).getPropertySources().get("class path resource [elo-cmis-server.properties]");
+
 //        for(Iterator it = ((AbstractEnvironment) environment).getPropertySources().iterator(); it.hasNext(); ) {
 //            org.springframework.core.env.PropertySource propertySource = (org.springframework.core.env.PropertySource) it.next();
 //            if( propertySource instanceof ResourcePropertySource) {
                     map.putAll(res.getSource());
 //            }
 //        }
-        ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
+        if (res != null) {
+            ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
+        } else {
+            ixPoolableConnectionManager = null;
+        }
     }
 
     @Override
@@ -69,12 +74,16 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
-        wmConnectInfo = new WMConnectInfoExtended(connectInfo.getUserIdentification(), connectInfo.getPassword(), connectInfo.getEngineName(),
-                connectInfo.getScope());
         if (ixPoolableConnectionManager == null){
             setIxPoolableConnectionManager();
         }
-        wmConnectInfo.setIxPoolableConnectionManager(ixPoolableConnectionManager);
+        if (ixPoolableConnectionManager != null) {
+            wmConnectInfo = new WMConnectInfoExtended(connectInfo.getUserIdentification(), connectInfo.getPassword(), connectInfo.getEngineName(),
+                    connectInfo.getScope());
+            ((WMConnectInfoExtended)wmConnectInfo).setIxPoolableConnectionManager(ixPoolableConnectionManager);
+        } else {
+            wmConnectInfo = connectInfo;
+        }
         wfmcService.connect(wmConnectInfo);
     }
 
