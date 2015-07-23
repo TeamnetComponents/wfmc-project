@@ -19,14 +19,14 @@
 
     <groupId>ro.teamnet.wfmc</groupId>
     <artifactId>wfmc-spring-services</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2</version>
 
     <dependencies>
         <!-- WfMC project dependencies -->
         <dependency>
             <groupId>org.wfmc</groupId>
             <artifactId>wfmc-commons</artifactId>
-            <version>6.0-SNAPSHOT</version>
+            <version>7.0</version>
         </dependency>
 
 
