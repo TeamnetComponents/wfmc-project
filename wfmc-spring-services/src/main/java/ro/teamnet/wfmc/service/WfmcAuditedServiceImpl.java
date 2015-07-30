@@ -70,7 +70,9 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
             fileNameDependingOnProfile ="class path resource [elo-cmis-server.properties]";
         }
         ResourcePropertySource res = (ResourcePropertySource) ((AbstractEnvironment) environment).getPropertySources().get(fileNameDependingOnProfile);
-        map.putAll(res.getSource());
+        if (res != null ) {
+            map.putAll(res.getSource());
+        }
         if (res != null) {
             ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
         } else {
