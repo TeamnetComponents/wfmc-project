@@ -57,6 +57,9 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
         Map<String, Object> map = new HashMap();
         String fileNameDependingOnProfile ;
         String activeProfile = environment.getProperty("spring.profiles.activeForFiles");
+        if (activeProfile == null){
+            activeProfile = "dev";
+        }
         if (activeProfile.equals("prod")){
             fileNameDependingOnProfile =  "class path resource [elo-cmis-server_prod.properties]";
         } else if (activeProfile.equals("test")){
