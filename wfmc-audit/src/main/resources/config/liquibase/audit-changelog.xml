@@ -213,4 +213,22 @@
             grant select on v_operatiuni to renns_jenkins
         </sql>
     </changeSet>
+    <changeSet id="20150729093300#4" author="CristianB" >
+        <sql>
+            create or replace view v_operatiuni as
+            select
+            decode (a.event_code, 1,'Creare dosar', 18,'Transmitere dosar',23,'Alocare dosar','' ) event,
+            case when a.username like '%@%' then SUBSTR(a.username,1,INSTR(a.username,'@')-1) else a.username end as username,
+            a.PROCESS_INSTANCE_ID, a.event_date from (select  W.PROCESS_INSTANCE_ID,  e.* from WM_PROCESS_INSTANCE_AUDIT w,
+            WM_EVENT_AUDIT e
+            where  E.WM_PROCESS_INSTANCE_AUDIT_ID=w.id and e.event_code=1
+            union
+            select W.PROCESS_INSTANCE_ID, e.* from WM_PROCESS_INSTANCE_AUDIT w,
+            WM_WORK_ITEM_AUDIT wi,
+            WM_EVENT_AUDIT e
+            where  E.wm_WORK_ITEM_audit_id =wi.id and WI.WM_PROCESS_INSTANCE_AUDIT_ID=w.id
+            ) a
+            order by a.event_date
+        </sql>
+    </changeSet>
 </databaseChangeLog>
