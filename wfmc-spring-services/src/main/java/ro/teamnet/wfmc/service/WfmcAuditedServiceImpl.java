@@ -49,11 +49,11 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
     @Inject
     protected Environment environment;
 
-    private WMConnectInfo wmConnectInfo = null;
+    private WMConnectInfo wmConnectInfo;
 
     IXPoolableConnectionManager ixPoolableConnectionManager;
 
-    private void setIxPoolableConnectionManager(){
+    private void setIxPoolableConnectionManager(WMConnectInfo connectInfo){
         Map<String, Object> map = new HashMap();
         String fileNameDependingOnProfile ;
         String activeProfile = environment.getProperty("spring.profiles.activeForFiles");
@@ -73,10 +73,22 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
         if (res != null ) {
             map.putAll(res.getSource());
         }
-        if (res != null) {
-            ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
-        } else {
-            ixPoolableConnectionManager = null;
+        if (ixPoolableConnectionManager == null) {
+            if (res != null) {
+                ixPoolableConnectionManager = new IXPoolableConnectionManager(map);
+            } else {
+                ixPoolableConnectionManager = null;
+            }
+        }
+        if (ixPoolableConnectionManager != null) {
+            if (map.containsKey("elo.connection.factory.connection.appUser") && map.containsKey("elo.connection.factory.connection.appPassword")) {
+                wmConnectInfo = new WMConnectInfoExtended((String)map.get("elo.connection.factory.connection.appUser"), (String) map.get("elo.connection.factory.connection.appPassword"), "WFMC",
+                        null);
+                ((WMConnectInfoExtended) wmConnectInfo).setIxPoolableConnectionManager(ixPoolableConnectionManager);
+            }
+        }
+        if (wmConnectInfo == null){
+            wmConnectInfo = connectInfo;
         }
     }
 
@@ -90,16 +102,7 @@ public class WfmcAuditedServiceImpl implements WfmcAuditedService {
 
     @Override
     public void connect(WMConnectInfo connectInfo) throws WMWorkflowException {
-        if (ixPoolableConnectionManager == null){
-            setIxPoolableConnectionManager();
-        }
-        if (ixPoolableConnectionManager != null) {
-            wmConnectInfo = new WMConnectInfoExtended(connectInfo.getUserIdentification(), connectInfo.getPassword(), connectInfo.getEngineName(),
-                    connectInfo.getScope());
-            ((WMConnectInfoExtended)wmConnectInfo).setIxPoolableConnectionManager(ixPoolableConnectionManager);
-        } else {
-            wmConnectInfo = connectInfo;
-        }
+        setIxPoolableConnectionManager(connectInfo);
         wfmcService.connect(wmConnectInfo);
     }
 

@@ -104,7 +104,7 @@ public class WfmcServiceEloImpl extends WfmcServiceAbstract {
                 String userIdentification = connectInfo.getUserIdentification();
                 IXPoolableConnectionManager ixPoolableConnectionManager = ((WMConnectInfoExtended) connectInfo).getIxPoolableConnectionManager();
                 //IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setDefaultCredentials().build();
-                IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setBasicCredentials("Administrator", "elo@RENNS2015").build();
+                IXConnectionKey ixConnectionKey = new IXConnectionKeyBuilder().setBasicCredentials(connectInfo.getUserIdentification(), connectInfo.getPassword()).build();
                 ixPoolableConnection = ixPoolableConnectionManager.retrieveConnection(ixConnectionKey);
                 ixConnection = ixPoolableConnection.getIxConnection();
                 if (!eloUtilsService.checkIfGroupExist(ixConnection, userIdentification)){
