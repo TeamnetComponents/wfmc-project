@@ -10,7 +10,7 @@
     <property name="activated" value="true" dbms="postgresql"/>
     <property name="activated" value="1" dbms="oracle"/>
 
-    <changeSet id="00000000000000" author="audit" dbms="postgresql,oracle">
+    <changeSet id="00000000000000" author="audit" dbms="postgresql,oracle" failOnError="false">
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
     </changeSet>
 
